@@ -1,4 +1,5 @@
 package top.lacrus.zephyrzeno.electron.test;
+import top.lacrus.zephyrzeno.electron.item.CircuitToolItem;
 
 import java.util.*;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;

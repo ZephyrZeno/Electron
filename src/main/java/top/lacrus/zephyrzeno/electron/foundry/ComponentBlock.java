@@ -22,8 +22,8 @@ import top.lacrus.zephyrzeno.electron.logic.LogicFunction;
 
 /** Two visible, physically separate pins on the selected mounting face. */
 public final class ComponentBlock extends BlockWithEntity {
-    public enum Kind { CRANK, RESISTOR, LED, SWITCH, GATE, DIODE, FUSE, BUTTON, CAPACITOR, BATTERY, TERMINAL_STRIP, REDSTONE_SWITCH, MOSFET, RELAY, BOOST, BUCK, GENERATOR, DISTRIBUTION, BREAKER, LAMP, MOTOR;
-        public boolean large(){return this==GENERATOR||this==DISTRIBUTION||this==BREAKER||this==LAMP||this==MOTOR;}
+    public enum Kind { CRANK, RESISTOR, LED, SWITCH, GATE, DIODE, FUSE, BUTTON, CAPACITOR, BATTERY, TERMINAL_STRIP, REDSTONE_SWITCH, MOSFET, RELAY, BOOST, BUCK, GENERATOR, DISTRIBUTION, BREAKER, LAMP, MOTOR, THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS;
+        public boolean large(){return this==GENERATOR||this==DISTRIBUTION||this==BREAKER||this==LAMP||this==MOTOR||top.lacrus.zephyrzeno.electron.power.GridDevices.handles(this);}
     }
     public static final int BUTTON_TICKS=20;
     public static final DirectionProperty FACING=Properties.FACING;
@@ -72,7 +72,9 @@ public final class ComponentBlock extends BlockWithEntity {
     @Override protected ActionResult onUse(BlockState state,World world,BlockPos pos,PlayerEntity player,BlockHitResult hit) {
         if(world.isClient)return ActionResult.SUCCESS;
         if(world.getBlockEntity(pos) instanceof ComponentEntity entity) {
-            if(kind==Kind.CRANK) {
+            if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(kind)){
+                top.lacrus.zephyrzeno.electron.power.PowerPlant.interact((ServerWorld)world,pos,state,entity,player,player.getMainHandStack());
+            } else if(kind==Kind.CRANK) {
                 if(player.isSneaking()){world.setBlockState(pos,state.cycle(ENABLED),Block.NOTIFY_ALL);ElectricalEffects.play((ServerWorld)world,pos,ElectricalEffects.SWITCH,.4f,state.get(ENABLED)?.85f:1.1f);player.sendMessage(Text.translatable(state.get(ENABLED)?"message.electron.source_off":"message.electron.source_on"),true);}
                 else {boolean charged=entity.crank(world.getTime());if(charged){world.addSyncedBlockEvent(pos,this,ComponentEntity.EVENT_CRANK,0);ElectricalEffects.play((ServerWorld)world,pos,ElectricalEffects.CRANK,.6f,1);}
                     player.sendMessage(player.isCreative()?Text.translatable("message.electron.crank",String.format(java.util.Locale.ROOT,"%.1f",entity.energy),Text.translatable(charged?"message.electron.crank_added":"message.electron.crank_wait")):Text.translatable(charged?"message.electron.cranked":"message.electron.crank_ready_later"),true);}

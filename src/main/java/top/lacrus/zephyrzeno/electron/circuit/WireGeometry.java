@@ -40,7 +40,7 @@ public final class WireGeometry {
         return result;
     }
     public static int lengthUnits(List<SurfacePoint> path,ToIntFunction<SurfacePoint> inset){
-        int units=path.getFirst().layer()+path.getLast().layer();
+        int units=2*(path.getFirst().layer()+path.getLast().layer());
         for(int i=1;i<path.size();i++)units+=segmentUnits(path.get(i-1),path.get(i),inset);
         return units;
     }

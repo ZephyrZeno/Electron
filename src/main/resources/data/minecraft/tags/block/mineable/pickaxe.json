@@ -36,6 +36,13 @@
     "electron:buck_converter_3v3",
     "electron:buck_converter_12",
     "electron:tower_terminal",
+    "electron:thermal_generator",
+    "electron:hydro_generator",
+    "electron:wind_generator",
+    "electron:lightning_collector",
+    "electron:nuclear_reactor",
+    "electron:substation",
+    "electron:mains_inlet",
     "electron:and_gate",
     "electron:or_gate",
     "electron:not_gate",
@@ -45,6 +52,11 @@
     "electron:xnor_gate",
     "electron:buffer_gate",
     "electron:binary_memory",
-    "electron:tower_section"
+    "electron:tower_section",
+    "electron:plant_casing",
+    "electron:reactor_casing",
+    "electron:transmission_shaft",
+    "electron:rotating_platform",
+    "electron:uranium_ore"
   ]
 }

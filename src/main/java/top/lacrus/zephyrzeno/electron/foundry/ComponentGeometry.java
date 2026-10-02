@@ -37,9 +37,10 @@ public final class ComponentGeometry {
     }
     public static boolean traceClear(ComponentBlock.Kind kind,int u,int v,int layer){
         // Keep the conductor off the IC, moving handle, resistor body and LED lens.
+        if(kind==ComponentBlock.Kind.MOTOR)return !(u>=5&&u<=9&&v>=5&&v<=11);
         if(layer==1)return true;
         if(kind==ComponentBlock.Kind.TERMINAL_STRIP||kind==ComponentBlock.Kind.DISTRIBUTION)return true;
-        if(kind==ComponentBlock.Kind.MOTOR||kind==ComponentBlock.Kind.GENERATOR||kind==ComponentBlock.Kind.LAMP)return !(u>=5&&u<=9&&v>=9&&v<=13);
+        if(kind==ComponentBlock.Kind.GENERATOR||kind==ComponentBlock.Kind.LAMP)return !(u>=5&&u<=9&&v>=9&&v<=13);
         if(kind==ComponentBlock.Kind.BATTERY||kind==ComponentBlock.Kind.BOOST||kind==ComponentBlock.Kind.BUCK||kind==ComponentBlock.Kind.RELAY)return !(u>=5&&u<=9&&v>=5&&v<=11);
         if(kind==ComponentBlock.Kind.CRANK)return !(u>=5&&u<=11&&v>=9&&v<=15);
         if(kind==ComponentBlock.Kind.RESISTOR||kind==ComponentBlock.Kind.DIODE||kind==ComponentBlock.Kind.FUSE)return !(u>=5&&u<=9&&v==7);

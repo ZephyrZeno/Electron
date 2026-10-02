@@ -8,8 +8,8 @@ import top.lacrus.zephyrzeno.electron.Electron;
 
 public final class EngineeringGuideScreen extends Screen {
     private int page,scroll,maxScroll;
-    private static final String[] PAGES={"first_light","series_parallel","timing","power_modules","redstone_switch","wiring","wall_ports","measurement","logic","control","conversion","distribution","crafting","protection","precision","scales"};
-    private static final String[] ILLUSTRATIONS={"first_light","series_parallel","rc_timing","power_modules","redstone_switch","manual_wiring",null,"meter_probes","gate_pins","control_power","dc_conversion","control_power",null,"protection","bridge_tap",null};
+    private static final String[] PAGES={"first_light","series_parallel","timing","power_modules","redstone_switch","wiring","wall_ports","measurement","logic","control","conversion","distribution","crafting","protection","precision","scales","power_grid","mechanics"};
+    private static final String[] ILLUSTRATIONS={"first_light","series_parallel","rc_timing","power_modules","redstone_switch","manual_wiring",null,"meter_probes","gate_pins","control_power","dc_conversion","control_power",null,"protection","bridge_tap",null,"power_grid","mechanics"};
     public EngineeringGuideScreen(){super(Text.translatable("guide.electron.title"));}
     @Override protected void applyBlur(float delta){}
     @Override public void renderBackground(DrawContext ctx,int mouseX,int mouseY,float delta){ctx.fill(0,0,width,height,0xb0081018);}

@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "electron:block/transmission_shaft"
+    },
+    "facing=down": {
+      "model": "electron:block/transmission_shaft",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "electron:block/transmission_shaft",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "electron:block/transmission_shaft",
+      "x": 90,
+      "y": 180
+    },
+    "facing=east": {
+      "model": "electron:block/transmission_shaft",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west": {
+      "model": "electron:block/transmission_shaft",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "electron:plant_casing"
+    },
+    {
+      "item": "electron:dc_breaker"
+    },
+    {
+      "item": "electron:multimeter"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    }
+  ],
+  "result": {
+    "id": "electron:mains_inlet",
+    "count": 1
+  }
+}

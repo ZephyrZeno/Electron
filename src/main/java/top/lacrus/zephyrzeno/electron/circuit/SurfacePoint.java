@@ -10,7 +10,7 @@ public record SurfacePoint(BlockPos host,Direction face,int u,int v,int layer) {
     public Direction vDirection(){return face.getAxis()==Direction.Axis.Y?Direction.SOUTH:Direction.UP;}
     public SurfacePoint layer(int value){return new SurfacePoint(host,face,u,v,value);}
     public Vec3d position() {
-        Vec3d p=Vec3d.of(host);double offset=.03125+layer*.0625;
+        Vec3d p=Vec3d.of(host);double offset=.03125+layer*.125;
         p=p.add(Vec3d.of(face.getVector()).multiply(offset));
         if(face.getDirection()==Direction.AxisDirection.POSITIVE)p=p.add(Vec3d.of(face.getVector()));
         return p.add(Vec3d.of(uDirection().getVector()).multiply(u/16d)).add(Vec3d.of(vDirection().getVector()).multiply(v/16d));

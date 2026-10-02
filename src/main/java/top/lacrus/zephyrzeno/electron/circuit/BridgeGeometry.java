@@ -16,9 +16,9 @@ public final class BridgeGeometry {
         for(double u:new double[]{.375,15.625})for(double v:new double[]{.375,15.625}){
             var base=origin.add(Vec3d.of(anchor.uDirection().getVector()).multiply(u/16)).add(Vec3d.of(anchor.vDirection().getVector()).multiply(v/16));
             result.add(part(base,normal,.013,.022,.013,0x626d78));
-            result.add(part(base,normal,.052,.018,.026,0xe5d4ad));
-            result.add(part(base,normal,.084,.022,.007,0xb9a786));
-            result.add(part(base,normal,.094,.010,.003,0x555962));
+            result.add(part(base,normal,.084,.018,.058,0xe5d4ad));
+            result.add(part(base,normal,.146,.022,.007,0xb9a786));
+            result.add(part(base,normal,.156,.010,.003,0x555962));
         }
         return List.copyOf(result);
     }

@@ -17,7 +17,7 @@ import net.minecraft.util.Identifier;
 import top.lacrus.zephyrzeno.electron.block.*;
 import top.lacrus.zephyrzeno.electron.logic.LogicFunction;
 import top.lacrus.zephyrzeno.electron.foundry.Foundry;
-import top.lacrus.zephyrzeno.electron.foundry.ComponentItem;
+import top.lacrus.zephyrzeno.electron.item.ComponentItem;
 
 public final class Electron implements ModInitializer {
     public static final String MOD_ID = "electron";
@@ -49,8 +49,8 @@ public final class Electron implements ModInitializer {
         Registry.register(Registries.ITEM_GROUP, id("components"), FabricItemGroup.builder()
                 .displayName(Text.translatable("itemGroup.electron.components"))
                 .icon(() -> new ItemStack(Foundry.LED))
-                .entries((context, entries) -> {Foundry.DEVICES.values().stream().filter(b->!b.kind.large()).forEach(entries::add);for(var item:new Item[]{Foundry.SPOOL,Foundry.TERMINAL,Foundry.WALL_PORT,Foundry.BRIDGE})entries.add(item);}).build());
-        Registry.register(Registries.ITEM_GROUP,id("power"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.power")).icon(()->new ItemStack(Foundry.MOTOR)).entries((context,entries)->{Foundry.DEVICES.values().stream().filter(b->b.kind.large()).forEach(entries::add);entries.add(Foundry.CABLE);entries.add(Foundry.TOWER_SECTION);}).build());
+                .entries((context, entries) -> {Foundry.DEVICES.values().stream().filter(b->!b.kind.large()).forEach(entries::add);for(var color:Foundry.WIRE_COLORS)entries.add(color);for(var item:new Item[]{Foundry.TERMINAL,Foundry.WALL_PORT,Foundry.BRIDGE})entries.add(item);}).build());
+        Registry.register(Registries.ITEM_GROUP,id("power"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.power")).icon(()->new ItemStack(Foundry.MOTOR)).entries((context,entries)->{Foundry.DEVICES.values().stream().filter(b->b.kind.large()).forEach(entries::add);for(var color:Foundry.CABLE_COLORS)entries.add(color);entries.add(Foundry.TOWER_SECTION);entries.add(Foundry.SHAFT);entries.add(Foundry.TURNTABLE);for(var item:new net.minecraft.item.ItemConvertible[]{Foundry.PLANT_CASING,Foundry.REACTOR_CASING,Foundry.URANIUM_ORE,Foundry.RAW_URANIUM,Foundry.URANIUM_PELLET,Foundry.FUEL_ROD,Foundry.SPENT_ROD})entries.add(item);}).build());
         Registry.register(Registries.ITEM_GROUP,id("redstone"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.redstone"))
                 .icon(()->new ItemStack(MEMORY)).entries((context,entries)->BLOCKS.values().forEach(entries::add)).build());
         Registry.register(Registries.ITEM_GROUP,id("workshop"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.workshop"))

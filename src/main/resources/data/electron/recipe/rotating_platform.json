@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "electron:transmission_shaft"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:smooth_stone"
+    }
+  ],
+  "result": {
+    "id": "electron:rotating_platform",
+    "count": 1
+  }
+}

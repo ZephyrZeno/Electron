@@ -10,6 +10,7 @@ import static top.lacrus.zephyrzeno.electron.circuit.CircuitParts.*;
 /** Finite-length suspended cable. Gravity sag is a static parabolic game approximation. */
 public final class OverheadCable {
     public static final int MAX_SPAN=64;
+    public static final double RADIUS=.05;
     public static boolean anchor(CircuitState state,Endpoint endpoint){
         var device=state.devices.get(endpoint.point().host());
         return device!=null&&device.block().equals("electron:tower_terminal")&&device.face()==Direction.UP;
@@ -33,17 +34,17 @@ public final class OverheadCable {
     public static int units(CircuitState state,List<SurfacePoint> path){return units(vertices(state,path));}
     public static int units(List<Vec3d> points){double length=0;for(int i=1;i<points.size();i++)length+=points.get(i).distanceTo(points.get(i-1));return (int)Math.ceil(length*16-1e-8);}
     public static Set<BlockPos> cells(List<Vec3d> points){
-        Set<BlockPos> cells=new HashSet<>();for(var p:points)for(var pos:BlockPos.iterate(BlockPos.ofFloored(p.add(-.03,-.03,-.03)),BlockPos.ofFloored(p.add(.03,.03,.03))))cells.add(pos.toImmutable());return cells;
+        Set<BlockPos> cells=new HashSet<>();for(var p:points)for(var pos:BlockPos.iterate(BlockPos.ofFloored(p.add(-(RADIUS+.01),-(RADIUS+.01),-(RADIUS+.01))),BlockPos.ofFloored(p.add((RADIUS+.01),(RADIUS+.01),(RADIUS+.01)))))cells.add(pos.toImmutable());return cells;
     }
     public static boolean loaded(World world,List<Vec3d> points){return cells(points).stream().allMatch(world::isChunkLoaded);}
     public static boolean clear(World world,List<Vec3d> points,BlockPos a,BlockPos b){
         for(int i=1;i<points.size();i++){
             Vec3d start=points.get(i-1),end=points.get(i);
-            for(var pos:BlockPos.iterate(BlockPos.ofFloored(new Vec3d(Math.min(start.x,end.x)-.03,Math.min(start.y,end.y)-.03,Math.min(start.z,end.z)-.03)),BlockPos.ofFloored(new Vec3d(Math.max(start.x,end.x)+.03,Math.max(start.y,end.y)+.03,Math.max(start.z,end.z)+.03)))){
+            for(var pos:BlockPos.iterate(BlockPos.ofFloored(new Vec3d(Math.min(start.x,end.x)-(RADIUS+.01),Math.min(start.y,end.y)-(RADIUS+.01),Math.min(start.z,end.z)-(RADIUS+.01))),BlockPos.ofFloored(new Vec3d(Math.max(start.x,end.x)+(RADIUS+.01),Math.max(start.y,end.y)+(RADIUS+.01),Math.max(start.z,end.z)+(RADIUS+.01))))){
                 if(pos.equals(a)||pos.equals(b))continue;
                 if(!world.isChunkLoaded(pos))return false;
                 for(var box:world.getBlockState(pos).getCollisionShape(world,pos).getBoundingBoxes()){
-                    var bounds=box.offset(pos).expand(.025);
+                    var bounds=box.offset(pos).expand(RADIUS);
                     if(bounds.contains(start)||bounds.contains(end)||bounds.raycast(start,end).isPresent())return false;
                 }
             }

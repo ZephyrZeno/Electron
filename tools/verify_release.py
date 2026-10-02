@@ -1,6 +1,7 @@
 """Check the two distributable JARs and assemble a reviewable local release folder."""
 from pathlib import Path
 import hashlib
+import re
 import json
 import shutil
 import zipfile
@@ -26,6 +27,12 @@ for label,path,modid,forbidden in [('main',MAIN,'electron',b'top/lacrus/zephyrze
             for device in ('rechargeable_battery','terminal_strip','electrical_redstone_switch','power_mosfet','electrical_relay','boost_converter','boost_converter_12','buck_converter','buck_converter_3v3','buck_converter_12','dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor'):
                 assert f'assets/electron/blockstates/{device}.json' in names
                 assert f'data/electron/recipe/{device}.json' in names
+            for device in ('thermal_generator','hydro_generator','wind_generator','lightning_collector','nuclear_reactor','substation','mains_inlet','transmission_shaft','rotating_platform'):
+                assert f'assets/electron/blockstates/{device}.json' in names
+                assert f'data/electron/recipe/{device}.json' in names
+            for item in ('CircuitToolItem','ComponentItem','MagnifierItem'):
+                assert f'top/lacrus/zephyrzeno/electron/item/{item}.class' in names
+                assert not any(f'/{old}/{item}.class' in n for old in ('circuit','foundry') for n in names)
             assert 'electron_calculator' not in meta.get('depends',{})
             assert not any(n.endswith(('.ebp','.startup')) or 'BluePrint' in n or 'electron_calculator' in n for n in names)
             for file in (ROOT/'src/main/resources').rglob('*'):
@@ -49,11 +56,13 @@ tests=[ET.parse(p).getroot() for p in (ROOT/'build/test-results/test').glob('TES
 assert tests and all(int(t.get('failures','0'))==0 and int(t.get('errors','0'))==0 for t in tests)
 native=ET.parse(ROOT/'build/foundry-gametest-results.xml').getroot()
 native_count=len(native.findall('.//testcase'))
-assert not native.findall('.//failure') and native_count==40
+assert not native.findall('.//failure') and native_count==sum(len(re.findall(r'@GameTest\(',p.read_text(encoding='utf-8'))) for p in (ROOT/'src/gametest/java').rglob('*.java'))
 assets=json.loads((ROOT/'build/asset-review/validation.json').read_text(encoding='utf-8'))
 localization=json.loads((ROOT/'build/localization-verification.json').read_text(encoding='utf-8'))
 summary['map']=json.loads((ROOT/'build/academy-package-verification.json').read_text(encoding='utf-8'))
-summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'client_visual':'Offline model previews and worn-head transform verification. Full manual in-client visual acceptance remains incomplete.'}
+summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'client_visual':'Offline model previews and native light propagation tests. Shader mappings audited; per-pack visual acceptance remains incomplete.'}
+shader_report=ROOT/'build/shader-compat-verification.json'
+if shader_report.exists():summary['local_shader_compatibility']=json.loads(shader_report.read_text(encoding='utf-8'))
 (ROOT/'build/foundry-release-verification.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 out=ROOT/f'dist/circuit-foundry-{VERSION}'
 out.mkdir(parents=True,exist_ok=True)
@@ -64,29 +73,27 @@ shutil.copy2(ROOT/'build/asset-review/equipment.png',out/'equipment-preview.png'
 shutil.copy2(ROOT/'build/asset-review/towers.png',out/'tower-preview.png')
 shutil.copy2(ROOT/'docs/design/ELECTRON_THREE_SCALES_V3.md',out/'三层电路设计-v3.md')
 shutil.copy2(ROOT/'README.md',out/'玩法与合成说明.md')
+shutil.copy2(ROOT/'docs/design/GRID_AND_MECHANICS_V4.md',out/'大型供电与传动-v4.md')
+shutil.copy2(ROOT/'build/asset-review/grid.png',out/'grid-preview.png')
 (out/'安装说明.txt').write_text(f"""Electron: Circuit Foundry — {VERSION}
 Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-46 种方块、11 种工具/附件。大型低压配电、小型电路、红石兼容、工程工具分栏。
-生存实时数值只能用万用表 HUD 测量；创造可诊断，铭牌额定参数保留。
-新加 MOSFET、隔离继电器、五种固定输出 DC 转换模块、24 V 手摇发电机、电缆、分线箱、1 A 断路器、工程灯与电机。
-转换模块固定规格，换标称电压需要合成并替换；没有免费调压界面。输入范围、功率、效率、过载和接线见玩法说明。
-128 段线总数上限已取消；每段 32 格、单网络 256 节点、每格导体/几何预算仍保留。
-细线 250 mA、电缆 5 A，正极与回线分别接，持续过流会烧断；大负载推荐电缆和断路器。
-右键电机切换空载/带载/锁轴；堵转会增大电流，排障后复位断路器。
-小型导线支持沿面跨墙角和台阶；大型电缆可连接完整电线塔，64 格跨度内显示下垂，并扣除实际长度。
-塔架逐层搭建，至少 3 节和实体基础；塔顶座 A/B 双母线隔离。新增可合成的 128 格电缆卷。
-小型器件板面仍为 3/16，总厚度不超过 4/16；大型电气设备用整格机壳。
-红石与电不能互相供电或转换；电控红石触点仅决定已有红石信号是否通过。
-16 页手册、12 张教程图各有中英版本；手持放大镜可佩戴，按住 Z 放大。
+本版新增：火电、水电、风电、引雷、核电、市电进线、240→24 V 变电、传动轴与旋转夹持台。
+主要样机改由真实风机持续供电，入口架空线接入负载。5 V 手摇课程仍需补能，电容需按按钮，故障区需手摇启动。
+普通器件放在平滑石上；风机与引雷装置放在玩家搭建的塔架上。详细结构与接线见《大型供电与传动-v4.md》。
+大型网络使用 240 V 整流直流模型；无免费市电、无免费调压，不模拟交流相位或核反应物理。
+八种颜色的导线和八种颜色的电缆均为独立物品；旧线轴与已付费长度保留。
+电缆加粗并采用贴图，跨线桥加高；240 V 架空线离地或障碍不足两格会漏电放电。
+工程灯在额定供电时发出原版 15 级光照；光源增加 labPBR 发光材质。断电和损坏时熄灭。
+本机光影兼容工具生成 Electron Lights 副本，保留原光影；第三方光影不随本发行包分发。
+18 页手册、14 张教程图各有中英版本。生存实时数值仍只通过万用表 HUD 测量。
+主线不依赖计算器。PCB 制板、焊接、开发板、三相交流等尚未实现。
 
-教学地图单独下载 circuit-academy-{VERSION}.zip，将其中 Circuit_Foundry_Academy 文件夹放入 saves。
-地图含九区和入口架空线示范，器件放在平滑石台面上方，和平生存，可拆改，工具与材料箱齐备；样机只有有限储能，须手摇补电。
-地图为实际存档，游玩不需要任何地图生成器，也不需要计算器模组。
-PCB 小配件、焊接、开发板、交流、多方块输电和外部机械传动仍为后续内容。
+教学地图：解压 circuit-academy-{VERSION}.zip，将 Circuit_Foundry_Academy 放入 saves。
+旧玩家存档不会被覆盖。生成器仅用于开发期导出，不进入主线发行 JAR。
 
 验证：{summary['validation']['junit']} 项单元测试、{native_count} 项 Minecraft GameTest、模型/方块状态/双语言检查通过。
 教学地图已经保存后重新载入并通电验证。预览图为离线几何渲染或存档数据示意；未完成逐项人工客户端视觉验收和大型多人压力测试。

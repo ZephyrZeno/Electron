@@ -1,4 +1,5 @@
 package top.lacrus.zephyrzeno.electron.circuit;
+import top.lacrus.zephyrzeno.electron.item.CircuitToolItem;
 
 import java.util.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;

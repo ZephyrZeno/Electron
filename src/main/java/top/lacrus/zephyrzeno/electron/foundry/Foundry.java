@@ -1,4 +1,7 @@
 package top.lacrus.zephyrzeno.electron.foundry;
+import top.lacrus.zephyrzeno.electron.item.MagnifierItem;
+import top.lacrus.zephyrzeno.electron.item.ComponentItem;
+import top.lacrus.zephyrzeno.electron.item.CircuitToolItem;
 
 import java.util.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -21,9 +24,15 @@ public final class Foundry {
     public static net.minecraft.component.ComponentType<Double> BATTERY_ENERGY;
     public static ComponentBlock MOSFET,RELAY,BOOST,BUCK,GENERATOR,DISTRIBUTION,BREAKER,LAMP,MOTOR;
     public static Item CABLE;
+    public static final Item[] WIRE_COLORS=new Item[8],CABLE_COLORS=new Item[8];
     public static ComponentBlock BOOST_12,BUCK_3V3,BUCK_12;
     public static ComponentBlock TOWER_TERMINAL;
     public static Block TOWER_SECTION;
+    public static Block SHAFT,TURNTABLE;
+    public static Block PLANT_CASING,REACTOR_CASING,URANIUM_ORE;
+    public static ComponentBlock THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS;
+    public static Item RAW_URANIUM,URANIUM_PELLET,FUEL_ROD,SPENT_ROD;
+    public static BlockEntityType<top.lacrus.zephyrzeno.electron.mechanical.MechanicalEntity> MECHANICAL_ENTITY;
     public static java.util.function.BooleanSupplier CREATIVE_READINGS=()->false;
     public static Block TABLE;
     public static Item SPOOL,CUTTER,METER,WRENCH,MAGNIFIER,TERMINAL,WALL_PORT,BRIDGE,HANDBOOK,SCRAP;
@@ -50,6 +59,14 @@ public final class Foundry {
         BREAKER=device("dc_breaker",ComponentBlock.Kind.BREAKER,.02);LAMP=device("engineering_lamp",ComponentBlock.Kind.LAMP,240);MOTOR=device("dc_motor",ComponentBlock.Kind.MOTOR,12);
         TOWER_TERMINAL=device("tower_terminal",ComponentBlock.Kind.DISTRIBUTION,.0005);
         TOWER_SECTION=block("tower_section",new Block(AbstractBlock.Settings.create().strength(3).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK)));
+        SHAFT=block("transmission_shaft",new top.lacrus.zephyrzeno.electron.mechanical.MechanicalBlock(AbstractBlock.Settings.create().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK),false));
+        TURNTABLE=block("rotating_platform",new top.lacrus.zephyrzeno.electron.mechanical.MechanicalBlock(AbstractBlock.Settings.create().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK),true));
+        MECHANICAL_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("mechanical"),FabricBlockEntityTypeBuilder.create(top.lacrus.zephyrzeno.electron.mechanical.MechanicalEntity::new,SHAFT,TURNTABLE).build());
+        PLANT_CASING=block("plant_casing",new Block(AbstractBlock.Settings.create().strength(4).sounds(BlockSoundGroup.METAL).requiresTool()));
+        REACTOR_CASING=block("reactor_casing",new Block(AbstractBlock.Settings.create().strength(6).sounds(BlockSoundGroup.METAL).requiresTool()));
+        URANIUM_ORE=block("uranium_ore",new Block(AbstractBlock.Settings.create().strength(4).sounds(BlockSoundGroup.STONE).requiresTool()));
+        RAW_URANIUM=item("raw_uranium",new Item(new Item.Settings()));URANIUM_PELLET=item("uranium_pellet",new Item(new Item.Settings()));FUEL_ROD=item("fuel_rod",new Item(new Item.Settings().maxCount(16)));SPENT_ROD=item("spent_fuel_rod",new Item(new Item.Settings().maxCount(16)));
+        THERMAL=device("thermal_generator",ComponentBlock.Kind.THERMAL,2);HYDRO=device("hydro_generator",ComponentBlock.Kind.HYDRO,2);WIND=device("wind_generator",ComponentBlock.Kind.WIND,2);LIGHTNING=device("lightning_collector",ComponentBlock.Kind.LIGHTNING,2);NUCLEAR=device("nuclear_reactor",ComponentBlock.Kind.NUCLEAR,2);SUBSTATION=device("substation",ComponentBlock.Kind.SUBSTATION,.1);MAINS=device("mains_inlet",ComponentBlock.Kind.MAINS,.02);
         for(var function:LogicFunction.values()) {
             String id="wire_"+function.name().toLowerCase(Locale.ROOT)+"_gate";
             var gate=block(id,new ComponentBlock(AbstractBlock.Settings.create().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK),ComponentBlock.Kind.GATE,10000,function));
@@ -58,7 +75,11 @@ public final class Foundry {
         COMPONENT_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("component"),FabricBlockEntityTypeBuilder.create(ComponentEntity::new,DEVICES.values().toArray(Block[]::new)).build());
         TABLE=block("assembly_table",new AssemblyTableBlock(AbstractBlock.Settings.create().strength(2.5f).sounds(BlockSoundGroup.WOOD).nonOpaque()));
         SPOOL=item("wire_spool",new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.SPOOL));
-        CABLE=item("cable_spool",new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.SPOOL));
+        CABLE=item("cable_spool",new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.SPOOL,-1,true));
+        for(int color=0;color<8;color++){
+            WIRE_COLORS[color]=item("wire_spool_"+CircuitToolItem.COLOR_NAMES[color],new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.SPOOL,color,false));
+            CABLE_COLORS[color]=item("cable_spool_"+CircuitToolItem.COLOR_NAMES[color],new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.SPOOL,color,true));
+        }
         CUTTER=item("wire_cutters",new CircuitToolItem(new Item.Settings().maxCount(1).maxDamage(512),CircuitToolItem.Tool.CUTTER));
         METER=item("multimeter",new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.METER));
         WRENCH=item("calibration_wrench",new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.WRENCH));
@@ -66,5 +87,6 @@ public final class Foundry {
         HANDBOOK=item("engineering_handbook",new Item(new Item.Settings().maxCount(1)));
         TERMINAL=item("terminal",new Item(new Item.Settings()));WALL_PORT=item("wall_port_2",new Item(new Item.Settings()));BRIDGE=item("wire_bridge",new Item(new Item.Settings()));SCRAP=item("burnt_component",new Item(new Item.Settings()));
         CircuitNetworking.register();CircuitInteractions.register();CircuitState.register();MeterService.register();
+        net.fabricmc.fabric.api.biome.v1.BiomeModifications.addFeature(net.fabricmc.fabric.api.biome.v1.BiomeSelectors.foundInOverworld(),net.minecraft.world.gen.GenerationStep.Feature.UNDERGROUND_ORES,RegistryKey.of(RegistryKeys.PLACED_FEATURE,Electron.id("uranium_ore")));
     }
 }

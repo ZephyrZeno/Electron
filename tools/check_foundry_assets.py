@@ -6,6 +6,7 @@ it is not a Minecraft screenshot. It uses only the existing Pillow dependency.
 from pathlib import Path
 import json
 import itertools
+import math
 from functools import lru_cache
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
@@ -50,7 +51,7 @@ for p in models:
 for path in (A/'blockstates').glob('*.json'):
     if 'multipart' not in read(path):continue
     inventory=model('electron:block/'+path.stem+'_inventory')
-    large=path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal')
+    large=path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal','thermal_generator','hydro_generator','wind_generator','lightning_collector','nuclear_reactor','substation','mains_inlet')
     assert min(e['from'][2] for e in inventory['elements'])>=(0 if large else 12),path
     up=model('electron:block/'+path.stem+'_off_up')
     assert max(e['to'][1] for e in up['elements'])<=(16 if large else 4),path
@@ -72,7 +73,7 @@ for path in (A/'blockstates').glob('*.json'):
 
 zh=read(A/'lang/zh_cn.json')
 for p in (A/'models/item').glob('*.json'):
-    if p.stem.startswith(('wire_spool_','cable_spool_')):continue
+    if p.stem.startswith(('wire_spool_','cable_spool_')) or p.stem.endswith('_item'):continue
     assert 'item.electron.'+p.stem in zh or 'block.electron.'+p.stem in zh,p
 for path in (ROOT/'src/main/resources/data/electron/recipe').glob('*.json'):
     obj=read(path);name=obj['result']['id'].split(':')[1]
@@ -123,6 +124,16 @@ def render(ref):
             im=im.crop((min(u0,u1)*w/16,min(v0,v1)*h/16,max(u0,u1)*w/16,max(v0,v1)*h/16))
             if u1<u0:im=im.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
             if v1<v0:im=im.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+            if 'rotation' in e:
+                rot=e['rotation'];ox,oy,oz=rot['origin'];angle=math.radians(rot['angle']);c,si=math.cos(angle),math.sin(angle)
+                points=[]
+                for x,y,z in verts:
+                    x,y,z=x-ox,y-oy,z-oz
+                    if rot['axis']=='x':y,z=y*c-z*si,y*si+z*c
+                    elif rot['axis']=='y':x,z=x*c+z*si,-x*si+z*c
+                    else:x,y=x*c-y*si,x*si+y*c
+                    points.append((x+ox,y+oy,z+oz))
+                verts=points
             depths=[x-z+y*.9 for x,y,z in verts]
             quads.append((im,list(map(project,verts)),shade,depths))
     canvas=Image.new('RGBA',(256,220),(23,33,43,255))
@@ -152,6 +163,7 @@ names += ['power_mosfet','electrical_relay','boost_converter','buck_converter','
 names += ['boost_converter_12','buck_converter_3v3','buck_converter_12']
 sheet('equipment.png','ELECTRON / 电路工坊 · 首批设备与工具',[(name,'item/'+name) for name in names])
 sheet('towers.png','ELECTRON / 玩家搭建塔架与绝缘接线横担',[('tower_section','item/tower_section'),('tower_terminal','item/tower_terminal'),('tower_terminal','block/tower_terminal_off_up')])
+sheet('grid.png','ELECTRON / 大型供电与传动',[(n,'item/'+n) for n in ['thermal_generator','hydro_generator','wind_generator','lightning_collector','nuclear_reactor','substation','mains_inlet','plant_casing','reactor_casing','transmission_shaft','rotating_platform','uranium_ore']])
 print(f'Validated {len(models)} models, {state_count} electrical block states, recipe models and Chinese names.')
 print(OUT)
 (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')

@@ -31,7 +31,7 @@
     }
   ],
   "result": {
-    "id": "electron:cable_spool",
+    "id": "electron:cable_spool_red",
     "count": 1,
     "components": {
       "minecraft:custom_data": {

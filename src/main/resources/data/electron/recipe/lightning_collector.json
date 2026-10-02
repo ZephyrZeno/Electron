@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "minecraft:lightning_rod"
+    },
+    {
+      "item": "electron:capacitor_100mf"
+    },
+    {
+      "item": "electron:capacitor_100mf"
+    },
+    {
+      "item": "electron:plant_casing"
+    },
+    {
+      "item": "minecraft:copper_block"
+    }
+  ],
+  "result": {
+    "id": "electron:lightning_collector",
+    "count": 1
+  }
+}

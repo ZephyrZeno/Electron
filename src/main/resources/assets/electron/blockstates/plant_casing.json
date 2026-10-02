@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "electron:block/plant_casing"
+    }
+  }
+}

@@ -73,11 +73,11 @@ def model(name, elements, textures, item=False):
     })
 
 
-BASE = {key: 'electron:block/'+key for key in ['case', 'trim', 'copper', 'silver', 'ceramic', 'chip', 'red_board', 'green_board', 'lamp_off', 'lamp_on', 'lamp_x', 'scorched', 'rubber', 'wood']}
+BASE = {key: 'electron:block/'+key for key in ['case', 'trim', 'copper', 'silver', 'ceramic', 'chip', 'red_board', 'green_board', 'lamp_off', 'flood_lens_on', 'flood_lens_off', 'lamp_on', 'lamp_x', 'scorched', 'rubber', 'wood']}
 for name, color, style in [('case', '#283441', 'metal'), ('trim', '#748494', 'metal'),
                          ('copper', '#bc7e48', ''), ('silver', '#c4cfda', ''), ('ceramic', '#d9cda6', ''),
                          ('chip', '#171f28', ''), ('red_board', '#752d3a', 'board'), ('green_board', '#174e42', 'board'),
-                         ('lamp_off', '#543840', ''), ('lamp_on', '#8ef5bd', ''), ('lamp_x', '#ffc64c', ''),
+                         ('lamp_off', '#543840', ''), ('flood_lens_on','#fff6d0',''), ('flood_lens_off','#53616b',''), ('lamp_on', '#8ef5bd', ''), ('lamp_x', '#ffc64c', ''),
                          ('scorched', '#241e1c', ''), ('rubber', '#202a35', ''), ('wood', '#625043', 'metal')]:
     texture(name, color, style)
 for n, c in enumerate(COLORS):
@@ -169,7 +169,9 @@ DEVICES.update({'power_mosfet':('N-MOS','功率 MOSFET'),'electrical_relay':('5 
                 'dc_generator':('24 V DC','手摇直流发电机'),'distribution_box':('DC BUS','低压分线箱'),'dc_breaker':('1 A DC','直流保护断路器'),'engineering_lamp':('24 V / 2.4 W','工程照明灯'),'dc_motor':('24 V MOTOR','直流电机')})
 DEVICES.update({'boost_converter_12':('12V','12 V 升压模块'),'buck_converter_3v3':('3.3V','3.3 V 降压模块'),'buck_converter_12':('12V','12 V 降压模块')})
 DEVICES['tower_terminal']=('A / B','塔顶双母线接线座')
-LARGE={'dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal'}
+GRID={'thermal_generator':('240 V / 120 W','火力发电控制器'),'hydro_generator':('240 V / 160 W','水力发电控制器'),'wind_generator':('240 V / 100 W','风力发电机'),'lightning_collector':('240 V / 4 kJ','引雷储能装置'),'nuclear_reactor':('240 V / 400 W','核反应堆控制器'),'substation':('240 / 24 V','变电站变流柜'),'mains_inlet':('240 V / 2 A','市电进线保护柜')}
+DEVICES.update(GRID)
+LARGE=set(GRID)|{'dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal'}
 
 
 def device(name, label):
@@ -186,7 +188,7 @@ def device(name, label):
     pins = [(3, 13, 'VCC'), (11, 13, 'GND'), (3, 3, 'A'), (11, 3, 'NC' if name in ('wire_not_gate','wire_buffer_gate') else 'B'), (7, 7, 'Y')] if gate else [(3, 7, '+'), (11, 7, '-')]
     if name.startswith('resistor_') or name in ('circuit_switch','momentary_button','fuse_25ma'):pins=[(3,7,'A'),(11,7,'B')]
     if name=='silicon_diode':pins=[(3,7,'A'),(11,7,'K')]
-    if name=='rechargeable_battery' or name.startswith(('boost_converter','buck_converter')):pins=[(3,13,'IN+'),(11,13,'IN-'),(3,3,'OUT+'),(11,3,'OUT-')]
+    if name in ('rechargeable_battery','substation','mains_inlet') or name.startswith(('boost_converter','buck_converter')):pins=[(3,13,'IN+'),(11,13,'IN-'),(3,3,'OUT+'),(11,3,'OUT-')]
     if name=='electrical_relay':pins=[(3,13,'COIL+'),(11,13,'COIL-'),(3,3,'COM'),(11,3,'NO')]
     if name=='power_mosfet':pins=[(3,13,'G'),(11,13,'D'),(7,3,'S')]
     if name=='dc_breaker':pins=[(3,7,'A'),(11,7,'B')]
@@ -231,12 +233,20 @@ def device(name, label):
         elif name=='electrical_relay':
             els += [local_cube((4.8,5,-.4),(9.2,11.4,.05),'rubber'),local_cube((5.1,7.8,-.75),(8.9,10.9,-.3),'copper'),local_cube((5.5,8.1,-.88),(8.5,10.6,-.7),'chip','label'),local_cube((5.2,5.5,-.6),(8.8,6.7,-.3),'silver'),local_cube((10,8.8,-.3),(11,9.8,0),'status')]
         elif name=='engineering_lamp':
-            els += [local_cube((4.5,8.5,-.45),(9.5,13.5,.05),'trim'),local_cube((5,9,-.9),(9,13,-.45),'scorched' if state=='broken' else 'lamp_on' if state=='on' else 'ceramic'),local_cube((3,2,-.1),(11,4.2,.05),'chip','label')]
+            els += [local_cube((4.5,8.5,-.45),(9.5,13.5,.05),'trim'),local_cube((5,9,-.9),(9,13,-.45),'scorched' if state=='broken' else 'flood_lens_on' if state=='on' else 'flood_lens_off'),local_cube((3,2,-.1),(11,4.2,.05),'chip','label')]
             for u in (4.7,9.1):els.append(local_cube((u,8.7,-1),(u+.2,13.3,-.4),'silver'))
         elif name=='dc_motor':
-            els += [local_cube((4.7,8.7,-.5),(9.3,13.3,.05),'trim'),local_cube((5.2,9.2,-.7),(8.8,12.8,-.5),'rubber'),local_cube((6.5,10.8,-.95),(7.5,12.2,-.6),'silver'),local_cube((3,2,-.1),(11,4.2,.05),'chip','label')]
-            for u in (4.8,8.8):
-                for v in (9,10,11,12):els.append(local_cube((u,v,-.65),(u+.35,v+.5,-.45),'chip'))
+            els += [local_cube((5,5,-.4),(11,11,.05),'trim'),local_cube((5.5,5.5,-.7),(10.5,10.5,-.4),'rubber'),local_cube((7.3,7.3,-.95),(8.7,8.7,-.6),'silver'),local_cube((3,2,-.1),(11,4.2,.05),'chip','label')]
+            for u in (5.1,10.4):
+                for v in (5.5,6.5,7.5,8.5,9.5):els.append(local_cube((u,v,-.65),(u+.35,v+.5,-.45),'chip'))
+        elif name in GRID:
+            els += [local_cube((5,9,-.45),(10,13.5,.05),'trim'),local_cube((5.4,9.4,-.6),(9.6,13.1,-.4),'chip','label'),local_cube((12,10,-.3),(13,11,0),'status')]
+            accent={'thermal_generator':'copper','hydro_generator':'silver','wind_generator':'ceramic','lightning_collector':'copper','nuclear_reactor':'lamp_x','substation':'copper','mains_inlet':'rubber'}[name]
+            for u in (5,7,9):
+                els += [local_cube((u,4,-.7),(u+1.2,7.5,-.1),accent)]
+            if name in ('substation','nuclear_reactor'):
+                for u in (1,14):
+                    for depth in (2,4,6,8,10,12):els.append(local_cube((u,1,depth),(u+1,15,depth+.5),'silver'))
         elif name=='dc_breaker':
             els += [local_cube((5,9,-.5),(9,13,.1),'rubber'),local_cube((3,2,-.1),(11,4.2,.05),'chip','label'),local_cube((10,10,-.3),(11,11,0),'status')]
         elif name=='electrical_redstone_switch':
@@ -279,7 +289,7 @@ def device(name, label):
             els += [local_cube((5.5, 10, -.4), (8.5, 13, .1), 'trim'),local_cube((3, 2, -.1), (11, 4.2, .1), 'chip', 'label')]
         if name=='tower_terminal':
             # Open steel crossarm and eight porcelain insulators. Pin tips match the bus grid.
-            els=[local_cube((6,6,8),(10,10,15),'trim'),local_cube((.5,.5,8),(15.5,15.5,10),'trim')]
+            els=[local_cube((6,6,8),(10,10,15),'trim'),local_cube((.5,1.5,8),(15.5,4.5,10),'trim'),local_cube((.5,11.5,8),(15.5,15.5,10),'trim'),local_cube((6,2,8),(10,14,10),'trim')]
             for u in (1,13):
                 for v in (1,13):els.append(local_cube((u,v,8),(u+2,v+2,15),'trim'))
             for u,rail in ((3,'copper'),(11,'silver')):
@@ -308,7 +318,7 @@ def device(name, label):
             if name in ('hand_crank','dc_generator'):inventory += [local_cube((6.5,11,-.7),(9.5,12,-.4),'silver'),local_cube((9,10.8,-1),(10,12.2,-.7),'wood')]
             if name in ('circuit_switch','dc_breaker'):inventory += [local_cube((6,11,-1),(8,13,-.4),'silver')]
             if name=='electrical_relay':inventory += [local_cube((5.5,6,-.9),(8.5,6.4,-.6),'silver')]
-            if name=='dc_motor':inventory += [local_cube((5.5,11.25,-1),(8.5,11.75,-.75),'copper')]
+            if name=='dc_motor':inventory += [local_cube((6,7.5,-1),(10,8.5,1),'copper')]
             if name=='momentary_button':inventory += [local_cube((5.8,9.8,-1),(8.2,12.2,-.55),'button_cap')]
             if name=='electrical_redstone_switch':inventory += [local_cube((6,12.5,-.9),(8,12.9,-.55),'silver')]
             model(name+'_inventory',orient(inventory,'north',0,depth),t)
@@ -440,13 +450,16 @@ for x in (1,13):
 for y in (0,7,14):
     for z in (1,14):frame.append(cube((1,y,z),(15,y+1, z+1),'silver'))
     for x in (1,14):frame.append(cube((x,y,1),(x+1,y+1,15),'silver'))
-for side in range(4):
-    for i in range(12):
-        x,y=2+i,2+i
-        for reverse in (False,True):
-            height=15-y if reverse else y
-            lo=(x,height,1) if side==0 else (x,height,14) if side==1 else (1,height,x) if side==2 else (14,height,x)
-            frame.append(cube(lo,tuple(v+1 for v in lo),'trim'))
+# Continuous rolled-angle X braces replace the old staircase of tiny cubes.
+for axis in ('x','z'):
+    for side in (1.5,14.5):
+        for angle in (-45,45):
+            lo=(7.6,-1.2,side-.3) if axis=='z' else (side-.3,-1.2,7.6)
+            hi=(8.4,17.2,side+.3) if axis=='z' else (side+.3,17.2,8.4)
+            e=cube(lo,hi,'trim');e['rotation']={'origin':[8,8,side] if axis=='z' else [side,8,8],'axis':axis,'angle':angle,'rescale':False};frame.append(e)
+for x in (1,13):
+    for z in (1,13):
+        frame += [cube((x-.5,0,z-.5),(x+2.5,.6,z+2.5),'silver'),cube((x+.5,.6,z+.5),(x+1.5,1,z+1.5),'rubber')]
 model('tower_section',frame,BASE)
 write(A/'blockstates/tower_section.json',{'variants':{'':{'model':'electron:block/tower_section'}}})
 write(A/'models/item/tower_section.json',{'parent':'electron:block/tower_section'})

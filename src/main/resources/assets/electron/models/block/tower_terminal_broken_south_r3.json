@@ -12,6 +12,8 @@
     "red_board": "electron:block/red_board",
     "green_board": "electron:block/green_board",
     "lamp_off": "electron:block/lamp_off",
+    "flood_lens_on": "electron:block/flood_lens_on",
+    "flood_lens_off": "electron:block/flood_lens_off",
     "lamp_on": "electron:block/lamp_on",
     "lamp_x": "electron:block/lamp_x",
     "scorched": "electron:block/scorched",
@@ -100,13 +102,149 @@
     },
     {
       "from": [
+        1.5,
         0.5,
+        5
+      ],
+      "to": [
+        4.5,
+        15.5,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        11.5,
         0.5,
         5
       ],
       "to": [
         15.5,
         15.5,
+        7
+      ],
+      "faces": {
+        "north": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#trim",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        6,
+        5
+      ],
+      "to": [
+        14,
+        10,
         7
       ],
       "faces": {

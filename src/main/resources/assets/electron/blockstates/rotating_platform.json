@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "electron:block/rotating_platform"
+    },
+    "facing=down": {
+      "model": "electron:block/rotating_platform",
+      "x": 180
+    },
+    "facing=north": {
+      "model": "electron:block/rotating_platform",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "electron:block/rotating_platform",
+      "x": 90,
+      "y": 180
+    },
+    "facing=east": {
+      "model": "electron:block/rotating_platform",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west": {
+      "model": "electron:block/rotating_platform",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

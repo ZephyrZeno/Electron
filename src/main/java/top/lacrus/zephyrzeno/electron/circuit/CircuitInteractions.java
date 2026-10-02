@@ -1,4 +1,5 @@
 package top.lacrus.zephyrzeno.electron.circuit;
+import top.lacrus.zephyrzeno.electron.item.CircuitToolItem;
 
 import java.util.*;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -61,7 +62,7 @@ public final class CircuitInteractions {
         NbtCompound n=CircuitToolItem.data(stack);String dimension=world.getRegistryKey().getValue().toString();
         if(!mayEdit(world,player,p.host()))throw new CircuitError("error.electron.edit_permission");
         for(var old:s.wires.values())if(old.path().contains(p)&&old.hosts().stream().anyMatch(pos->!mayEdit(world,player,pos)))throw new CircuitError("error.electron.tap_permission");
-        var copy=s.wiringCopy();Endpoint end=copy.joinAt(world,p,stack.isOf(Foundry.CABLE));
+        var copy=s.wiringCopy();Endpoint end=copy.joinAt(world,p,CircuitToolItem.cable(stack));
         Endpoint start=dimension.equals(n.getString("dimension"))?copy.endpoints().get(n.getString("start")):null;
         int nodeCost=copy.junctions.size()-s.junctions.size();
         if(start==null){
@@ -72,13 +73,13 @@ public final class CircuitInteractions {
             say(player,"message.electron.wire_start");return;
         }
         if(start.id().equals(end.id())){n.remove("start");n.remove("end");CircuitToolItem.data(stack,n);say(player,"message.electron.wire_end");return;}
-        boolean cable=stack.isOf(Foundry.CABLE),overhead=OverheadCable.connection(copy,start,end,cable);
+        boolean cable=CircuitToolItem.cable(stack),overhead=OverheadCable.connection(copy,start,end,cable);
         var path=copy.connectionRoute(world,start,end,n.getInt("layer")&1,cable);copy.validateCapacity(path);int units=overhead?OverheadCable.units(copy,path):copy.lengthUnits(path,start,end);
         for(var point:path)if(!mayEdit(world,player,point.host()))throw new CircuitError("error.electron.path_permission");
         if(overhead)for(var cell:OverheadCable.cells(OverheadCable.vertices(copy,path)))if(!mayEdit(world,player,cell))throw new CircuitError("error.electron.path_permission");
         if(!player.isCreative()&&CircuitToolItem.units(stack)<units+nodeCost)throw new CircuitError("error.electron.material",units+nodeCost);
         // All geometry, permissions and material checks complete before any mutation.
-        var wire=new Wire(UUID.randomUUID(),start.id(),end.id(),n.getInt("color")&7,path,units,cable,overhead);copy.wires.put(wire.id(),wire);s.commitWiring(copy);
+        var wire=new Wire(UUID.randomUUID(),start.id(),end.id(),CircuitToolItem.color(stack),path,units,cable,overhead);copy.wires.put(wire.id(),wire);s.commitWiring(copy);
         if(!player.isCreative())n.putInt("units",CircuitToolItem.units(stack)-units-nodeCost);
         if(end.id().startsWith("c:"))n.remove("start");else n.putString("start",end.id());
         n.remove("end");CircuitToolItem.data(stack,n);CircuitNetworking.preview(player,List.of());

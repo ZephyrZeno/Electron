@@ -1,4 +1,5 @@
 package top.lacrus.zephyrzeno.electron.circuit;
+import top.lacrus.zephyrzeno.electron.item.CircuitToolItem;
 
 import java.util.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.*;
@@ -27,6 +28,7 @@ public final class CircuitState extends PersistentState {
     public final Map<BlockPos,Device> devices=new HashMap<>();
     public DcSolver.Result readings=new DcSolver.Result(Map.of(),Map.of(),Map.of());
     public final Map<String,String> paused=new HashMap<>();
+    private final Map<UUID,net.minecraft.util.math.Vec3d> lowCables=new HashMap<>();
     public List<DcSolver.Branch> lastBranches=List.of();
     public final Map<UUID,Double> wireHeat=new HashMap<>();
     private final Map<Wire,List<Vec3d>> overheadCurves=new HashMap<>();
@@ -63,7 +65,9 @@ public final class CircuitState extends PersistentState {
         if(!world.isChunkLoaded(pos)||!world.isChunkLoaded(pos.offset(face)))return false;
         BlockState state=world.getBlockState(pos);
         boolean support=state.getBlock() instanceof ComponentBlock component?(component.kind.large()||state.get(ComponentBlock.FACING)==face):Block.isShapeFullCube(state.getCollisionShape(world,pos));
-        return support&&!state.isOf(Blocks.BEDROCK)&&world.getBlockState(pos.offset(face)).getCollisionShape(world,pos.offset(face)).isEmpty();
+        var neighbor=world.getBlockState(pos.offset(face));
+        boolean shaft=state.isOf(Foundry.MOTOR)&&state.get(ComponentBlock.FACING)==face&&neighbor.getBlock() instanceof top.lacrus.zephyrzeno.electron.mechanical.MechanicalBlock&&neighbor.get(top.lacrus.zephyrzeno.electron.mechanical.MechanicalBlock.FACING).getAxis()==face.getAxis();
+        return support&&!state.isOf(Blocks.BEDROCK)&&(shaft||neighbor.getCollisionShape(world,pos.offset(face)).isEmpty());
     }
     public boolean hasBridge(SurfacePoint p){return bridges.values().stream().anyMatch(b->b.host().equals(p.host())&&b.face()==p.face());}
     public void validateBridgeSpace(SurfacePoint point){
@@ -102,7 +106,7 @@ public final class CircuitState extends PersistentState {
         if(conductors>64)throw new CircuitError("error.electron.tap_cell_budget");
         junctions.put(j.id(),j);return j.endpoint();
     }
-    public int lengthUnits(List<SurfacePoint> path,Endpoint a,Endpoint b){return lengthUnits(path)-path.getFirst().layer()-path.getLast().layer()+Math.abs(path.getFirst().layer()-a.point().layer())+Math.abs(path.getLast().layer()-b.point().layer());}
+    public int lengthUnits(List<SurfacePoint> path,Endpoint a,Endpoint b){return lengthUnits(path)-2*path.getFirst().layer()-2*path.getLast().layer()+2*Math.abs(path.getFirst().layer()-a.point().layer())+2*Math.abs(path.getLast().layer()-b.point().layer());}
     public List<SurfacePoint> connectionRoute(World world,Endpoint a,Endpoint b,int layer){
         var start=a.point().layer(layer);var end=b.point().layer(layer);Set<SurfacePoint> used=new HashSet<>();wires.values().forEach(w->used.addAll(w.path()));
         Set<SurfacePoint> pins=new HashSet<>();endpoints().values().forEach(e->{if(!e.id().equals(a.id())&&!e.id().equals(b.id()))pins.add(e.point());});
@@ -191,6 +195,7 @@ public final class CircuitState extends PersistentState {
             if(!(world.getBlockEntity(pos) instanceof ComponentEntity entity))continue;
             BlockState state=world.getBlockState(pos);ComponentBlock block=(ComponentBlock)state.getBlock();
             boolean broken=state.get(ComponentBlock.BROKEN);
+            if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.stamp(world,pos,state,entity,branches);continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.stamp(block,state,entity,pos,branches);continue;}
             if(block.kind==ComponentBlock.Kind.TERMINAL_STRIP){terminalBranches(branches,pos,broken?1e12:.002);continue;}
             if(block.kind==ComponentBlock.Kind.BATTERY){
@@ -216,19 +221,43 @@ public final class CircuitState extends PersistentState {
                 case CRANK -> {double emf=state.get(ComponentBlock.ENABLED)&&entity.energy>1e-9?5*Math.min(1,entity.energy/.25):0;branches.add(DcSolver.Branch.source(id,a,b,emf,emf>0?5:1e12));}
                 case GATE -> throw new AssertionError("Gate stamp handled above");
                 case BATTERY,TERMINAL_STRIP -> throw new AssertionError("Multi-pin stamp handled above");
-                case MOSFET,RELAY,BOOST,BUCK,GENERATOR,DISTRIBUTION,BREAKER,LAMP,MOTOR->throw new AssertionError("Power stamp handled above");
+                case THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS,MOSFET,RELAY,BOOST,BUCK,GENERATOR,DISTRIBUTION,BREAKER,LAMP,MOTOR->throw new AssertionError("Power stamp handled above");
             }
         }
+        top.lacrus.zephyrzeno.electron.power.CableSafety.stamp(world,this,branches,lowCables);
         lastBranches=List.copyOf(branches);
         for(var e:pins.values())if(!world.isChunkLoaded(e.point().host()))unavailable.add(e.id());else if(world.isChunkLoaded(e.point().host().offset(e.point().face()))&&!world.getFluidState(e.point().host().offset(e.point().face())).isEmpty())unavailable.add(e.id());
         Map<String,String> parent=new HashMap<>();for(var b:branches){parent.putIfAbsent(b.a(),b.a());parent.putIfAbsent(b.b(),b.b());parent.put(find(parent,b.a()),find(parent,b.b()));}
         Map<String,List<DcSolver.Branch>> groups=new LinkedHashMap<>();for(var b:branches)groups.computeIfAbsent(find(parent,b.a()),k->new ArrayList<>()).add(b);
         Set<String> excluded=new HashSet<>();for(String n:unavailable)if(parent.containsKey(n))excluded.add(find(parent,n));
-        Map<String,Double> volts=new HashMap<>(),amps=new HashMap<>();Map<String,String> refs=new HashMap<>();paused.clear();
+        // Stored-energy devices couple availability even when their electrical ports are isolated.
+        // Otherwise an unloaded input could freeze energy accounting while its output still powers a load.
+        boolean propagated;
+        do{propagated=false;for(var entry:devices.entrySet()){
+            var registered=Registries.BLOCK.get(net.minecraft.util.Identifier.of(entry.getValue().block));
+            if(!(registered instanceof ComponentBlock device)||ComponentPins.count(device.kind)<=2)continue;
+            Set<String> sides=new HashSet<>();for(int pin=0;pin<ComponentPins.count(device.kind);pin++){var n=node(entry.getKey(),pin);if(parent.containsKey(n))sides.add(find(parent,n));}
+            if(sides.stream().anyMatch(excluded::contains))for(var side:sides)propagated|=excluded.add(side);
+        }}while(propagated);
+        Map<String,DcSolver.Result> solved=new HashMap<>();Map<String,String> failures=new HashMap<>();
         for(var group:groups.entrySet()) {
             String error=excluded.contains(group.getKey())?"error.electron.network_unavailable":null;
-            if(error==null)try{var result=DcSolver.solve(group.getValue());volts.putAll(result.voltage());amps.putAll(result.current());refs.putAll(result.reference());}catch(IllegalStateException failure){error=failure.getMessage();}
+            if(error==null)try{solved.put(group.getKey(),DcSolver.solve(group.getValue()));}catch(IllegalStateException failure){error=failure.getMessage();}
+            if(error!=null)failures.put(group.getKey(),error);
+        }
+        // A solver failure must also pause the isolated side before any load consumes power.
+        do{propagated=false;for(var entry:devices.entrySet()){
+            var registered=Registries.BLOCK.get(net.minecraft.util.Identifier.of(entry.getValue().block));
+            if(!(registered instanceof ComponentBlock device)||ComponentPins.count(device.kind)<=2)continue;
+            Set<String> sides=new HashSet<>();for(int pin=0;pin<ComponentPins.count(device.kind);pin++){var n=node(entry.getKey(),pin);if(parent.containsKey(n))sides.add(find(parent,n));}
+            String error=sides.stream().filter(failures::containsKey).map(failures::get).findFirst().orElse(null);
+            if(error!=null)for(var side:sides)if(failures.putIfAbsent(side,error)==null)propagated=true;
+        }}while(propagated);
+        Map<String,Double> volts=new HashMap<>(),amps=new HashMap<>();Map<String,String> refs=new HashMap<>();paused.clear();
+        for(var group:groups.entrySet()){
+            String error=failures.get(group.getKey());
             if(error!=null)for(var b:group.getValue()){paused.put(b.a(),error);paused.put(b.b(),error);}
+            else{var result=solved.get(group.getKey());volts.putAll(result.voltage());amps.putAll(result.current());refs.putAll(result.reference());}
         }
         readings=new DcSolver.Result(Map.copyOf(volts),Map.copyOf(amps),Map.copyOf(refs));
         Map<String,String> strong=new HashMap<>();Set<String> driven=new HashSet<>();
@@ -241,10 +270,12 @@ public final class CircuitState extends PersistentState {
             for(int pin=1;pin<ComponentPins.count(block.kind);pin++)entity.paused|=paused.containsKey(node(pos,pin));
             entity.current=readings.current(id);entity.voltage=readings.voltage(node(pos,0))-readings.voltage(node(pos,1));
             if(entity.paused){
+                if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)&&state.get(ComponentBlock.LEVEL)!=0)world.setBlockState(pos,state.with(ComponentBlock.LEVEL,0),Block.NOTIFY_ALL);
                 if(PowerDevices.handles(block.kind))PowerDevices.pause(world,pos,state,entity);
                 if(block.kind==ComponentBlock.Kind.REDSTONE_SWITCH){entity.signal=0;entity.contactClosed=entity.pendingContact=false;if(state.get(ComponentBlock.LEVEL)!=0||state.get(ComponentBlock.ENABLED))world.setBlockState(pos,state.with(ComponentBlock.LEVEL,0).with(ComponentBlock.ENABLED,false),Block.NOTIFY_ALL);}
                 continue;
             }
+            if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.update(world,pos,state,entity,readings);continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.update(world,pos,state,entity,readings);continue;}
             if(block.kind==ComponentBlock.Kind.GATE) {
                 double supply=entity.voltage;
@@ -285,6 +316,7 @@ public final class CircuitState extends PersistentState {
             if(block.kind==ComponentBlock.Kind.LED&&level>0&&state.get(ComponentBlock.LEVEL)==0&&world.getTime()-entity.lastLedSoundTick>=20){entity.lastLedSoundTick=world.getTime();ElectricalEffects.play(world,pos,ElectricalEffects.LED,.08f,1.6f);}
             if(state!=world.getBlockState(pos)||state.get(ComponentBlock.LEVEL)!=level)world.setBlockState(pos,state.with(ComponentBlock.LEVEL,level),Block.NOTIFY_ALL);
         }
+        top.lacrus.zephyrzeno.electron.power.CableSafety.effects(world,this,lowCables);
         wireHeat.keySet().retainAll(wires.keySet());
         for(var wire:new ArrayList<>(wires.values())){
             if(paused.containsKey(wire.a()))continue;double ratio=Math.abs(readings.current("w:"+wire.id()))/wire.rating();

@@ -1,4 +1,5 @@
 package top.lacrus.zephyrzeno.electron.test;
+import top.lacrus.zephyrzeno.electron.item.CircuitToolItem;
 
 import java.util.*;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -107,8 +108,8 @@ public final class FoundryGameTests implements FabricGameTest {
         List<Endpoint> ends=new ArrayList<>();for(var p:points){var j=new Junction(UUID.randomUUID(),p,"minecraft:stone");s.junctions.put(j.id(),j);ends.add(j.endpoint());}
         var first=s.route(t.getWorld(),ends.get(0),ends.get(1),0);var w=new Wire(UUID.randomUUID(),ends.get(0).id(),ends.get(1).id(),0,first,SurfaceRouter.lengthUnits(first));s.wires.put(w.id(),w);
         var second=s.route(t.getWorld(),ends.get(2),ends.get(3),1);var upper=new Wire(UUID.randomUUID(),ends.get(2).id(),ends.get(3).id(),2,second,SurfaceRouter.lengthUnits(second));s.wires.put(upper.id(),upper);s.changed();
-        t.assertEquals(upper.units(),16,"Seven 1/8 runs and two 1/16 risers consume exactly one block");
-        var recovered=CircuitToolItem.spool(upper.units(),upper.color());t.assertEquals(CircuitToolItem.units(recovered),16,"Cut spool retains fractional material");
+        t.assertEquals(upper.units(),18,"Seven 1/8 runs and two 1/8 risers consume eighteen units");
+        var recovered=CircuitToolItem.spool(upper.units(),upper.color());t.assertEquals(CircuitToolItem.units(recovered),18,"Cut spool retains fractional material");
         t.runAtTick(8,()->{t.assertFalse(s.readings.commonReference(w.a(),upper.a()),"Same-cell two-layer crossing stays isolated");t.complete();});
     }
 }

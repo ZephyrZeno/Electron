@@ -8,7 +8,7 @@ import top.lacrus.zephyrzeno.electron.circuit.*;
 class SurfaceRouterTest {
     @Test void sameCellSupportsEightIndependentTracksPerLayer() {
         Set<SurfacePoint> occupied=new HashSet<>();
-        for(int layer=0;layer<2;layer++)for(int v=1;v<16;v+=2){var a=new SurfacePoint(BlockPos.ORIGIN,Direction.UP,1,v,layer);var b=new SurfacePoint(BlockPos.ORIGIN,Direction.UP,15,v,layer);var path=SurfaceRouter.route(a,b,p->p.host().equals(BlockPos.ORIGIN)&&!occupied.contains(p));assertEquals(14+(layer==1?2:0),SurfaceRouter.lengthUnits(path));occupied.addAll(path);}
+        for(int layer=0;layer<2;layer++)for(int v=1;v<16;v+=2){var a=new SurfacePoint(BlockPos.ORIGIN,Direction.UP,1,v,layer);var b=new SurfacePoint(BlockPos.ORIGIN,Direction.UP,15,v,layer);var path=SurfaceRouter.route(a,b,p->p.host().equals(BlockPos.ORIGIN)&&!occupied.contains(p));assertEquals(14+(layer==1?4:0),SurfaceRouter.lengthUnits(path));occupied.addAll(path);}
         assertEquals(128,occupied.size());
     }
     @Test void upperLayerCrossesWithoutSharingPoints() {

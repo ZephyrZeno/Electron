@@ -12,6 +12,8 @@
     "red_board": "electron:block/red_board",
     "green_board": "electron:block/green_board",
     "lamp_off": "electron:block/lamp_off",
+    "flood_lens_on": "electron:block/flood_lens_on",
+    "flood_lens_off": "electron:block/flood_lens_off",
     "lamp_on": "electron:block/lamp_on",
     "lamp_x": "electron:block/lamp_x",
     "scorched": "electron:block/scorched",
@@ -921,7 +923,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#lamp_on",
+          "texture": "#flood_lens_on",
           "uv": [
             0,
             0,
@@ -930,7 +932,7 @@
           ]
         },
         "south": {
-          "texture": "#lamp_on",
+          "texture": "#flood_lens_on",
           "uv": [
             0,
             0,
@@ -939,7 +941,7 @@
           ]
         },
         "east": {
-          "texture": "#lamp_on",
+          "texture": "#flood_lens_on",
           "uv": [
             0,
             0,
@@ -948,7 +950,7 @@
           ]
         },
         "west": {
-          "texture": "#lamp_on",
+          "texture": "#flood_lens_on",
           "uv": [
             0,
             0,
@@ -957,7 +959,7 @@
           ]
         },
         "up": {
-          "texture": "#lamp_on",
+          "texture": "#flood_lens_on",
           "uv": [
             0,
             0,
@@ -966,7 +968,7 @@
           ]
         },
         "down": {
-          "texture": "#lamp_on",
+          "texture": "#flood_lens_on",
           "uv": [
             0,
             0,

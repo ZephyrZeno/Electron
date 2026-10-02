@@ -40,7 +40,18 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         }else if(block.kind==ComponentBlock.Kind.RELAY&&!state.get(ComponentBlock.BROKEN)){
             double v=5.6+.9*entity.displayedLight;cuboid(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),matrix,face,turn,inset,5.5,v,-.9,8.5,v+.4,-.6,0,light,overlay);
         }else if(block.kind==ComponentBlock.Kind.MOTOR&&!state.get(ComponentBlock.BROKEN)){
-            double angle=now*.6*entity.displayedLight*(state.get(ComponentBlock.ENABLED)?1:-1);cuboid(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),matrix,face,turn,inset,5.5,11.25,-1,8.5,11.75,-.75,angle,light,overlay);
+            entity.rotorAngle+=dt*.6*entity.displayedLight*(state.get(ComponentBlock.ENABLED)?1:-1);
+            var rotor=new Matrix4f(matrix);var center=ComponentGeometry.local(face,turn,8,8,0);
+            rotor.translate((float)center.x,(float)center.y,(float)center.z).rotate((float)entity.rotorAngle,face.getOffsetX(),face.getOffsetY(),face.getOffsetZ()).translate((float)-center.x,(float)-center.y,(float)-center.z);
+            cuboid(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),rotor,face,turn,inset,6,7.5,-1,10,8.5,1,0,light,overlay);
+        }else if(block.kind==ComponentBlock.Kind.WIND){
+            entity.rotorAngle+=dt*.07*entity.displayedLight;
+            var hub=new Matrix4f(matrix).translate(.5f,1.8f,.5f);
+            centeredBox(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),hub,-.13,-1,-.13,.13,0,.13,light,overlay);
+            for(int i=0;i<3;i++){
+                var blade=new Matrix4f(hub).rotateZ((float)(entity.rotorAngle+i*Math.PI*2/3));
+                centeredBox(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),blade,-.09,.08,-.2,.09,1.55,-.12,light,overlay);
+            }
         }
         if(block.kind==ComponentBlock.Kind.LED&&entity.displayedLight>.002)glow(consumers,matrix,face,turn,7,11,inset-1.05,4.7,(float)entity.displayedLight,.9f,.22f,.1f);
         if(block.kind==ComponentBlock.Kind.LAMP&&entity.displayedLight>.002)glow(consumers,matrix,face,turn,7,11,inset-1.02,5,(float)entity.displayedLight,1,.9f,.65f);
@@ -55,6 +66,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         else if(block.kind==ComponentBlock.Kind.CAPACITOR)label(consumers,matrix,face,turn,7,3.1,inset-.15,"100 mF / 10 V",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.BUTTON)label(consumers,matrix,face,turn,7,3.1,inset-.15,"1 s / NO",.010f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.GENERATOR||block.kind==ComponentBlock.Kind.LAMP||block.kind==ComponentBlock.Kind.MOTOR||block.kind==ComponentBlock.Kind.BREAKER)label(consumers,matrix,face,turn,7,3.1,inset-.15,block.kind==ComponentBlock.Kind.BREAKER?"1 A DC":"24 V DC",.010f,0xf4f5eb,light);
+        else if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind))label(consumers,matrix,face,turn,7.5,11.2,inset-.65,block.kind==ComponentBlock.Kind.SUBSTATION?"240 / 24 V":"240 V DC",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.MOSFET)label(consumers,matrix,face,turn,7,10.5,inset-.92,"N-MOS",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.RELAY)label(consumers,matrix,face,turn,7,9.5,inset-.92,"5 V",.009f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.BOOST||block.kind==ComponentBlock.Kind.BUCK)label(consumers,matrix,face,turn,7,9.5,inset-.92,String.format(java.util.Locale.ROOT,"%s %.1f V",block.kind==ComponentBlock.Kind.BOOST?"UP":"DN",block.resistance),.007f,0xf4f5eb,light);
@@ -91,5 +103,9 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
     private static void glow(VertexConsumerProvider consumers,Matrix4f matrix,Direction face,int turn,double u,double v,double depth,double width,float alpha,float r,float g,float b){
         var out=consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(GLOW));double h=width/2;double[][] coords={{u-h,v+h,0,0},{u-h,v-h,0,1},{u+h,v-h,1,1},{u+h,v+h,1,0}};
         for(var c:coords){var p=ComponentGeometry.local(face,turn,c[0],c[1],depth);out.vertex(matrix,(float)p.x,(float)p.y,(float)p.z).color(r,g,b,alpha*.75f).texture((float)c[2],(float)c[3]).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(face.getOffsetX(),face.getOffsetY(),face.getOffsetZ());}
+    }
+    @Override public boolean rendersOutsideBoundingBox(ComponentEntity entity){return entity.getCachedState().isOf(Foundry.WIND);}
+    static void centeredBox(VertexConsumer out,Matrix4f m,double x0,double y0,double z0,double x1,double y1,double z1,int light,int overlay){
+        cuboid(out,m,Direction.NORTH,0,0,x0*16,y0*16,z0*16,x1*16,y1*16,z1*16,0,light,overlay);
     }
 }

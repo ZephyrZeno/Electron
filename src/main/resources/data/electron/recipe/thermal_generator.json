@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    {
+      "item": "electron:dc_generator"
+    },
+    {
+      "item": "minecraft:furnace"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "electron:plant_casing"
+    }
+  ],
+  "result": {
+    "id": "electron:thermal_generator",
+    "count": 1
+  }
+}

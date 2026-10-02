@@ -1,4 +1,5 @@
 package top.lacrus.zephyrzeno.electron.test;
+import top.lacrus.zephyrzeno.electron.item.CircuitToolItem;
 
 import java.util.*;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
@@ -91,7 +92,7 @@ public final class FoundryRegressionTests implements FabricGameTest {
         var s=CircuitState.get(t.getWorld());var p=surface(t);var a=s.joinAt(t.getWorld(),point(p,1,7,0));var b=s.joinAt(t.getWorld(),point(p,15,7,0));var low=connect(t,s,a,b,0);
         var lowTap=s.joinAt(t.getWorld(),point(p,7,7,0));var bridge=new Bridge(UUID.randomUUID(),p,Direction.UP,"minecraft:stone");s.bridges.put(bridge.id(),bridge);
         var c=s.joinAt(t.getWorld(),point(p,7,1,0));var d=s.joinAt(t.getWorld(),point(p,7,15,0));var upper=connect(t,s,c,d,2);
-        t.assertTrue(upper.path().contains(point(p,7,7,1)),"Crossing automatically uses the bridge");t.assertEquals(upper.units(),16,"Automatic overpass charges both height changes");
+        t.assertTrue(upper.path().contains(point(p,7,7,1)),"Crossing automatically uses the bridge");t.assertEquals(upper.units(),18,"Automatic overpass charges both height changes");
         var upperTap=s.joinAt(t.getWorld(),point(p,7,7,1));t.assertFalse(upperTap.id().equals(lowTap.id()),"Clicking raised wire never shorts the lower node");
         s.simulate(t.getWorld());t.assertFalse(s.readings.commonReference(low.a(),upper.a()),"Crossing remains electrically isolated after both layers are tapped");
         t.assertEquals(CircuitState.read(s.snapshot()).junctions,s.junctions,"Layer isolation survives save/reload");t.complete();
