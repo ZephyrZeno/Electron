@@ -49,7 +49,7 @@ tests=[ET.parse(p).getroot() for p in (ROOT/'build/test-results/test').glob('TES
 assert tests and all(int(t.get('failures','0'))==0 and int(t.get('errors','0'))==0 for t in tests)
 native=ET.parse(ROOT/'build/foundry-gametest-results.xml').getroot()
 native_count=len(native.findall('.//testcase'))
-assert not native.findall('.//failure') and native_count==37
+assert not native.findall('.//failure') and native_count==40
 assets=json.loads((ROOT/'build/asset-review/validation.json').read_text(encoding='utf-8'))
 localization=json.loads((ROOT/'build/localization-verification.json').read_text(encoding='utf-8'))
 summary['map']=json.loads((ROOT/'build/academy-package-verification.json').read_text(encoding='utf-8'))
@@ -61,6 +61,7 @@ shutil.copy2(MAIN,out/MAIN.name)
 shutil.copy2(ROOT/'build/foundry-release-verification.json',out/'verification.json')
 shutil.copy2(ROOT/'build/asset-review/gates.png',out/'gates-preview.png')
 shutil.copy2(ROOT/'build/asset-review/equipment.png',out/'equipment-preview.png')
+shutil.copy2(ROOT/'build/asset-review/towers.png',out/'tower-preview.png')
 shutil.copy2(ROOT/'docs/design/ELECTRON_THREE_SCALES_V3.md',out/'三层电路设计-v3.md')
 shutil.copy2(ROOT/'README.md',out/'玩法与合成说明.md')
 (out/'安装说明.txt').write_text(f"""Electron: Circuit Foundry — {VERSION}
@@ -69,19 +70,21 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-44 种方块、11 种工具/附件。大型低压配电、小型电路、红石兼容、工程工具分栏。
+46 种方块、11 种工具/附件。大型低压配电、小型电路、红石兼容、工程工具分栏。
 生存实时数值只能用万用表 HUD 测量；创造可诊断，铭牌额定参数保留。
 新加 MOSFET、隔离继电器、五种固定输出 DC 转换模块、24 V 手摇发电机、电缆、分线箱、1 A 断路器、工程灯与电机。
 转换模块固定规格，换标称电压需要合成并替换；没有免费调压界面。输入范围、功率、效率、过载和接线见玩法说明。
 128 段线总数上限已取消；每段 32 格、单网络 256 节点、每格导体/几何预算仍保留。
 细线 250 mA、电缆 5 A，正极与回线分别接，持续过流会烧断；大负载推荐电缆和断路器。
 右键电机切换空载/带载/锁轴；堵转会增大电流，排障后复位断路器。
+小型导线支持沿面跨墙角和台阶；大型电缆可连接完整电线塔，64 格跨度内显示下垂，并扣除实际长度。
+塔架逐层搭建，至少 3 节和实体基础；塔顶座 A/B 双母线隔离。新增可合成的 128 格电缆卷。
 小型器件板面仍为 3/16，总厚度不超过 4/16；大型电气设备用整格机壳。
 红石与电不能互相供电或转换；电控红石触点仅决定已有红石信号是否通过。
 16 页手册、12 张教程图各有中英版本；手持放大镜可佩戴，按住 Z 放大。
 
 教学地图单独下载 circuit-academy-{VERSION}.zip，将其中 Circuit_Foundry_Academy 文件夹放入 saves。
-地图含九区，和平生存，可拆改，工具与材料箱齐备；样机只有有限储能，须手摇补电。
+地图含九区和入口架空线示范，器件放在平滑石台面上方，和平生存，可拆改，工具与材料箱齐备；样机只有有限储能，须手摇补电。
 地图为实际存档，游玩不需要任何地图生成器，也不需要计算器模组。
 PCB 小配件、焊接、开发板、交流、多方块输电和外部机械传动仍为后续内容。
 

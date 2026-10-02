@@ -37,7 +37,7 @@ public final class ComponentItem extends BlockItem {
                 case RELAY -> {line(lines,"relay_rating");line(lines,"relay_isolation");}
                 case BOOST,BUCK -> {var spec=top.lacrus.zephyrzeno.electron.circuit.ConverterSpec.of(block.kind==ComponentBlock.Kind.BOOST,block.resistance);lines.add(Text.translatable("tooltip.electron.fixed_converter_rating",spec.minInput,spec.maxInput,spec.output,(int)(spec.maxCurrent*1000)).formatted(Formatting.GRAY));line(lines,"converter_power");line(lines,"converter_fixed");}
                 case GENERATOR -> line(lines,"generator_rating");
-                case DISTRIBUTION -> {line(lines,"terminal_strip_buses");line(lines,"distribution_rating");}
+                case DISTRIBUTION -> {line(lines,"terminal_strip_buses");line(lines,"distribution_rating");if(block==Foundry.TOWER_TERMINAL)line(lines,"tower_build");}
                 case BREAKER -> line(lines,"breaker_rating");
                 case LAMP -> line(lines,"lamp_rating");
                 case MOTOR -> {line(lines,"motor_rating");line(lines,"motor_load");}

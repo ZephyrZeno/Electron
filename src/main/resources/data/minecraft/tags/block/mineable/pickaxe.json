@@ -35,6 +35,7 @@
     "electron:boost_converter_12",
     "electron:buck_converter_3v3",
     "electron:buck_converter_12",
+    "electron:tower_terminal",
     "electron:and_gate",
     "electron:or_gate",
     "electron:not_gate",
@@ -43,6 +44,7 @@
     "electron:nor_gate",
     "electron:xnor_gate",
     "electron:buffer_gate",
-    "electron:binary_memory"
+    "electron:binary_memory",
+    "electron:tower_section"
   ]
 }

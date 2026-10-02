@@ -23,7 +23,8 @@ public final class CircuitParts {
             return new Box(a,b).expand(.0624);
         }
     }
-    public record Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units,boolean cable) {
+    public record Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units,boolean cable,boolean overhead) {
+        public Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units,boolean cable){this(id,a,b,color,path,units,cable,false);}
         public Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units){this(id,a,b,color,path,units,false);}
         public Wire { path=List.copyOf(path); }
         public double resistance(){return Math.max(.0001,units/16d*(cable?.002:.02));}

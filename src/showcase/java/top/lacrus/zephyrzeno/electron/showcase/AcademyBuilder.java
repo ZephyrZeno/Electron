@@ -30,8 +30,8 @@ public final class AcademyBuilder implements ModInitializer {
     private void load() throws java.io.IOException {
         for(int x=-1;x<=3;x++)for(int z=-1;z<=4;z++)world.getChunk(x,z);
         report.addAll(Files.readAllLines(Path.of("academy-verification.txt")));report.add("reopened_from_saved_world=true");
-        for(var p:new BlockPos[]{new BlockPos(8,65,11),new BlockPos(26,65,15),new BlockPos(8,65,29),new BlockPos(26,65,29),new BlockPos(8,65,63)})indicators.add(p);
-        motors.add(new BlockPos(8,65,58));
+        for(var p:new BlockPos[]{new BlockPos(8,66,11),new BlockPos(26,66,15),new BlockPos(8,66,29),new BlockPos(26,66,29),new BlockPos(8,66,63)})indicators.add(p);
+        motors.add(new BlockPos(8,66,58));
     }
     private void build(MinecraftServer server){
         if(!circuit.devices.isEmpty()||!circuit.wires.isEmpty())throw new IllegalStateException("Export requires a fresh world. Run tools/build_academy.ps1 instead of rebuilding an existing map.");
@@ -56,11 +56,12 @@ public final class AcademyBuilder implements ModInitializer {
             chest(base.add(10,1,17),false);
             switch(i){case 0->first(base);case 1->battery(base);case 2->timing(base);case 3->mosfet(base);case 4->relay(base);case 5->conversion(base);case 6->distribution(base,false);case 7->distribution(base,true);case 8->sandbox(base);}
         }
+        towers();
         circuit.bridges.values().removeIf(b->circuit.wires.values().stream().noneMatch(w->w.path().stream().anyMatch(p->p.host().equals(b.host())&&p.layer()==1)));
         if(circuit.bridges.size()>CircuitState.MAX_BRIDGES)throw new IllegalStateException("Map exceeded normal bridge budget");
         circuit.changed();world.getPersistentStateManager().save();report.add("stations=9");report.add("devices="+circuit.devices.size());report.add("wires="+circuit.wires.size());report.add("bridges="+circuit.bridges.size());
     }
-    private BlockPos device(BlockPos base,int x,int z,ComponentBlock block){var p=base.add(x,0,z);world.setBlockState(p,block.getDefaultState().with(ComponentBlock.FACING,Direction.UP),Block.NOTIFY_ALL);circuit.track(p,world.getBlockState(p));var bridge=new Bridge(UUID.randomUUID(),p,Direction.UP,net.minecraft.registry.Registries.BLOCK.getId(block).toString());circuit.bridges.put(bridge.id(),bridge);return p;}
+    private BlockPos device(BlockPos base,int x,int z,ComponentBlock block){var p=base.add(x,1,z);world.setBlockState(p,block.getDefaultState().with(ComponentBlock.FACING,Direction.UP),Block.NOTIFY_ALL);circuit.track(p,world.getBlockState(p));var bridge=new Bridge(UUID.randomUUID(),p,Direction.UP,net.minecraft.registry.Registries.BLOCK.getId(block).toString());circuit.bridges.put(bridge.id(),bridge);return p;}
     private ComponentEntity e(BlockPos p){return (ComponentEntity)world.getBlockEntity(p);}
     private BlockPos source(BlockPos base,int x,int z,boolean large,double energy){var p=device(base,x,z,large?Foundry.GENERATOR:Foundry.CRANK);e(p).energy=energy;e(p).markDirty();sources.add(p);return p;}
     private void wire(BlockPos base,BlockPos a,int ap,BlockPos b,int bp,int color,boolean cable){
@@ -75,6 +76,20 @@ public final class AcademyBuilder implements ModInitializer {
         }
         circuit.validateCapacity(path);var w=new Wire(UUID.randomUUID(),start.id(),end.id(),color,path,circuit.lengthUnits(path,start,end),cable);circuit.wires.put(w.id(),w);circuit.changed();
     }
+    private void towers(){
+        List<BlockPos> heads=new ArrayList<>();
+        for(int x:new int[]{14,48}){
+            set(x,64,-4,Blocks.SMOOTH_STONE);for(int y=65;y<68;y++)set(x,y,-4,Foundry.TOWER_SECTION);
+            var head=new BlockPos(x,68,-4);world.setBlockState(head,Foundry.TOWER_TERMINAL.getDefaultState().with(ComponentBlock.FACING,Direction.UP));circuit.track(head,world.getBlockState(head));heads.add(head);
+        }
+        for(int pin:new int[]{0,6}){
+            var a=circuit.endpoints().get(node(heads.get(0),pin));var b=circuit.endpoints().get(node(heads.get(1),pin));var path=circuit.connectionRoute(world,a,b,0,true);
+            var w=new Wire(UUID.randomUUID(),a.id(),b.id(),pin==0?0:1,path,OverheadCable.units(circuit,path),true,true);circuit.wires.put(w.id(),w);
+        }
+        sign(new BlockPos(17,65,-4),"towers","towers_1","towers_2","towers_3");
+        var box=new BlockPos(19,65,-4);world.setBlockState(box,Blocks.CHEST.getDefaultState());var chest=(ChestBlockEntity)world.getBlockEntity(box);
+        chest.setStack(0,new ItemStack(Foundry.TOWER_SECTION,32));chest.setStack(1,new ItemStack(Foundry.TOWER_TERMINAL,4));chest.setStack(2,CircuitToolItem.spool(2048,0,true));chest.markDirty();
+    }
     private void first(BlockPos b){var s=source(b,1,3,false,100);var r=device(b,5,3,Foundry.RESISTOR_220);var l=device(b,8,8,Foundry.LED);wire(b,s,0,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,s,1,1,false);indicators.add(l);}
     private void battery(BlockPos b){var s=source(b,1,2,false,100);var m=device(b,5,2,Foundry.BATTERY);var bus=device(b,5,7,Foundry.TERMINAL_STRIP);var r=device(b,8,8,Foundry.RESISTOR_220);var l=device(b,8,12,Foundry.LED);e(m).energy=10;wire(b,s,0,m,0,0,false);wire(b,s,1,m,1,1,false);wire(b,m,2,bus,0,0,false);wire(b,m,3,bus,4,1,false);wire(b,bus,1,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,bus,5,1,false);indicators.add(l);}
     private void timing(BlockPos b){var s=source(b,1,2,false,100);var button=device(b,5,2,Foundry.BUTTON);var cap=device(b,5,7,Foundry.CAPACITOR);var r=device(b,8,7,Foundry.RESISTOR_220);var l=device(b,8,12,Foundry.LED);wire(b,s,0,button,0,0,false);wire(b,button,1,cap,0,2,false);wire(b,cap,1,s,1,1,false);wire(b,cap,0,r,0,2,false);wire(b,r,1,l,0,3,false);wire(b,l,1,cap,1,1,false);}
@@ -86,7 +101,13 @@ public final class AcademyBuilder implements ModInitializer {
     private void sign(BlockPos p,String...keys){world.setBlockState(p,Blocks.OAK_SIGN.getDefaultState().with(SignBlock.ROTATION,0));var sign=(SignBlockEntity)world.getBlockEntity(p);var text=new SignText().withColor(DyeColor.WHITE).withGlowing(true);for(int i=0;i<Math.min(4,keys.length);i++)text=text.withMessage(i,Text.translatable("map.electron."+keys[i]));sign.setText(text,true);sign.setText(text,false);sign.setWaxed(true);sign.markDirty();}
     private void chest(BlockPos p,boolean all){world.setBlockState(p,Blocks.CHEST.getDefaultState().with(ChestBlock.FACING,Direction.SOUTH));var chest=(ChestBlockEntity)world.getBlockEntity(p);List<ItemStack> items=new ArrayList<>();for(var item:new Item[]{Foundry.HANDBOOK,Foundry.METER,Foundry.CUTTER,Foundry.WRENCH,Foundry.MAGNIFIER})items.add(new ItemStack(item));for(int color=0;color<4;color++){items.add(CircuitToolItem.spool(4096,color,false));items.add(CircuitToolItem.spool(4096,color,true));}items.add(new ItemStack(Foundry.BRIDGE,32));items.add(new ItemStack(Foundry.TERMINAL,32));items.add(new ItemStack(Foundry.WALL_PORT,8));for(var item:all?new Item[]{Foundry.CRANK.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.LED.asItem(),Foundry.BATTERY.asItem(),Foundry.MOSFET.asItem(),Foundry.RELAY.asItem(),Foundry.BOOST.asItem(),Foundry.BUCK_3V3.asItem(),Foundry.BUCK_12.asItem(),Foundry.GENERATOR.asItem(),Foundry.MOTOR.asItem()}:new Item[]{Foundry.LED.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.BREAKER.asItem(),Foundry.FUSE.asItem()})items.add(new ItemStack(item,item==Foundry.BATTERY.asItem()?1:4));for(int i=0;i<Math.min(27,items.size());i++)chest.setStack(i,items.get(i));chest.markDirty();}
     private void verify(){
-        if(circuit.wires.size()!=50||circuit.devices.size()!=39)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size());
+        if(circuit.wires.size()!=52||circuit.devices.size()!=41)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size());
+        for(var p:circuit.devices.keySet()){
+            if(world.getBlockState(p).isOf(Foundry.TOWER_TERMINAL)){if(!OverheadCable.tower(world,p))throw new IllegalStateException("Invalid demonstration tower");}
+            else if(!world.getBlockState(p.down()).isOf(Blocks.SMOOTH_STONE))throw new IllegalStateException("Component is not on the smooth-stone bench: "+p);
+        }
+        if(circuit.wires.values().stream().filter(Wire::overhead).count()!=2)throw new IllegalStateException("Missing overhead example");
+        report.add("components_above_bench=true");
         // Entity chunks load asynchronously; check after ticking, never discard at SERVER_STARTED.
         long droppedItems=0;for(var entity:world.iterateEntities())if(entity instanceof net.minecraft.entity.ItemEntity&&entity.isAlive())droppedItems++;
         if(droppedItems!=0)throw new IllegalStateException("Map contains "+droppedItems+" dropped item entities");

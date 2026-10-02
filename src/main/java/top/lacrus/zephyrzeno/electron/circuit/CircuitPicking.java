@@ -9,11 +9,16 @@ import top.lacrus.zephyrzeno.electron.foundry.ComponentBlock;
 public final class CircuitPicking {
     public static SurfacePoint pick(World world,CircuitState state,BlockHitResult hit,int layer){
         var block=world.getBlockState(hit.getBlockPos());
-        Direction face=block.getBlock() instanceof ComponentBlock?block.get(ComponentBlock.FACING):hit.getSide();
+        Direction face=hit.getSide();
+        if(block.getBlock() instanceof ComponentBlock component){
+            var front=block.get(ComponentBlock.FACING);var projected=SurfacePoint.hit(hit.getBlockPos(),front,hit.getPos(),layer);
+            double depth=Math.abs(state.position(projected).subtract(hit.getPos()).dotProduct(Vec3d.of(front.getVector())));
+            if(!component.kind.large()||depth<.125)face=front;
+        }
         var grid=SurfacePoint.hit(hit.getBlockPos(),face,hit.getPos(),layer);
         if(state.contactAt(grid).isPresent()||state.wires.values().stream().anyMatch(w->w.path().contains(grid)))return grid;
-        Vec3d normal=Vec3d.of(face.getVector());
-        return state.endpoints().values().stream().map(e->e.point()).filter(p->p.host().equals(grid.host())&&p.face()==face)
+        Vec3d normal=Vec3d.of(face.getVector());Direction selectedFace=face;
+        return state.endpoints().values().stream().map(e->e.point()).filter(p->p.host().equals(grid.host())&&p.face()==selectedFace)
             .filter(p->state.contactAt(p.layer(layer)).isPresent())
             .filter(p->planeDistance(state.position(p),hit.getPos(),normal)<.085*.085)
             .min(java.util.Comparator.comparingDouble(p->planeDistance(state.position(p),hit.getPos(),normal)))

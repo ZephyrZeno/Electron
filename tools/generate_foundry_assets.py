@@ -7,6 +7,7 @@ from pathlib import Path
 from copy import deepcopy
 import json
 import random
+import sys
 from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -130,9 +131,10 @@ def redstone_gate(fn, label):
     write(A/'models/item'/f'{name}.json', {'parent': 'electron:block/'+name})
 
 
-for fn, (label, _) in GATES.items():
-    redstone_gate(fn, label)
-redstone_gate('binary_memory', 'D-FF')
+if not (len(sys.argv)==3 and sys.argv[1]=='--device'):
+    for fn, (label, _) in GATES.items():
+        redstone_gate(fn, label)
+    redstone_gate('binary_memory', 'D-FF')
 
 
 def local_cube(lo, hi, tex='case', front_tex=None):
@@ -166,7 +168,8 @@ DEVICES.update({'wire_'+fn+'_gate': (label, zh+'（电线）') for fn, (label, z
 DEVICES.update({'power_mosfet':('N-MOS','功率 MOSFET'),'electrical_relay':('5 V / NO','电磁继电器'),'boost_converter':('24V','24 V 升压模块'),'buck_converter':('5V','5 V 降压模块'),
                 'dc_generator':('24 V DC','手摇直流发电机'),'distribution_box':('DC BUS','低压分线箱'),'dc_breaker':('1 A DC','直流保护断路器'),'engineering_lamp':('24 V / 2.4 W','工程照明灯'),'dc_motor':('24 V MOTOR','直流电机')})
 DEVICES.update({'boost_converter_12':('12V','12 V 升压模块'),'buck_converter_3v3':('3.3V','3.3 V 降压模块'),'buck_converter_12':('12V','12 V 降压模块')})
-LARGE={'dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor'}
+DEVICES['tower_terminal']=('A / B','塔顶双母线接线座')
+LARGE={'dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal'}
 
 
 def device(name, label):
@@ -187,7 +190,7 @@ def device(name, label):
     if name=='electrical_relay':pins=[(3,13,'COIL+'),(11,13,'COIL-'),(3,3,'COM'),(11,3,'NO')]
     if name=='power_mosfet':pins=[(3,13,'G'),(11,13,'D'),(7,3,'S')]
     if name=='dc_breaker':pins=[(3,7,'A'),(11,7,'B')]
-    if name in ('terminal_strip','distribution_box'):pins=[(u,v,f'{bus}{i+1}') for bus,u in [('A',3),('B',11)] for i,v in enumerate((3,7,11,15))]
+    if name in ('terminal_strip','distribution_box','tower_terminal'):pins=[(u,v,f'{bus}{i+1}') for bus,u in [('A',3),('B',11)] for i,v in enumerate((3,7,11,15))]
     # Normal, lit/high, unknown, broken and switch-open variants.
     for state in ('off', 'on', 'unknown', 'broken', 'open'):
         t = {**tx, 'status': BASE['scorched' if state == 'broken' else 'lamp_on' if state == 'on' else 'lamp_x' if state == 'unknown' else 'lamp_off']}
@@ -274,8 +277,20 @@ def device(name, label):
                 els.append(local_cube((5.7,6.85,-.81),(8.3,7.15,-.76),'copper' if state!='broken' else 'scorched'))
         else:
             els += [local_cube((5.5, 10, -.4), (8.5, 13, .1), 'trim'),local_cube((3, 2, -.1), (11, 4.2, .1), 'chip', 'label')]
+        if name=='tower_terminal':
+            # Open steel crossarm and eight porcelain insulators. Pin tips match the bus grid.
+            els=[local_cube((6,6,8),(10,10,15),'trim'),local_cube((.5,.5,8),(15.5,15.5,10),'trim')]
+            for u in (1,13):
+                for v in (1,13):els.append(local_cube((u,v,8),(u+2,v+2,15),'trim'))
+            for u,rail in ((3,'copper'),(11,'silver')):
+                els.append(local_cube((u-.25,2,1.5),(u+.25,15.8,2),rail))
+                for v in (3,7,11,15):
+                    els.append(local_cube((u-.4,v-.4,-.65),(u+.4,v+.4,8),'copper' if u==3 else 'silver'))
+                    for depth_ring in (1,3,5,7):
+                        els.append(local_cube((u-1.1,v-1.1,depth_ring),(u+1.1,min(16,v+1.1),depth_ring+1),'scorched' if state=='broken' else 'ceramic'))
+                    els.append(local_cube((u-1.3,max(0,v-1.6),-.1),(u+1.3,v-.5,.1),'chip','pin'+str((0 if u==3 else 4)+(v-3)//4)))
         depth=1 if large else 13
-        if large:
+        if large and name!='tower_terminal':
             for u in (.2,15.2):
                 for v in (3,5,7,9,11):els.append(local_cube((u,v,2),(u+.5,v+.45,14),'rubber'))
         if name=='indicator_led':
@@ -316,6 +331,17 @@ def device(name, label):
     write(A/'blockstates'/f'{name}.json', {'multipart': parts})
     write(A/'models/item'/f'{name}.json', {'parent': 'electron:block/'+name+'_inventory'})
 
+
+if len(sys.argv)==3 and sys.argv[1]=='--device':
+    name=sys.argv[2]
+    device(name,DEVICES[name][0])
+    item_path=A/'models/item'/f'{name}.json';data=json.loads(item_path.read_text(encoding='utf-8'))
+    data['display']={}
+    for hand in ('righthand','lefthand'):
+        data['display']['firstperson_'+hand]={'rotation':[0,180,0],'translation':[0,1.4,-.6],'scale':[.58,.58,.58]}
+        data['display']['thirdperson_'+hand]={'rotation':[0,180,0],'translation':[0,2.5,0],'scale':[.4,.4,.4]}
+    write(item_path,data)
+    raise SystemExit(0)
 
 texture('led_red_on','#ff6a42','');texture('led_red_off','#602b2e','')
 button_cap=texture('button_cap','#287eac','');d=ImageDraw.Draw(button_cap);d.rounded_rectangle((6,6,57,57),radius=12,outline='#87cbe4',width=3);d.ellipse((21,21,42,42),outline='#f1f4e9',width=3);button_cap.save(A/'textures/block/button_cap.png')
@@ -407,6 +433,25 @@ for name, base in [('engineering_handbook' ,'#174c43'), ('burnt_component','#453
     write(A/'models/item'/f'{name}.json',{'parent':'minecraft:item/generated','textures':{'layer0':'electron:item/'+name}})
 
 
+# Player-built lattice tower segments, assembled one block at a time.
+frame=[]
+for x in (1,13):
+    for z in (1,13):frame.append(cube((x,0,z),(x+2,16,z+2),'trim'))
+for y in (0,7,14):
+    for z in (1,14):frame.append(cube((1,y,z),(15,y+1, z+1),'silver'))
+    for x in (1,14):frame.append(cube((x,y,1),(x+1,y+1,15),'silver'))
+for side in range(4):
+    for i in range(12):
+        x,y=2+i,2+i
+        for reverse in (False,True):
+            height=15-y if reverse else y
+            lo=(x,height,1) if side==0 else (x,height,14) if side==1 else (1,height,x) if side==2 else (14,height,x)
+            frame.append(cube(lo,tuple(v+1 for v in lo),'trim'))
+model('tower_section',frame,BASE)
+write(A/'blockstates/tower_section.json',{'variants':{'':{'model':'electron:block/tower_section'}}})
+write(A/'models/item/tower_section.json',{'parent':'electron:block/tower_section'})
+
+
 def recipe(name, ingredients, count=1):
     ing=[{'tag': x[1:]} if x.startswith('#') else {'item': x if ':' in x else 'minecraft:'+x} for x in ingredients]
     write(RES/'data/electron/recipe'/f'{name}.json',{'type':'minecraft:crafting_shapeless','category':'redstone','ingredients':ing,'result':{'id':'electron:'+name,'count':count}})
@@ -439,6 +484,9 @@ recipe('dc_breaker',['iron_ingot']*3+['copper_ingot']*2+['lever','quartz','paper
 recipe('engineering_lamp',['iron_ingot']*2+['copper_ingot']*2+['glass']*3+['glowstone_dust'])
 recipe('dc_motor',['iron_ingot']*3+['copper_ingot']*3+['piston','quartz','redstone'])
 recipe('cable_spool',['copper_ingot']*4+['paper']*2+['string','iron_ingot'])
+recipe('tower_section',['iron_ingot']*4+['iron_bars']*3,4)
+recipe('tower_terminal',['iron_ingot']*2+['copper_ingot']*2+['brick']*4+['quartz'])
+write(RES/'data/electron/recipe/cable_spool_128.json',{'type':'minecraft:crafting_shapeless','category':'redstone','ingredients':[{'item':'minecraft:'+x} for x in ['copper_block']*4+['paper']*2+['string']*2+['iron_ingot']],'result':{'id':'electron:cable_spool','count':1,'components':{'minecraft:custom_data':{'units':2048,'color':0}}}})
 recipe('assembly_table',['crafting_table','iron_ingot','iron_ingot','copper_ingot']+['#minecraft:planks']*2)
 recipe('wire_cutters',['iron_ingot','iron_ingot','stick'])
 recipe('multimeter',['iron_ingot']*2+['copper_ingot']*2+['redstone','glass'])
@@ -451,7 +499,7 @@ recipe('engineering_handbook',['book','redstone','paper'])
 for fn in GATES:
     recipe('wire_'+fn+'_gate',['electron:'+fn+'_gate','copper_ingot','paper','quartz'])
 
-for name in list(DEVICES)+['assembly_table']:
+for name in list(DEVICES)+['assembly_table','tower_section']:
     entries=[{'type':'minecraft:item','name':'electron:'+name}]
     if name in DEVICES:
         entries=[{'type':'minecraft:alternatives','children':[
@@ -512,7 +560,7 @@ for lang in ('en_us','zh_cn'):
     localized=json.loads(language_path.read_text(encoding='utf-8')) if language_path.exists() else {}
     for key,value in data.items():localized.setdefault(key,value)
     write(language_path,localized)
-write(RES/'data/minecraft/tags/block/mineable/pickaxe.json',{'replace':False,'values':['electron:'+n for n in list(DEVICES)+[fn+'_gate' for fn in GATES]+['binary_memory']]})
+write(RES/'data/minecraft/tags/block/mineable/pickaxe.json',{'replace':False,'values':['electron:'+n for n in list(DEVICES)+[fn+'_gate' for fn in GATES]+['binary_memory','tower_section']]})
 write(RES/'data/minecraft/tags/block/mineable/axe.json',{'replace':False,'values':['electron:assembly_table']})
 # Keep the working face readable in either hand instead of showing a board edge.
 for name in list(DEVICES)+list(items)+[fn+'_gate' for fn in GATES]+['binary_memory']:

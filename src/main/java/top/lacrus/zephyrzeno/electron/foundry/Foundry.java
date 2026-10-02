@@ -22,6 +22,8 @@ public final class Foundry {
     public static ComponentBlock MOSFET,RELAY,BOOST,BUCK,GENERATOR,DISTRIBUTION,BREAKER,LAMP,MOTOR;
     public static Item CABLE;
     public static ComponentBlock BOOST_12,BUCK_3V3,BUCK_12;
+    public static ComponentBlock TOWER_TERMINAL;
+    public static Block TOWER_SECTION;
     public static java.util.function.BooleanSupplier CREATIVE_READINGS=()->false;
     public static Block TABLE;
     public static Item SPOOL,CUTTER,METER,WRENCH,MAGNIFIER,TERMINAL,WALL_PORT,BRIDGE,HANDBOOK,SCRAP;
@@ -46,6 +48,8 @@ public final class Foundry {
         BOOST_12=device("boost_converter_12",ComponentBlock.Kind.BOOST,12);BUCK_3V3=device("buck_converter_3v3",ComponentBlock.Kind.BUCK,3.3);BUCK_12=device("buck_converter_12",ComponentBlock.Kind.BUCK,12);
         GENERATOR=device("dc_generator",ComponentBlock.Kind.GENERATOR,4);DISTRIBUTION=device("distribution_box",ComponentBlock.Kind.DISTRIBUTION,.0005);
         BREAKER=device("dc_breaker",ComponentBlock.Kind.BREAKER,.02);LAMP=device("engineering_lamp",ComponentBlock.Kind.LAMP,240);MOTOR=device("dc_motor",ComponentBlock.Kind.MOTOR,12);
+        TOWER_TERMINAL=device("tower_terminal",ComponentBlock.Kind.DISTRIBUTION,.0005);
+        TOWER_SECTION=block("tower_section",new Block(AbstractBlock.Settings.create().strength(3).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK)));
         for(var function:LogicFunction.values()) {
             String id="wire_"+function.name().toLowerCase(Locale.ROOT)+"_gate";
             var gate=block(id,new ComponentBlock(AbstractBlock.Settings.create().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK),ComponentBlock.Kind.GATE,10000,function));

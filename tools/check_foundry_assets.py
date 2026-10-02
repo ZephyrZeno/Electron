@@ -50,10 +50,11 @@ for p in models:
 for path in (A/'blockstates').glob('*.json'):
     if 'multipart' not in read(path):continue
     inventory=model('electron:block/'+path.stem+'_inventory')
-    large=path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor')
+    large=path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal')
     assert min(e['from'][2] for e in inventory['elements'])>=(0 if large else 12),path
     up=model('electron:block/'+path.stem+'_off_up')
     assert max(e['to'][1] for e in up['elements'])<=(16 if large else 4),path
+    if path.stem=='tower_terminal':continue
     plate=up['elements'][1]
     assert abs(plate['to'][1]-(15 if large else 3))<1e-9,(path,'Panel height must match device scale')
 
@@ -150,6 +151,7 @@ names += ['rechargeable_battery','terminal_strip','electrical_redstone_switch']
 names += ['power_mosfet','electrical_relay','boost_converter','buck_converter','dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','cable_spool']
 names += ['boost_converter_12','buck_converter_3v3','buck_converter_12']
 sheet('equipment.png','ELECTRON / 电路工坊 · 首批设备与工具',[(name,'item/'+name) for name in names])
+sheet('towers.png','ELECTRON / 玩家搭建塔架与绝缘接线横担',[('tower_section','item/tower_section'),('tower_terminal','item/tower_terminal'),('tower_terminal','block/tower_terminal_off_up')])
 print(f'Validated {len(models)} models, {state_count} electrical block states, recipe models and Chinese names.')
 print(OUT)
 (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')

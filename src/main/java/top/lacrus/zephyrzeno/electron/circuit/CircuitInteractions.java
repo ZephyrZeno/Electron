@@ -72,11 +72,13 @@ public final class CircuitInteractions {
             say(player,"message.electron.wire_start");return;
         }
         if(start.id().equals(end.id())){n.remove("start");n.remove("end");CircuitToolItem.data(stack,n);say(player,"message.electron.wire_end");return;}
-        var path=copy.connectionRoute(world,start,end,n.getInt("layer")&1);copy.validateCapacity(path);int units=copy.lengthUnits(path,start,end);
+        boolean cable=stack.isOf(Foundry.CABLE),overhead=OverheadCable.connection(copy,start,end,cable);
+        var path=copy.connectionRoute(world,start,end,n.getInt("layer")&1,cable);copy.validateCapacity(path);int units=overhead?OverheadCable.units(copy,path):copy.lengthUnits(path,start,end);
         for(var point:path)if(!mayEdit(world,player,point.host()))throw new CircuitError("error.electron.path_permission");
+        if(overhead)for(var cell:OverheadCable.cells(OverheadCable.vertices(copy,path)))if(!mayEdit(world,player,cell))throw new CircuitError("error.electron.path_permission");
         if(!player.isCreative()&&CircuitToolItem.units(stack)<units+nodeCost)throw new CircuitError("error.electron.material",units+nodeCost);
         // All geometry, permissions and material checks complete before any mutation.
-        var wire=new Wire(UUID.randomUUID(),start.id(),end.id(),n.getInt("color")&7,path,units,stack.isOf(Foundry.CABLE));copy.wires.put(wire.id(),wire);s.commitWiring(copy);
+        var wire=new Wire(UUID.randomUUID(),start.id(),end.id(),n.getInt("color")&7,path,units,cable,overhead);copy.wires.put(wire.id(),wire);s.commitWiring(copy);
         if(!player.isCreative())n.putInt("units",CircuitToolItem.units(stack)-units-nodeCost);
         if(end.id().startsWith("c:"))n.remove("start");else n.putString("start",end.id());
         n.remove("end");CircuitToolItem.data(stack,n);CircuitNetworking.preview(player,List.of());
@@ -116,7 +118,7 @@ public final class CircuitInteractions {
         }
         int layer=CircuitToolItem.data(stack).getInt("layer")&1;
         Wire selected=s.wires.values().stream().min(Comparator.comparingDouble(w->distance(s,w,p,hit))).filter(w->distance(s,w,p,hit)<.025).orElseThrow(()->new CircuitError("error.electron.no_wire",layer));
-        if(selected.hosts().stream().anyMatch(pos->!mayEdit(world,player,pos)))throw new CircuitError("error.electron.cut_permission");
+        if(selected.hosts().stream().anyMatch(pos->!mayEdit(world,player,pos))||(selected.overhead()&&OverheadCable.cells(s.overheadVertices(selected)).stream().anyMatch(pos->!mayEdit(world,player,pos))))throw new CircuitError("error.electron.cut_permission");
         s.wires.remove(selected.id());s.changed();give(player,CircuitToolItem.spool(selected.units(),selected.color(),selected.cable()));stack.damage(1,player,slot);say(player,"message.electron.recovered",selected.units());
     }
     private static double distance(CircuitState state,Wire wire,SurfacePoint target,Vec3d hit){return wire.path().stream().filter(p->p.host().equals(target.host())&&p.face()==target.face()&&p.layer()==target.layer()).mapToDouble(p->state.position(p).squaredDistanceTo(state.position(target))).min().orElse(100);}

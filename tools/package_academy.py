@@ -1,7 +1,7 @@
 """Inspect saved Minecraft NBT and package the playable map independently of the gameplay JAR."""
 from pathlib import Path
 import json,zipfile,hashlib
-from minecraft_nbt import chunks, read_gzip, position, assert_no_dropped_items
+from minecraft_nbt import chunks, read_gzip, position, assert_no_dropped_items, block_state
 from PIL import Image,ImageDraw,ImageFont
 ROOT=Path(__file__).resolve().parents[1]
 WORLD=ROOT/'build/showcase-run/Circuit_Foundry_Academy'
@@ -15,20 +15,27 @@ assert_no_dropped_items(WORLD)
 level=read_gzip(WORLD/'level.dat')['Data'];assert level['GameType']==0 and level['Difficulty']==0
 assert (level['SpawnX'],level['SpawnY'],level['SpawnZ'])==(8,65,-4)
 circuit=read_gzip(WORLD/'data/electron_circuits.dat')['data']
-assert len(circuit['devices'])==39 and len(circuit['wires'])==50
+assert len(circuit['devices'])==41 and len(circuit['wires'])==52
 assert any(w.get('cable') for w in circuit['wires']) and any(not w.get('cable') for w in circuit['wires'])
-blocks=[]
+blocks=[];saved_chunks={}
 for file in (WORLD/'region').glob('*.mca'):
     for data in chunks(file):
+        saved_chunks[(data['xPos'],data['zPos'])]=data
         blocks.extend(data.get('block_entities',[]))
 components=[b for b in blocks if b['id']=='electron:component'];signs=[b for b in blocks if b['id']=='minecraft:sign'];chests=[b for b in blocks if b['id']=='minecraft:chest']
-assert len(components)==39 and len(signs)==10 and len(chests)==11
+assert len(components)==41 and len(signs)==11 and len(chests)==12
 chest_stacks=sum(len(b.get('Items',[])) for b in chests)
-assert chest_stacks==234, f'Missing toolbox contents: {chest_stacks}/234 stacks'
+assert chest_stacks==237, f'Missing toolbox contents: {chest_stacks}/237 stacks'
 assert all('map.electron.' in message and 'translate' in message for sign in signs for message in sign['front_text']['messages']),'Sign instructions must remain client-translated'
-assert len({(b['x'],b['y'],b['z']) for b in components})==39
+assert len({(b['x'],b['y'],b['z']) for b in components})==41
 assert {(b['x'],b['y'],b['z']) for b in components}=={position(d['p']) for d in circuit['devices']}
 assert all(not b.get('converter_target') for b in components),'Fixed modules must have no free setting'
+
+assert report.count('components_above_bench=true')==2
+for device in circuit['devices']:
+    x,y,z=position(device['p']);below=block_state(saved_chunks[(x//16,z//16)],x,y-1,z)['Name']
+    assert below==('electron:tower_section' if device['block']=='electron:tower_terminal' else 'minecraft:smooth_stone'), (device,below)
+assert sum(bool(w.get('overhead')) for w in circuit['wires'])==2
 
 out=ROOT/f'dist/circuit-academy-{VERSION}';out.mkdir(parents=True,exist_ok=True)
 font=lambda n:ImageFont.truetype('C:/Windows/Fonts/msyh.ttc',n)
@@ -56,7 +63,7 @@ for i in range(9):
         d.rounded_rectangle((px-21,py-8,px+22,py+15),radius=3,fill='#254738',outline='#9ccdba')
         d.text((px,py+3),short.get(name,name),anchor='mm',font=font(11),fill='white')
     if i==8:d.text((x0+29,y0+139),'工作台 · 装配台\n工具箱与空白台面\n\n所有实验可拆改',font=font(18),fill='#9ec4b3',spacing=12)
-d.text((30,1294),'39 个器件 / 50 段导线与电缆 / 23 座跨线桥 / 和平生存 / 中英双语说明',font=font(18),fill='#a3bbca')
+d.text((30,1294),f"41 个器件 / 52 段导线与电缆 / {len(circuit['bridges'])} 座跨线桥 / 台面安装 / 架空塔演示",font=font(18),fill='#a3bbca')
 im.save(out/'地图导览.png')
 instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 
@@ -76,6 +83,9 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 08 故障 (18..29, z=51..68)：电机预设锁轴、电源初始为空；摇动电源后观察断路器跳闸。把电机切回空载，再复位断路器。
 09 实验 (36..47, z=51..68)：拿材料和工具，自行搭线、合成器件，使用工程手册查看接法。
 
+入口外 (14,68,-4)、(48,68,-4) 两座玩家可拆改的电线塔，A/B 各一条架空电缆，当前未供电，可自行接入电源和负载。旁边箱子有塔架、塔顶座与长电缆卷。
+所有台面器件放在平滑石上方，导线沿台面跨高差连接；不再把器件嵌进台面。
+
 工作样机预充有限能量，会正常耗尽；需要时空手右键摇动电源，每秒一次。
 生存模式准确读数只显示在万用表 HUD；铭牌上的电压/电流是额定值。
 固定转换模块没有调压界面，换规格须合成并更换器件；PCB 电源芯片及焊接仍是后续设计。
@@ -83,11 +93,11 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 未加载区块中的网络会暂停，走近实验区会恢复；没有免费持续发电或远程逻辑控制器。
 地图导览是从实际保存的线路数据绘制的平面示意，不是游戏截图。
 验证：每次从干净世界生成。创建后通电 100 刻，再从存档重开运行 100 刻，检查 5 个指示负载与 1 个旋转电机。
-生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、11 个工具箱中的 234 组物品完整。
-全部 39 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
+生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、12 个工具箱中的 237 组物品完整。
+全部 41 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
 '''
 (out/'地图说明.txt').write_text(instructions,encoding='utf-8')
-audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'reopened_and_powered':True,'generator_required':False}
+audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'components_above_bench':True,'overhead_spans':2,'reopened_and_powered':True,'generator_required':False}
 (out/'map-verification.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
 archive=ROOT/f'dist/circuit-academy-{VERSION}.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:

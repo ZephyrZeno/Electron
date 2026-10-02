@@ -39,6 +39,16 @@ def assert_no_dropped_items(world):
     items=dropped_items(world)
     if items:raise ValueError(f'Refusing to publish map with {len(items)} dropped item entities: {world}')
 
+def block_state(chunk,x,y,z):
+    """Resolve one post-1.18 chunk section palette entry, including non-straddling packed longs."""
+    section=next((s for s in chunk.get('sections',[]) if s['Y']==y//16),None)
+    if not section or 'block_states' not in section:return {'Name':'minecraft:air'}
+    state=section['block_states'];palette=state['palette']
+    if len(palette)==1:return palette[0]
+    bits=max(4,(len(palette)-1).bit_length());per_long=64//bits
+    index=((y&15)*16+(z&15))*16+(x&15)
+    return palette[(state['data'][index//per_long]>>((index%per_long)*bits))&((1<<bits)-1)]
+
 def position(n):
     def signed(x,bits):return x-(1<<bits) if x&(1<<(bits-1)) else x
     return signed((n>>38)&0x3ffffff,26),signed(n&0xfff,12),signed((n>>12)&0x3ffffff,26)

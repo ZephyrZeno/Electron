@@ -12,7 +12,8 @@
       "top.lacrus.zephyrzeno.electron.test.CircuitBehaviorTests",
       "top.lacrus.zephyrzeno.electron.test.PowerModuleTests",
       "top.lacrus.zephyrzeno.electron.test.ConstructionGeometryTests",
-      "top.lacrus.zephyrzeno.electron.test.PowerControlTests"
+      "top.lacrus.zephyrzeno.electron.test.PowerControlTests",
+      "top.lacrus.zephyrzeno.electron.test.SurfaceAndTowerTests"
     ]
   },
   "depends": {

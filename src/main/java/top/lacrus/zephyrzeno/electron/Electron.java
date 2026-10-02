@@ -50,7 +50,7 @@ public final class Electron implements ModInitializer {
                 .displayName(Text.translatable("itemGroup.electron.components"))
                 .icon(() -> new ItemStack(Foundry.LED))
                 .entries((context, entries) -> {Foundry.DEVICES.values().stream().filter(b->!b.kind.large()).forEach(entries::add);for(var item:new Item[]{Foundry.SPOOL,Foundry.TERMINAL,Foundry.WALL_PORT,Foundry.BRIDGE})entries.add(item);}).build());
-        Registry.register(Registries.ITEM_GROUP,id("power"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.power")).icon(()->new ItemStack(Foundry.MOTOR)).entries((context,entries)->{Foundry.DEVICES.values().stream().filter(b->b.kind.large()).forEach(entries::add);entries.add(Foundry.CABLE);}).build());
+        Registry.register(Registries.ITEM_GROUP,id("power"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.power")).icon(()->new ItemStack(Foundry.MOTOR)).entries((context,entries)->{Foundry.DEVICES.values().stream().filter(b->b.kind.large()).forEach(entries::add);entries.add(Foundry.CABLE);entries.add(Foundry.TOWER_SECTION);}).build());
         Registry.register(Registries.ITEM_GROUP,id("redstone"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.redstone"))
                 .icon(()->new ItemStack(MEMORY)).entries((context,entries)->BLOCKS.values().forEach(entries::add)).build());
         Registry.register(Registries.ITEM_GROUP,id("workshop"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.workshop"))
