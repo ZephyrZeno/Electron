@@ -1,0 +1,47 @@
+{
+  "parent": "electron:item/wire_spool_0",
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 1
+      },
+      "model": "electron:item/wire_spool_1"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 2
+      },
+      "model": "electron:item/wire_spool_2"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 3
+      },
+      "model": "electron:item/wire_spool_3"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 4
+      },
+      "model": "electron:item/wire_spool_4"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 5
+      },
+      "model": "electron:item/wire_spool_5"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 6
+      },
+      "model": "electron:item/wire_spool_6"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 7
+      },
+      "model": "electron:item/wire_spool_7"
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "hand_crank": {
+    "subtitle": "subtitles.electron.hand_crank",
+    "sounds": [
+      {
+        "name": "minecraft:block.grindstone.use",
+        "type": "event",
+        "pitch": 0.9,
+        "volume": 0.7
+      }
+    ]
+  },
+  "switch_click": {
+    "subtitle": "subtitles.electron.switch_click",
+    "sounds": [
+      {
+        "name": "minecraft:block.lever.click",
+        "type": "event",
+        "pitch": 1,
+        "volume": 1
+      }
+    ]
+  },
+  "led_on": {
+    "subtitle": "subtitles.electron.led_on",
+    "sounds": [
+      {
+        "name": "minecraft:block.note_block.hat",
+        "type": "event",
+        "pitch": 1.6,
+        "volume": 0.6
+      }
+    ]
+  },
+  "electrical_arc": {
+    "subtitle": "subtitles.electron.electrical_arc",
+    "sounds": [
+      {
+        "name": "minecraft:block.copper_bulb.turn_off",
+        "type": "event",
+        "pitch": 1.4,
+        "volume": 0.8
+      }
+    ]
+  },
+  "component_fail": {
+    "subtitle": "subtitles.electron.component_fail",
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.extinguish",
+        "type": "event",
+        "pitch": 1.4,
+        "volume": 0.8
+      }
+    ]
+  },
+  "component_pop": {
+    "subtitle": "subtitles.electron.component_pop",
+    "sounds": [
+      {
+        "name": "minecraft:entity.firework_rocket.blast",
+        "type": "event",
+        "pitch": 1.4,
+        "volume": 0.8
+      }
+    ]
+  },
+  "wrench_turn": {
+    "subtitle": "subtitles.electron.wrench_turn",
+    "sounds": [
+      {
+        "name": "minecraft:block.tripwire.attach",
+        "type": "event",
+        "pitch": 0.8,
+        "volume": 0.8
+      }
+    ]
+  }
+}

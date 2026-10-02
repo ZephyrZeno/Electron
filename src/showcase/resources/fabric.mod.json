@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "electron_showcase",
+  "version": "1.0.0",
+  "name": "Circuit Academy Offline Map Builder",
+  "environment": "server",
+  "entrypoints": {"main": ["top.lacrus.zephyrzeno.electron.showcase.AcademyBuilder"]},
+  "depends": {"electron": "*", "fabric-api": "*"}
+}

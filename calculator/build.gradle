@@ -1,0 +1,42 @@
+plugins { id 'fabric-loom' version '1.9.2'; id 'maven-publish' }
+version = project.mod_version
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+repositories { mavenCentral() }
+sourceSets { gametest { compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output; runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output } }
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+processResources { inputs.property 'version', project.version; filesMatching('fabric.mod.json') { expand version: project.version } }
+tasks.withType(JavaCompile).configureEach { options.release = 21; options.encoding = 'UTF-8' }
+java { withSourcesJar(); sourceCompatibility = JavaVersion.VERSION_21; targetCompatibility = JavaVersion.VERSION_21 }
+tasks.named('remapJar') { doFirst { project.delete(archiveFile.get().asFile) } }
+test { useJUnitPlatform() }
+check.dependsOn compileGametestJava
+
+def testClass = project.hasProperty('consoleWhole') || project.hasProperty('consoleAuto') ? 'ConsoleWholeGameTests' : project.hasProperty('consoleOnly') ? 'ConsoleGameTests' : project.hasProperty('consoleFront') ? 'ConsoleFrontGameTests' : project.hasProperty('fullOnly') ? 'FullCalculatorGameTests' : 'CompactGameTests'
+loom {
+    mods { electron_calculator { sourceSet sourceSets.main }; electron_calculator_test { sourceSet sourceSets.gametest } }
+    runs { gametest {
+        server(); source sourceSets.gametest; name = 'Independent Calculator GameTests'
+        vmArg '-Dfabric-api.gametest'; vmArg '-Dfabric-api.gametest.report-file=../build/gametest-results.xml'; vmArg '-Xmx6G'
+        if (project.hasProperty('consoleAuto')) vmArg '-Delectron.autoFixture=true'
+        if (project.hasProperty('coldOnly')) vmArg '-Delectron.coldOnly=true'
+        if (project.hasProperty('captureStartup')) vmArg '-Delectron.captureStartup=true'
+        if (project.hasProperty('repairOnly')) vmArg '-Delectron.repairFixture=true'
+        runDir 'run-gametest'
+    } }
+}
+processGametestResources {
+    inputs.property 'testClass', testClass
+    filesMatching('fabric.mod.json') { expand testClass: testClass }
+}
+tasks.register('cleanCalculator', JavaExec) { dependsOn classes; classpath=sourceSets.main.runtimeClasspath; mainClass='top.lacrus.zephyrzeno.electroncalculator.BluePrint.CalculatorCleanup'; args 'src/main/resources/data/electron_calculator/calculator-legacy.ebp', 'build/clean-console-calculator.ebp' }
+tasks.register('checkCleanup', JavaExec) { dependsOn classes; classpath=sourceSets.main.runtimeClasspath; mainClass='top.lacrus.zephyrzeno.electroncalculator.BluePrint.CalculatorCleanup'; args 'src/main/resources/data/electron_calculator/calculator-legacy.ebp', 'build/console-calculator.ebp', 'check' }
+tasks.register('compileCalculator', JavaExec) { dependsOn classes; classpath=sourceSets.main.runtimeClasspath; mainClass='top.lacrus.zephyrzeno.electroncalculator.BluePrint.ModularLayout'; maxHeapSize='4G'; systemProperty 'electron.routeCheckpoint', "${layout.buildDirectory.get()}/module-checkpoint.ebp"; args 'build/modular-calculator.ebp' }
+tasks.register('compileConsole', JavaExec) { dependsOn classes; classpath=sourceSets.main.runtimeClasspath; mainClass='top.lacrus.zephyrzeno.electroncalculator.BluePrint.ConsoleCompiler'; maxHeapSize='6G'; systemProperty 'electron.routeCheckpoint', "${layout.buildDirectory.get()}/keypad-checkpoint.ebp"; args project.hasProperty('keypadOnly') ? ['front','build/keypad.ebp'] : ['build/console-calculator.ebp'] }

@@ -1,0 +1,49 @@
+plugins { id 'fabric-loom' version '1.9.2'; id 'maven-publish' }
+version = project.mod_version
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+repositories { mavenCentral() }
+sourceSets {
+    gametest { compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output; runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output }
+    showcase { compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output; runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output }
+}
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+processResources { inputs.property 'version', project.version; filesMatching('fabric.mod.json') { expand version: project.version } }
+tasks.withType(JavaCompile).configureEach { options.release = 21; options.encoding = 'UTF-8' }
+java { withSourcesJar(); sourceCompatibility = JavaVersion.VERSION_21; targetCompatibility = JavaVersion.VERSION_21 }
+tasks.named('remapJar') { doFirst { project.delete(archiveFile.get().asFile) } }
+test { useJUnitPlatform() }
+check.dependsOn compileGametestJava
+
+loom {
+    mods { electron { sourceSet sourceSets.main }; electron_test { sourceSet sourceSets.gametest }; electron_showcase { sourceSet sourceSets.showcase } }
+    runs {
+        gametest {
+            server(); source sourceSets.gametest; name = 'Electron Foundry GameTests'; vmArg '-Dfabric-api.gametest'
+            vmArg '-Dfabric-api.gametest.report-file=' + file('build/foundry-gametest-results.xml').absolutePath
+            vmArg '-Xmx3G'
+            // Test attachments are persistent; each invocation needs a new world to avoid consuming old wiring budgets.
+            runDir 'build/gametest-runs/' + UUID.randomUUID().toString()
+        }
+        qaClient { client(); source sourceSets.main; name = 'Electron Visual QA'; vmArg '-Xmx3G'; runDir 'run-client-review'; programArgs '--width','1280','--height','800' }
+        showcase { server(); source sourceSets.showcase; name = 'Build Circuit Foundry Academy'; vmArg '-Xmx3G'; vmArg '-Delectron.academy.verify=' + (project.findProperty('academyVerify') ?: 'false'); runDir 'build/showcase-run'; programArg 'nogui' }
+    }
+}
+tasks.register('assembleExample', JavaExec) { dependsOn classes; classpath = sourceSets.main.runtimeClasspath; mainClass = 'top.lacrus.zephyrzeno.electron.assembly.Assembler'; args 'examples/add.ea', "${layout.buildDirectory.get()}/add.bin" }
+tasks.register('verifyMainIsolation') {
+    doLast {
+        sourceSets.main.allSource.files.each { f ->
+            if (f.name.endsWith('.ebp') || f.name.endsWith('.startup')) throw new GradleException("Generator resource in main mod: ${f}")
+            if ((f.name.endsWith('.java') || f.name.endsWith('.json')) && f.text =~ /electroncalculator|electron_calculator|electron\.BluePrint/) throw new GradleException("Generator reference in main mod: ${f}")
+        }
+        configurations.implementation.dependencies.each { d -> if (d.name.toLowerCase().contains('calculator')) throw new GradleException('Generator dependency in main mod') }
+    }
+}
+check.dependsOn verifyMainIsolation

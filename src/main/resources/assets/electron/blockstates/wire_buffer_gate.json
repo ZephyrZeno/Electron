@@ -1,0 +1,1036 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "turn": "0",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "0",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "0",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "0",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_north"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "1",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_north_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "1",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_north_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "1",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_north_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "1",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_north_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "2",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_north_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "2",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_north_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "2",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_north_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "2",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_north_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "3",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_north_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "3",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_north_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "3",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_north_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "turn": "3",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_north_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "0",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "0",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "0",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "0",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_south"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "1",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_south_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "1",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_south_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "1",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_south_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "1",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_south_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "2",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_south_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "2",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_south_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "2",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_south_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "2",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_south_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "3",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_south_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "3",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_south_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "3",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_south_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "turn": "3",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_south_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "0",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "0",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "0",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "0",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_east"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "1",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_east_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "1",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_east_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "1",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_east_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "1",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_east_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "2",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_east_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "2",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_east_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "2",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_east_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "2",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_east_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "3",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_east_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "3",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_east_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "3",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_east_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "turn": "3",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_east_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "0",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "0",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "0",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "0",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_west"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "1",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_west_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "1",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_west_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "1",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_west_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "1",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_west_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "2",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_west_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "2",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_west_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "2",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_west_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "2",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_west_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "3",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_west_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "3",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_west_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "3",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_west_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "turn": "3",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_west_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "0",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "0",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "0",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "0",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_up"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "1",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_up_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "1",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_up_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "1",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_up_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "1",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_up_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "2",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_up_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "2",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_up_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "2",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_up_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "2",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_up_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "3",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_up_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "3",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_up_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "3",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_up_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "up",
+        "turn": "3",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_up_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "0",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "0",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "0",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "0",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_down"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "1",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_down_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "1",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_down_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "1",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_down_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "1",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_down_r1"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "2",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_down_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "2",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_down_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "2",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_down_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "2",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_down_r2"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "3",
+        "broken": "true"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_broken_down_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "3",
+        "broken": "false",
+        "power": "0|1|2|3|4|5|6"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_off_down_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "3",
+        "broken": "false",
+        "power": "7|8|9|10|11|12|13|14"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_unknown_down_r3"
+      }
+    },
+    {
+      "when": {
+        "facing": "down",
+        "turn": "3",
+        "broken": "false",
+        "power": "15"
+      },
+      "apply": {
+        "model": "electron:block/wire_buffer_gate_on_down_r3"
+      }
+    }
+  ]
+}

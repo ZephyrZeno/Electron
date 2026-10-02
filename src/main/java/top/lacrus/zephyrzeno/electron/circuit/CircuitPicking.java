@@ -1,0 +1,24 @@
+package top.lacrus.zephyrzeno.electron.circuit;
+
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.*;
+import net.minecraft.world.World;
+import top.lacrus.zephyrzeno.electron.foundry.ComponentBlock;
+
+/** The HUD, preview and server use the same projected target and snap radius. */
+public final class CircuitPicking {
+    public static SurfacePoint pick(World world,CircuitState state,BlockHitResult hit,int layer){
+        var block=world.getBlockState(hit.getBlockPos());
+        Direction face=block.getBlock() instanceof ComponentBlock?block.get(ComponentBlock.FACING):hit.getSide();
+        var grid=SurfacePoint.hit(hit.getBlockPos(),face,hit.getPos(),layer);
+        if(state.contactAt(grid).isPresent()||state.wires.values().stream().anyMatch(w->w.path().contains(grid)))return grid;
+        Vec3d normal=Vec3d.of(face.getVector());
+        return state.endpoints().values().stream().map(e->e.point()).filter(p->p.host().equals(grid.host())&&p.face()==face)
+            .filter(p->state.contactAt(p.layer(layer)).isPresent())
+            .filter(p->planeDistance(state.position(p),hit.getPos(),normal)<.085*.085)
+            .min(java.util.Comparator.comparingDouble(p->planeDistance(state.position(p),hit.getPos(),normal)))
+            .map(p->p.layer(layer)).orElse(grid);
+    }
+    private static double planeDistance(Vec3d a,Vec3d b,Vec3d normal){var d=a.subtract(b);double n=d.dotProduct(normal);return d.lengthSquared()-n*n;}
+    private CircuitPicking(){}
+}

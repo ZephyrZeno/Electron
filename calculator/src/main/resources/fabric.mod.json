@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "electron_calculator",
+  "version": "${version}",
+  "name": "Electron Calculator",
+  "description": "Independent vanilla-redstone calculator blueprint generator.",
+  "authors": [
+    "ZephyrZeno"
+  ],
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "top.lacrus.zephyrzeno.electroncalculator.CalculatorMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

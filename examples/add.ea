@@ -1,0 +1,8 @@
+; EA-8: store 5, add it to 3, output 8.
+; Toolchain example. Physical CPU is the next milestone.
+LDI 5
+STA 0x10
+LDI 3
+ADD 0x10
+OUT
+HLT

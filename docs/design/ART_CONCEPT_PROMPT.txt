@@ -1,0 +1,16 @@
+Electron 电子工坊：器件美术概念图 v1
+日期：2026-10-02
+模式：内置 image_gen 工具，原创生成，无输入参考图，非透明背景。
+用途：设计讨论；非可直接导入游戏的模型、贴图或实际游戏截图。
+
+Use case: stylized-concept
+Asset type: original art direction concept sheet for a Minecraft Fabric electronics mod design document, not production-ready model assets.
+Primary request: present a coherent family of independently modeled voxel electronics objects at two scales: world-scale power/wiring machinery and miniature PCB components crafted at a precision workbench.
+Scene/backdrop: clean warm off-white studio presentation board, wide landscape composition, generous spacing, one large hero object and six smaller product studies arranged in a clear grid.
+Subject: large hero is a precision electronics workbench, two blocks wide, brushed steel dark graphite frame, warm birch worktop, recessed green PCB cutting mat, soldering iron in holder, small oscilloscope, component drawers, articulated task lamp. Smaller isolated isometric studies: (1) insulated surface-mount wires running over and around a stone cube with purposeful junction terminals, red/black power wires and teal signal cable; (2) compact power cabinet with breaker, chunky connector sockets and status lights; (3) green PCB with copper traces, black unbranded microcontroller, small resistors and upright cylindrical capacitor, beside a removable board enclosure; (4) handheld yellow multimeter with two probes; (5) modular amber LED matrix display showing "12.34"; (6) small square-bodied electric motor with shaft and connector, next to a tiny failed capacitor with a bulged split top and faint soot to demonstrate a repairable damage variant.
+Style/medium: carefully designed Minecraft-compatible blocky 3D voxel product concept art, crisp cuboid silhouettes and visible pixel-art material textures, restrained detail, orthographic isometric view, all objects share scale and material language. Avoid smooth photorealistic curves; capacitor cylinders approximated as voxel forms.
+Lighting/mood: soft neutral studio light, subtle grounded shadows, warm workshop feel, readable functional objects.
+Color palette: graphite, warm wood, PCB green, exposed copper, small yellow safety accents, teal signal accents.
+Materials/textures: original pixel-art metal panels, screws, copper contacts and black polymer; limited emissive pixels only on powered LEDs.
+Text (verbatim): only small numerical panel markers "01", "02", "03", "04", "05", "06", "07"; the display may show "12.34". No other text.
+Constraints: no real manufacturer logos, no ST or STM32 branding, no Minecraft logo, no characters, no watermark. Keep cables visibly attached to terminals; no floating wires. This is a visual concept, not an electrical schematic. Show full objects without clipping.

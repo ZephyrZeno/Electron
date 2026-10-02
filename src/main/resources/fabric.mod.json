@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "electron",
+  "version": "${version}",
+  "name": "Electron: Circuit Foundry",
+  "description": "Circuit Foundry: electrical wiring, instruments, components and redstone logic.",
+  "authors": ["ZephyrZeno"],
+  "environment": "*",
+  "entrypoints": {
+    "main": ["top.lacrus.zephyrzeno.electron.Electron"],
+    "client": ["top.lacrus.zephyrzeno.electron.client.ElectronClient"]
+  },
+  "mixins": ["electron.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.16.14",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
