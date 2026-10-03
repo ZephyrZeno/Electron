@@ -26,7 +26,7 @@ public final class GridDevices {
             e.inputVoltage=e.voltage;e.voltage=r.voltage(node(p,2))-r.voltage(node(p,3));
             e.meterEnergy+=Math.max(0,e.current*e.voltage)*.05;
             e.overload=Math.max(0,e.overload+(Math.abs(e.current)>2?(Math.abs(e.current)/2-1)*.05:-.1));
-            if(e.overload>.5&&s.get(ComponentBlock.ENABLED)){s=s.with(ComponentBlock.ENABLED,false);e.overload=0;ElectricalEffects.play(w,p,ElectricalEffects.FAIL,.5f,1);}
+            if(e.overload>.5&&s.get(ComponentBlock.ENABLED)){s=s.with(ComponentBlock.ENABLED,false);e.overload=0;FaultEffects.emit(w,ElectricalEffects.front(p,s).add(-.08,0,0),ElectricalEffects.front(p,s),FaultEffects.TRIP,Math.abs(e.voltage*e.current));}
             level=s.get(ComponentBlock.ENABLED)&&Math.abs(e.voltage)>1?15:0;
         }
         if(s.get(ComponentBlock.BROKEN))level=0;e.markDirty();if(w.getBlockState(p)!=s||s.get(ComponentBlock.LEVEL)!=level)w.setBlockState(p,s.with(ComponentBlock.LEVEL,level),Block.NOTIFY_ALL);

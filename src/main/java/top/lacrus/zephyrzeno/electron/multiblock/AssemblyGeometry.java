@@ -71,8 +71,7 @@ public final class AssemblyGeometry {
             for(int i=0;i<12;i++){double a=i*Math.PI/6;box(.5+.59*Math.cos(a)-.035,-height,.5+.59*Math.sin(a)-.035,.5+.59*Math.cos(a)+.035,-height+.08,.5+.59*Math.sin(a)+.035,"cast_base");}
         }
         // This service panel keeps the existing eight/six/two electrical pin coordinates accessible.
-        box(.03,0,.03,.97,.88,.97,"control_case");
-        box(.04,.88,.04,.96,.9375,.96,"service_panel");
+        if(kind!=Kind.WIND){box(.03,0,.03,.97,.88,.97,"control_case");box(.04,.88,.04,.96,.9375,.96,"service_panel");}
         if(tower){
             for(int side:new int[]{-1,1}){
                 double tip=side<0?-1.85:2.85;
@@ -93,13 +92,15 @@ public final class AssemblyGeometry {
         }
         switch(kind){
             case WIND -> {
-                cone(.5,.85,.5,.27,.23,1.55,"turbine_white");
+                cone(.5,0,.5,.27,.23,2.4,"turbine_white");
                 // Nacelle, service hatch, hub and a swept rotor envelope.
                 box(-.02,2.04,-.34,1.02,2.96,1.7,"turbine_white");
                 for(int i=0;i<6;i++)box(.13,2.95,.25+i*.18,.87,2.98,.32+i*.18,"cast_base");
                 beam(.5,3,1.2,.5,3.48,1.2,.026,"galvanized");
                 box(.2,2.86,.3,.8,2.94,1.05,"galvanized");
                 box(.32,2.3,-.68,.68,2.67,-.34,"cast_base");
+                for(int j=0;j<8;j++){double a=j*Math.PI/4;beam(.5+.25*Math.cos(a),2.5+.25*Math.sin(a),-.35,.5+.25*Math.cos(a),2.5+.25*Math.sin(a),-.4,.028,"galvanized");}
+                box(.9,2.23,.8,1.04,2.8,1.4,"service_panel");
             }
             case LIGHTNING -> {
                 for(int side:new int[]{-1,1}){
@@ -124,6 +125,16 @@ public final class AssemblyGeometry {
                 for(int i=0;i<5;i++)box(-1.25,.15+i*.55,-4.75,-1.1,.21+i*.55,-2.5,"galvanized");
                 rail(-1.35,3.0,-4.8,2,3.0,-4.8);rail(-1.35,3.0,-4.8,-1.35,3.0,-2.3);
                 box(.12,0,-.96,.88,1.4,-.08,"control_case");box(.17,.9,-.99,.83,1.3,-.97,"service_panel");
+                // Refractory firebox, ash doors, supported catwalk, guarded ladder and relief piping.
+                box(-.92,.05,-4.9,-.86,1.14,-2.66,"firebrick");box(1.86,.05,-4.9,1.92,1.14,-2.66,"firebrick");
+                for(double x:new double[]{-.15,.85}){box(x,.23,-2.65,x+.55,.78,-2.58,"hatch");beam(x+.15,.48,-2.56,x+.43,.48,-2.56,.025,"galvanized");}
+                box(-1.45,2.88,-4.9,2.12,3,-4.66,"grating");box(-1.45,2.88,-4.9,-1.06,3,-2.15,"grating");
+                for(double z:new double[]{-4.8,-2.3})beam(-1.3,.04,z,-1.3,2.88,z,.055,"galvanized");
+                ladder(-1.46,.15,-2.22,3.05);pipe(.5,3.95,-3.5,1.6,4.15,-3.5,.07);pipe(1.6,4.15,-3.5,1.6,4.95,-3.5,.07);
+                wheel(1.6,4.3,-3.5,.24);wheel(-1.6,1,-1.7,.22);
+                for(int band=0;band<6;band++)cylinder(.5,4.08+band*.5,-4.5,.38,.055,"galvanized");
+                for(double x:new double[]{-.32,1.32})for(double y:new double[]{.3,.78})box(x,y,-2.6,x+.055,y+.055,-2.53,"galvanized");
+                box(2.14,1.4,-2.75,2.86,1.7,-2.25,"service_panel");
             }
             case HYDRO -> {
                 tank(.5,.04,-.5,.46,1.28,"hydro_blue");
@@ -138,7 +149,7 @@ public final class AssemblyGeometry {
                 tank(-2.5,0,-19.5,5.45,10,"reactor_shell");
                 for(int i=0;i<12;i++){double y=i/12d*5.4,Y=(i+1)/12d*5.4;cone(-2.5,10+y,-19.5,Math.sqrt(Math.max(.005,5.45*5.45-y*y)),Math.sqrt(Math.max(.005,5.45*5.45-Y*Y)),Y-y,"reactor_shell");}
                 for(int i=0;i<20;i++){double y=i*.9,r=3.8-1.6*Math.sin(Math.PI*i/27),R=3.8-1.6*Math.sin(Math.PI*(i+1)/27);cone(9.5,y,-22.5,r,R,.9,"cooling_concrete");}
-                cylinder(9.5,18,-22.5,2.67,.2,"galvanized");
+                cylinder(9.5,18,-22.5,2.67,.2,"cooling_concrete");
                 // Separate rectangular condenser hall with visible turbine housings and overhead service rails.
                 box(4,.0,-10,13,.18,-1,"cast_base");
                 for(double x:new double[]{4.25,12.75})for(double z:new double[]{-9.5,-5.5,-1.5})beam(x,.15,z,x,4.8,z,.1,"galvanized");
@@ -156,6 +167,25 @@ public final class AssemblyGeometry {
                 box(-12,0,-4.6,-5,3.6,-1.0,"control_case");box(-12.12,3.6,-4.7,-4.88,3.82,-.88,"roof_panels");
                 for(int i=0;i<6;i++)box(-11.65+i,.95,-1.04,-10.85+i,2.65,-.98,"instrument_glass");
                 rail(-8.7,2.4,-12,-8.7,2.4,-5.1);
+                // Containment ribs, accessible service ring, personnel airlock and pipe penetrations.
+                for(int i=0;i<24;i++){double a=i*Math.PI/12,x=-2.5+5.5*Math.cos(a),z=-19.5+5.5*Math.sin(a);beam(x,.25,z,x,9.85,z,.055,"reactor_rib");}
+                for(double y:new double[]{3.0,6.0,9.8})cylinder(-2.5,y,-19.5,5.5,.075,"reactor_rib");
+                box(-4,.0,-14.1,-1,2.85,-12.9,"reactor_shell");box(-3.62,.06,-12.91,-1.4,2.58,-12.8,"hatch");
+                for(int i=0;i<5;i++)box(-3.8,i*.16,-12.8+i*.35,-1.2,(i+1)*.16,-11.0,"grating");
+                pipe(-5.8,3.0,-14.9,-5.8,3,-10.8,.14);pipe(-5.8,3,-10.8,4.2,3,-10.8,.14);wheel(-5.8,3,-12.5,.34);
+                // Cooling tower is hollow at the crown, with separate louvres and ring columns.
+                for(int i=0;i<24;i++){double a=i*Math.PI/12,x=9.5+3.6*Math.cos(a),z=-22.5+3.6*Math.sin(a);beam(x,.05,z,x,.95,z,.1,"reactor_rib");}
+                for(int i=0;i<10;i++)cylinder(9.5,.25+i*.08,-22.5,3.83,.025,"grating");
+                ladder(12.24,.2,-22.5,17.8);rail(6.0,5.03,-10,12.8,5.03,-10);
+                // Turbine hall: trusses, bridge crane, cable trays, vents, flanges and maintenance hatches.
+                for(int i=0;i<5;i++){double z=-9.5+i*1.8;beam(4.3,3.4,z,8.5,4.76,z,.065,"galvanized");beam(8.5,4.76,z,12.7,3.4,z,.065,"galvanized");}
+                for(double x:new double[]{4.65,12.35})box(x,3.88,-9.75,x+.15,4.03,-1.15,"safety_yellow");
+                box(4.6,4.04,-6.9,12.55,4.28,-6.45,"safety_yellow");box(8.05,3.5,-6.95,8.8,4.03,-6.35,"cast_base");beam(8.4,3.5,-6.65,8.4,2.25,-6.65,.024,"galvanized");
+                for(double x:new double[]{7.5,10.5}){box(x-.44,2.2,-6.9,x+.44,2.46,-6.1,"service_panel");wheel(x,1.5,-5.2,.28);}
+                for(int i=0;i<4;i++){box(-11.5+i*1.6,3.83,-3.9,-10.45+i*1.6,4.23,-2.7,"vent");box(-11.65+i*1.4,.1,-1.08,-10.65+i*1.4,.65,-1.02,"vent");}
+                box(-6.1,.02,-1.05,-5.2,2.75,-.92,"hatch");
+                for(int i=0;i<3;i++){double z=-17+i*2.3;box(11.5,.12,z,13.8,.72,z+1.2,"transformer_oil");for(double x:new double[]{12,13.3})for(int j=0;j<5;j++)cylinder(x,.72+j*.11,z+.6,.17,.05,"porcelain");}
+                pipe(-13.4,.75,-10.8,-13.4,.75,-5.6,.10);wheel(-13.4,.75,-8.5,.24);
             }
             case SUBSTATION -> {
                 box(-.25,.1,-.97,1.25,1.5,-.08,"transformer_oil");
@@ -175,6 +205,8 @@ public final class AssemblyGeometry {
         }
     }
     private void pipe(double x,double y,double z,double X,double Y,double Z,double r){beam(x,y,z,X,Y,Z,r,"steel_pipe");var a=new Vec3d(x,y,z);var b=new Vec3d(X,Y,Z);int n=Math.max(1,(int)a.distanceTo(b));for(int i=0;i<=n;i++){var q=a.lerp(b,i/(double)n);box(q.x-r*1.35,q.y-r*1.35,q.z-r*1.35,q.x+r*1.35,q.y+r*1.35,q.z+r*1.35,"galvanized");}}
+    private void ladder(double x,double y,double z,double top){for(double X:new double[]{x-.21,x+.21})beam(X,y,z,X,top,z,.035,"galvanized");for(double Y=y+.12;Y<top;Y+=.3)beam(x-.21,Y,z,x+.21,Y,z,.025,"galvanized");}
+    private void wheel(double x,double y,double z,double radius){for(int i=0;i<12;i++){double a=i*Math.PI/6,b=(i+1)*Math.PI/6;beam(x+radius*Math.cos(a),y+radius*Math.sin(a),z,x+radius*Math.cos(b),y+radius*Math.sin(b),z,.025,"safety_yellow");if(i%3==0)beam(x,y,z,x+radius*Math.cos(a),y+radius*Math.sin(a),z,.018,"galvanized");}}
     private void rail(double x,double y,double z,double X,double Y,double Z){beam(x,y+1,z,X,Y+1,Z,.035,"safety_yellow");beam(x,y+.55,z,X,Y+.55,Z,.025,"galvanized");var a=new Vec3d(x,y,z);var b=new Vec3d(X,Y,Z);int n=Math.max(1,(int)Math.ceil(a.distanceTo(b)/2));for(int i=0;i<=n;i++){var q=a.lerp(b,i/(double)n);beam(q.x,q.y+.04,q.z,q.x,q.y+1.04,q.z,.032,"galvanized");}}
     private void tank(double x,double y,double z,double r,double h,String texture){
         cylinder(x,y,z,r,h,texture);
@@ -184,9 +216,13 @@ public final class AssemblyGeometry {
         Map<BlockPos,List<Box>> boxes=new LinkedHashMap<>();
         for(var p:parts){
             if(p.sides>4){
+                if(p.texture.equals("cooling_concrete")){
+                    double rr=Math.max(p.radius,p.topRadius),inner=Math.max(0,Math.min(p.radius,p.topRadius)-.15);
+                    for(int x=0;x<32;x++)for(int z=0;z<32;z++){double dx=-rr+(x+.5)*rr/16,dz=-rr+(z+.5)*rr/16,d=Math.hypot(dx,dz);if(d<=rr+.12&&d>=inner-.08)clip(boxes,new Box(p.a.x-rr+x*rr/16,p.a.y,p.a.z-rr+z*rr/16,p.a.x-rr+(x+1)*rr/16,p.b.y,p.a.z-rr+(z+1)*rr/16));}continue;
+                }
                 for(int i=0;i<24;i++){double rr=Math.max(p.radius,p.topRadius),z0=-rr+2*rr*i/24,z1=-rr+2*rr*(i+1)/24;double w=Math.sqrt(Math.max(0,rr*rr-Math.pow((z0+z1)/2,2)));clip(boxes,new Box(p.a.x-w,p.a.y,p.a.z+z0,p.a.x+w,p.b.y,p.a.z+z1));}
             }
-            else if(p.beam){int n=Math.max(1,(int)Math.ceil(p.a.distanceTo(p.b)*7));for(int i=0;i<n;i++)clip(boxes,new Box(p.a.lerp(p.b,i/(double)n),p.a.lerp(p.b,(i+1d)/n)).expand(p.radius));}
+            else if(p.beam){int n=Math.max(1,(int)Math.ceil(p.a.distanceTo(p.b)*7));for(int i=0;i<n;i++)clip(boxes,beamBounds(p.a.lerp(p.b,i/(double)n),p.a.lerp(p.b,(i+1d)/n),p.radius));}
             else clip(boxes,p.bounds());
         }
         Map<BlockPos,VoxelShape> cells=new LinkedHashMap<>();
@@ -202,6 +238,10 @@ public final class AssemblyGeometry {
     private static final class CellShape extends ArrayVoxelShape {
         private static final double[] GRID=java.util.stream.IntStream.rangeClosed(0,16).mapToDouble(i->i/16d).toArray();
         CellShape(BitSetVoxelSet set){super(set,GRID,GRID,GRID);}
+    }
+    private static Box beamBounds(Vec3d a,Vec3d b,double radius){
+        var axis=b.subtract(a).normalize();var u=axis.crossProduct(new Vec3d(0,1,0));if(u.lengthSquared()<1e-8)u=axis.crossProduct(new Vec3d(1,0,0));u=u.normalize().multiply(radius);var v=axis.crossProduct(u).normalize().multiply(radius);
+        return new Box(a,b).expand(Math.abs(u.x)+Math.abs(v.x),Math.abs(u.y)+Math.abs(v.y),Math.abs(u.z)+Math.abs(v.z));
     }
     private static void clip(Map<BlockPos,List<Box>> cells,Box b){
         for(var q:BlockPos.iterate(BlockPos.ofFloored(b.minX,b.minY,b.minZ),BlockPos.ofFloored(b.maxX-1e-7,b.maxY-1e-7,b.maxZ-1e-7))){

@@ -32,6 +32,7 @@
     "electron:industrial_assembly_table",
     "electron:iron_pipe",
     "electron:lightning_collector",
+    "electron:low_profile_socket",
     "electron:mains_inlet",
     "electron:momentary_button",
     "electron:nand_gate",

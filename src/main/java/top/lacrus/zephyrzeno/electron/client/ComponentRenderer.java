@@ -25,6 +25,10 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         double switchTarget=state.get(ComponentBlock.ENABLED)?1:0;
         entity.displayedSwitch+=(switchTarget-entity.displayedSwitch)*(1-Math.exp(-dt*.9));
         Matrix4f matrix=matrices.peek().getPositionMatrix();
+        if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE){
+            AssemblyRenderer.windFoot(entity,consumers,matrix,light,overlay);
+            for(int i=2;i<4;i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.55,inset-.13,ComponentPins.label(block.kind,i),.0062f,0xe4eeee,light);return;
+        }
         if(top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state)){
             AssemblyRenderer.draw(entity,block,consumers,matrix,dt,light,overlay);
             for(int i=0;i<(block.kind==ComponentBlock.Kind.WIND?0:ComponentPins.count(block.kind));i++)label(consumers,matrix,Direction.UP,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.4,.82,ComponentPins.label(block.kind,i),.007f,0xe4eeee,light);

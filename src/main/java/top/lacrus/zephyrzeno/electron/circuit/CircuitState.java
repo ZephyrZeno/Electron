@@ -28,7 +28,7 @@ public final class CircuitState extends PersistentState {
     public final Map<BlockPos,Device> devices=new HashMap<>();
     public DcSolver.Result readings=new DcSolver.Result(Map.of(),Map.of(),Map.of());
     public final Map<String,String> paused=new HashMap<>();
-    private final Map<UUID,net.minecraft.util.math.Vec3d> lowCables=new HashMap<>();
+    private final top.lacrus.zephyrzeno.electron.power.CableFaults.State lowCables=new top.lacrus.zephyrzeno.electron.power.CableFaults.State();
     public List<DcSolver.Branch> lastBranches=List.of();
     public final Map<UUID,Double> wireHeat=new HashMap<>();
     private final Map<Wire,List<Vec3d>> overheadCurves=new HashMap<>();
@@ -243,7 +243,7 @@ public final class CircuitState extends PersistentState {
                 case THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS,MOSFET,RELAY,BOOST,BUCK,GENERATOR,DISTRIBUTION,BREAKER,LAMP,MOTOR->throw new AssertionError("Power stamp handled above");
             }
         }
-        top.lacrus.zephyrzeno.electron.power.CableSafety.stamp(world,this,branches,lowCables);
+        top.lacrus.zephyrzeno.electron.power.CableFaults.stamp(world,this,branches,lowCables);
         lastBranches=List.copyOf(branches);
         for(var e:pins.values())if(!world.isChunkLoaded(e.point().host()))unavailable.add(e.id());else if(world.isChunkLoaded(e.point().host().offset(e.point().face()))&&!world.getFluidState(e.point().host().offset(e.point().face())).isEmpty())unavailable.add(e.id());
         Map<String,String> parent=new HashMap<>();for(var b:branches){parent.putIfAbsent(b.a(),b.a());parent.putIfAbsent(b.b(),b.b());parent.put(find(parent,b.a()),find(parent,b.b()));}
@@ -335,13 +335,14 @@ public final class CircuitState extends PersistentState {
             if(block.kind==ComponentBlock.Kind.LED&&level>0&&state.get(ComponentBlock.LEVEL)==0&&world.getTime()-entity.lastLedSoundTick>=20){entity.lastLedSoundTick=world.getTime();ElectricalEffects.play(world,pos,ElectricalEffects.LED,.08f,1.6f);}
             if(state!=world.getBlockState(pos)||state.get(ComponentBlock.LEVEL)!=level)world.setBlockState(pos,state.with(ComponentBlock.LEVEL,level),Block.NOTIFY_ALL);
         }
-        top.lacrus.zephyrzeno.electron.power.CableSafety.effects(world,this,lowCables);
+        top.lacrus.zephyrzeno.electron.power.CableFaults.effects(world,this,lowCables);
         wireHeat.keySet().retainAll(wires.keySet());
         for(var wire:new ArrayList<>(wires.values())){
             if(paused.containsKey(wire.a()))continue;double ratio=Math.abs(readings.current("w:"+wire.id()))/wire.rating();
             double before=wireHeat.getOrDefault(wire.id(),0d),heat=Math.max(0,before+(ratio>1?(ratio-1)*.05:-.05));
             if(heat!=before){if(heat==0)wireHeat.remove(wire.id());else wireHeat.put(wire.id(),heat);markDirty();}
-            if(heat>=3){var at=wire.path().get(wire.path().size()/2);if(world.isChunkLoaded(at.host())){var point=position(at);world.spawnParticles(ParticleTypes.SMOKE,point.x,point.y,point.z,8,.05,.05,.05,.01);ElectricalEffects.play(world,at.host(),ElectricalEffects.FAIL,.3f,1.3f);drop(world,at.host(),new ItemStack(Foundry.SCRAP));}wires.remove(wire.id());wireHeat.remove(wire.id());changed();}
+            if(heat>.6&&ratio>1&&world.getTime()%10==0){var point=top.lacrus.zephyrzeno.electron.power.CableFaults.middle(this,wire);world.spawnParticles(ParticleTypes.SMOKE,point.x,point.y,point.z,2,.02,.02,.02,.008);top.lacrus.zephyrzeno.electron.power.FaultEffects.emit(world,point.add(-.1,0,0),point,1,ratio*heat);}
+            if(heat>=3){var point=top.lacrus.zephyrzeno.electron.power.CableFaults.middle(this,wire);var at=BlockPos.ofFloored(point);if(world.isChunkLoaded(at)){top.lacrus.zephyrzeno.electron.power.FaultEffects.emit(world,point.add(-.14,0,0),point.add(.14,0,0),2,ratio*24);drop(world,at,new ItemStack(Foundry.SCRAP));}wires.remove(wire.id());wireHeat.remove(wire.id());changed();}
         }
     }
     private static void terminalBranches(List<DcSolver.Branch> branches,BlockPos pos,double resistance){

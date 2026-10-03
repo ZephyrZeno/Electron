@@ -28,7 +28,7 @@ for event,settings in sounds.items():
         rms=float(np.sqrt(np.mean(data**2)))
         assert .01<peak<1 and rms>.005,(event,peak,rms)
         rows.append({'event':event,'seconds':round(len(data)/rate,3),'peak':round(peak,3),'rms':round(rms,3),'channels':1,'rate':rate})
-assert len(rows)==15
+assert len(rows)==23
 report={'original_ogg_samples':rows,'decoded':True,'clipped':False}
 (ROOT/'build/industrial-audio-verification.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
 print(f"Validated {len(rows)} mono Ogg samples and both subtitle catalogs; highest decoded peak {max(row['peak'] for row in rows):.3f}.")

@@ -10,6 +10,7 @@
     "electron:glass_pipe",
     "electron:industrial_assembly_table",
     "electron:iron_pipe",
+    "electron:low_profile_socket",
     "electron:pipe_valve",
     "electron:plant_control_module",
     "electron:reactor_coolant_tank",

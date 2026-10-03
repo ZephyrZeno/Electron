@@ -17,6 +17,7 @@ import top.lacrus.zephyrzeno.electron.circuit.*;
 import top.lacrus.zephyrzeno.electron.power.PowerPlant;
 
 public final class Assembly {
+    public static final int GEOMETRY_REVISION=2;
     public static AssemblyPartBlock PART;
     public static BlockEntityType<AssemblyPartEntity> PART_ENTITY;
     private static final Set<String> CHANGING=new HashSet<>();
@@ -70,7 +71,7 @@ public final class Assembly {
             replacements.put(q,old);
         }
         if(!(w.getBlockEntity(p) instanceof ComponentEntity core))return "unloaded";
-        core.energy=0;core.converterEnergy=0;core.assemblyHeight=h;core.assemblyCells=replacements.keySet().stream().map(q->q.subtract(p)).toList();core.markDirty();
+        core.energy=0;core.converterEnergy=0;core.assemblyHeight=h;core.assemblyRevision=GEOMETRY_REVISION;core.assemblyCells=replacements.keySet().stream().map(q->q.subtract(p)).toList();core.markDirty();
         for(var entry:replacements.entrySet()){
             var q=entry.getKey();w.setBlockState(q,PART.getDefaultState(),Block.NOTIFY_LISTENERS);
             if(w.getBlockEntity(q) instanceof AssemblyPartEntity e){e.origin=p.toImmutable();e.original=entry.getValue();e.height=h;e.turn=state.get(ComponentBlock.TURN);e.kind=controller.kind;e.tower=tower;e.markDirty();w.updateListeners(q,e.getCachedState(),e.getCachedState(),Block.NOTIFY_LISTENERS);}
@@ -78,6 +79,20 @@ public final class Assembly {
         w.setBlockState(p,state.with(AssemblyControllerBlock.FORMED,true),Block.NOTIFY_ALL);
         w.updateListeners(p,state,w.getBlockState(p),Block.NOTIFY_LISTENERS);CircuitState.get(w).track(p,w.getBlockState(p));
         ElectricalEffects.play(w,p,ElectricalEffects.FORM,.6f,1);return "formed";
+    }
+    /** Add newly detailed collision cells on upgrade, preserving energy, inventories and paid parts. */
+    public static String refresh(ServerWorld w,BlockPos p,ComponentEntity core){
+        var s=w.getBlockState(p);if(!formed(s))return "assembly_pending";
+        var kind=((ComponentBlock)s.getBlock()).kind;boolean tower=s.isOf(Foundry.TOWER_TERMINAL);
+        var offsets=new LinkedHashSet<>(core.assemblyCells);var additions=new ArrayList<BlockPos>();
+        for(var offset:AssemblyGeometry.model(kind,core.assemblyHeight,tower,s.get(ComponentBlock.TURN)).cells().keySet()){
+            if(offset.equals(BlockPos.ORIGIN)||offsets.contains(offset))continue;var q=p.add(offset);if(!w.isChunkLoaded(q))return "unloaded";var old=w.getBlockState(q);
+            if(old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.FluidBlock||old.isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE))continue;
+            if(kind==ComponentBlock.Kind.HYDRO&&q.equals(top.lacrus.zephyrzeno.electron.industrial.PlantStructures.at(p,s,0,0,-1)))continue;
+            if(!old.isAir()||CircuitState.get(w).hasAttachment(q))return "space";additions.add(offset);
+        }
+        for(var offset:additions){var q=p.add(offset);var old=w.getBlockState(q);w.setBlockState(q,PART.getDefaultState(),Block.NOTIFY_LISTENERS);if(w.getBlockEntity(q) instanceof AssemblyPartEntity e){e.origin=p.toImmutable();e.original=old;e.height=core.assemblyHeight;e.turn=s.get(ComponentBlock.TURN);e.kind=kind;e.tower=tower;e.markDirty();w.updateListeners(q,e.getCachedState(),e.getCachedState(),Block.NOTIFY_LISTENERS);}offsets.add(offset);}
+        core.assemblyCells=List.copyOf(offsets);core.assemblyRevision=GEOMETRY_REVISION;core.markDirty();return "ready";
     }
     public static void dismantle(ServerWorld w,BlockPos p,BlockPos removed){
         String key=w.getRegistryKey().getValue()+":"+p.asLong();if(!CHANGING.add(key))return;

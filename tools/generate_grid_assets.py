@@ -100,3 +100,5 @@ print('Grid, independent colors, mechanical models, ores and emissive materials 
 runpy.run_path(str(Path(__file__).with_name("generate_assembly_assets.py")))
 runpy.run_path(str(Path(__file__).with_name("generate_industrial_assets.py")))
 runpy.run_path(str(Path(__file__).with_name("generate_industrial_guide.py")))
+runpy.run_path(str(Path(__file__).with_name("generate_fault_assets.py")))
+runpy.run_path(str(Path(__file__).with_name("generate_fault_guide.py")))

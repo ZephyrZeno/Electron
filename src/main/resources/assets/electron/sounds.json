@@ -36,10 +36,19 @@
     "subtitle": "subtitles.electron.electrical_arc",
     "sounds": [
       {
-        "name": "minecraft:block.copper_bulb.turn_off",
-        "type": "event",
-        "pitch": 1.4,
-        "volume": 0.8
+        "name": "electron:electrical_arc_1",
+        "attenuation_distance": 24,
+        "stream": false
+      },
+      {
+        "name": "electron:electrical_arc_2",
+        "attenuation_distance": 24,
+        "stream": false
+      },
+      {
+        "name": "electron:electrical_arc_3",
+        "attenuation_distance": 24,
+        "stream": false
       }
     ]
   },
@@ -47,10 +56,9 @@
     "subtitle": "subtitles.electron.component_fail",
     "sounds": [
       {
-        "name": "minecraft:block.fire.extinguish",
-        "type": "event",
-        "pitch": 1.4,
-        "volume": 0.8
+        "name": "electron:component_fail",
+        "attenuation_distance": 24,
+        "stream": false
       }
     ]
   },
@@ -58,10 +66,9 @@
     "subtitle": "subtitles.electron.component_pop",
     "sounds": [
       {
-        "name": "minecraft:entity.firework_rocket.blast",
-        "type": "event",
-        "pitch": 1.4,
-        "volume": 0.8
+        "name": "electron:component_pop",
+        "attenuation_distance": 24,
+        "stream": false
       }
     ]
   },
@@ -208,6 +215,36 @@
       {
         "name": "electron:pressure_burst",
         "attenuation_distance": 24
+      }
+    ]
+  },
+  "insulation_sizzle": {
+    "subtitle": "subtitles.electron.insulation_sizzle",
+    "sounds": [
+      {
+        "name": "electron:insulation_sizzle",
+        "attenuation_distance": 24,
+        "stream": false
+      }
+    ]
+  },
+  "wire_melt": {
+    "subtitle": "subtitles.electron.wire_melt",
+    "sounds": [
+      {
+        "name": "electron:wire_melt",
+        "attenuation_distance": 24,
+        "stream": false
+      }
+    ]
+  },
+  "breaker_trip": {
+    "subtitle": "subtitles.electron.breaker_trip",
+    "sounds": [
+      {
+        "name": "electron:breaker_trip",
+        "attenuation_distance": 24,
+        "stream": false
       }
     ]
   }

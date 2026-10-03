@@ -48,7 +48,7 @@ for i,key in enumerate(order):
         color=ImageStat.Stat(Image.open(tx).convert('RGB')).mean
         inds=[[0,3,2,1],[4,5,6,7],[0,4,7,3],[1,2,6,5],[3,7,6,2],[0,1,5,4]] if not p['beam'] else [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7],[0,3,2,1],[4,5,6,7]]
         if p.get('sides',0)>4:
-            n=p['sides'];inds=[[j,(j+1)%n,(j+1)%n+n,j+n] for j in range(n)]+[list(range(n-1,-1,-1)),list(range(n,2*n))]
+            n=p['sides'];inds=[[j,(j+1)%n,(j+1)%n+n,j+n] for j in range(n)]+([] if p['texture']=='cooling_concrete' else [list(range(n-1,-1,-1)),list(range(n,2*n))])
         for face in inds:
             points=[vs[k] for k in face];normal=norm(cross(sub(points[1],points[0]),sub(points[2],points[0])))
             shade=.55+.45*abs(normal[1])+.15*max(0,-normal[2])

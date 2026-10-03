@@ -96,6 +96,7 @@ public final class AssemblyTests implements FabricGameTest {
             var parts=new com.google.gson.JsonArray();
             for(var piece:model.pieces()){var obj=new com.google.gson.JsonObject();obj.add("a",new com.google.gson.Gson().toJsonTree(new double[]{piece.a().x,piece.a().y,piece.a().z}));obj.add("b",new com.google.gson.Gson().toJsonTree(new double[]{piece.b().x,piece.b().y,piece.b().z}));obj.addProperty("r",piece.radius());obj.addProperty("beam",piece.beam());obj.addProperty("sides",piece.sides());obj.addProperty("top_r",piece.topRadius());obj.addProperty("texture",piece.texture());parts.add(obj);}
             all.add(kind.name(),parts);
+            if(kind==ComponentBlock.Kind.THERMAL||kind==ComponentBlock.Kind.NUCLEAR)t.assertTrue(model.cells().keySet().stream().noneMatch(p->p.getY()<0),"Machine details never intrude into their paid foundation");
             for(var cell:model.cells().values())for(var box:cell.getBoundingBoxes())t.assertTrue(box.minX>=0&&box.maxX<=1&&box.minY>=0&&box.maxY<=1&&box.minZ>=0&&box.maxZ<=1,"Collision stays in its registered world cell");
         }
         try{var file=java.nio.file.Path.of("../assembly-meshes.json");java.nio.file.Files.writeString(file,new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(all));}catch(java.io.IOException ex){throw new RuntimeException(ex);}t.complete();

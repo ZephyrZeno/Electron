@@ -30,6 +30,9 @@ public final class ElectronClient implements ClientModInitializer {
     private static PathPreview cachedRoute;private static long nextRouteUpdate;
     @Override public void onInitializeClient() {
         MagnifierZoom.register();
+        ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.power.FaultEffects.Event.ID,(payload,context)->context.client().execute(()->ArcRenderer.receive(payload.data())));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->ArcRenderer.clear());
+        WorldRenderEvents.AFTER_ENTITIES.register(ArcRenderer::render);
         net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.SCREEN,IndustrialScreen::new);
         BlockEntityRendererFactories.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.FLUID_ENTITY,FluidRenderer::new);
         net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),top.lacrus.zephyrzeno.electron.industrial.Industrial.GLASS_PIPE,top.lacrus.zephyrzeno.electron.industrial.Industrial.THERMAL_TANK,top.lacrus.zephyrzeno.electron.industrial.Industrial.NUCLEAR_TANK);

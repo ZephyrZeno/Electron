@@ -46,6 +46,7 @@ public final class Electron implements ModInitializer {
         }
         MEMORY = register("binary_memory", new BinaryMemoryBlock(settings()));
         Foundry.register();
+        top.lacrus.zephyrzeno.electron.power.FaultEffects.register();
         Registry.register(Registries.ITEM_GROUP, id("components"), FabricItemGroup.builder()
                 .displayName(Text.translatable("itemGroup.electron.components"))
                 .icon(() -> new ItemStack(Foundry.LED))

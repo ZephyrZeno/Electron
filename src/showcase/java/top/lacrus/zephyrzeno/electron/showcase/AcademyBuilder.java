@@ -28,7 +28,33 @@ public final class AcademyBuilder implements ModInitializer {
     private final Set<BlockPos> liveSupplies=new HashSet<>();
     @Override public void onInitialize(){
         ServerLifecycleEvents.SERVER_STARTED.register(server->{try{world=server.getOverworld();circuit=CircuitState.get(world);if(Boolean.getBoolean("electron.academy.verify"))load();else build(server);for(int cx=-1;cx<=8;cx++)for(int cz=-1;cz<=5;cz++)world.setChunkForced(cx,cz,true);ready=true;}catch(Exception e){e.printStackTrace();server.stop(false);throw new IllegalStateException("Academy map build failed",e);}});
-        ServerTickEvents.END_SERVER_TICK.register(server->{if(ready&&++age==1200){try{verify();for(int cx=-1;cx<=8;cx++)for(int cz=-1;cz<=5;cz++)world.setChunkForced(cx,cz,false);server.save(false,true,true);report.add(Boolean.getBoolean("electron.academy.verify")?"reload_verified=true":"build_verified=true");Files.writeString(Path.of("academy-verification.txt"),String.join("\n",report)+"\n");}catch(Exception e){e.printStackTrace();throw new IllegalStateException("Academy validation failed",e);}finally{server.stop(false);}}});
+        ServerTickEvents.END_SERVER_TICK.register(server->{
+            if(!ready)return;
+            age++;
+            try{
+                if(age==1100)arcSupply(true);
+                if(age==1140){
+                    boolean discharge=circuit.wires.values().stream().filter(Wire::vertical)
+                            .anyMatch(w->Math.abs(circuit.readings.current("ground:"+w.id()))>=.002);
+                    arcSupply(false);
+                    if(!discharge)throw new IllegalStateException("The teaching arc did not conduct when switched on");
+                    report.add("arc_demo_powered_test=true");
+                }
+                if(age==1200){
+                    verify();
+                    for(int cx=-1;cx<=8;cx++)for(int cz=-1;cz<=5;cz++)world.setChunkForced(cx,cz,false);
+                    server.save(false,true,true);
+                    report.add(Boolean.getBoolean("electron.academy.verify")?"reload_verified=true":"build_verified=true");
+                    Files.writeString(Path.of("academy-verification.txt"),String.join("\n",report)+"\n");
+                    server.stop(false);
+                }
+            }catch(Exception e){ready=false;server.stop(false);throw new IllegalStateException("Academy validation failed",e);}
+        });
+    }
+    private void arcSupply(boolean enabled){
+        var p=new BlockPos(60,65,51);
+        world.setBlockState(p,world.getBlockState(p).with(ComponentBlock.ENABLED,enabled));
+        circuit.changed();
     }
     private void formed(BlockPos p){String status=top.lacrus.zephyrzeno.electron.multiblock.Assembly.form(world,p,null);if(!status.equals("formed"))throw new IllegalStateException("Cannot form "+p+": "+status);}
     private void foundation(BlockPos p){for(int x=-2;x<=2;x++)for(int z=-2;z<=2;z++)set(p.getX()+x,64,p.getZ()+z,Blocks.SMOOTH_STONE);}
@@ -172,7 +198,16 @@ public final class AcademyBuilder implements ModInitializer {
         var pump=tank.offset(direction.getOpposite(),3);var supply=pump.offset(direction.getOpposite());
         for(var q:BlockPos.iterate(core.add(nuclear?-16:-8,-1,-4),core.add(3,-1,7)))world.setBlockState(q,Blocks.SMOOTH_STONE.getDefaultState());
         for(int i=1;i<=2;i++)world.setBlockState(tank.offset(direction.getOpposite(),i),Industrial.GLASS_PIPE.getDefaultState());
-        world.setBlockState(supply,(nuclear?Industrial.NUCLEAR_TANK:Industrial.THERMAL_TANK).getDefaultState());((FluidEntity)world.getBlockEntity(supply)).change(nuclear?200000:16000);
+        if(nuclear){world.setBlockState(supply,Industrial.NUCLEAR_TANK.getDefaultState());((FluidEntity)world.getBlockEntity(supply)).change(200000);}
+        else{
+            // A raised glass pond keeps the pump terminals dry and the layer withdrawal visible.
+            for(int x=58;x<=62;x++)for(int z=5;z<=9;z++)set(x,65,z,Blocks.SMOOTH_STONE);
+            for(int y=66;y<=66;y++)for(int x=57;x<=63;x++)for(int z=4;z<=10;z++){
+                if(x>=58&&x<=62&&z>=5&&z<=9)world.setBlockState(new BlockPos(x,y,z),Blocks.WATER.getDefaultState(),Block.NOTIFY_LISTENERS|Block.FORCE_STATE);
+                else if(!(x==63&&z==9&&y==66))set(x,y,z,Blocks.GLASS);
+            }
+            sign(new BlockPos(57,66,11),"lake","lake_1","lake_2","read_book");
+        }
         world.setBlockState(pump,Industrial.PUMP.getDefaultState().with(ComponentBlock.FACING,Direction.UP).with(ComponentBlock.TURN,direction.getHorizontal()));circuit.track(pump,world.getBlockState(pump));
         var stageBase=core.down();var tap=device(stageBase,0,4,Industrial.BREAKOUT);
         wire(stageBase,lv,2,tap,0,0,true);wire(stageBase,lv,3,tap,4,1,true);wire(stageBase,tap,1,pump,0,2,true);wire(stageBase,tap,5,pump,1,1,true);
@@ -183,11 +218,17 @@ public final class AcademyBuilder implements ModInitializer {
         var inventory=(IndustrialTableEntity)world.getBlockEntity(table);int slot=0;for(var ingredient:AssemblyRecipes.recipes().getFirst().inputs())inventory.setStack(slot++,new ItemStack(ingredient.item(),ingredient.count()));
         var box=new BlockPos(60,66,17);world.setBlockState(box,Blocks.CHEST.getDefaultState());var chest=(ChestBlockEntity)world.getBlockEntity(box);slot=0;
         for(var block:Industrial.BLOCKS.values())chest.setStack(slot++,new ItemStack(block,4));
-        for(var item:new ItemConvertible[]{Items.IRON_BLOCK,Items.COPPER_BLOCK,Items.IRON_INGOT,Items.WATER_BUCKET,Foundry.RELAY,Foundry.MOTOR,Foundry.RESISTOR_1000,Foundry.MOSFET,Foundry.CAPACITOR})chest.setStack(slot++,new ItemStack(item,item==Items.WATER_BUCKET?1:16));chest.markDirty();
+        for(var item:new ItemConvertible[]{Items.IRON_BLOCK,Items.COPPER_BLOCK,Items.WATER_BUCKET,Foundry.RELAY,Foundry.MOTOR,Foundry.RESISTOR_1000,Foundry.MOSFET,Foundry.CAPACITOR})chest.setStack(slot++,new ItemStack(item,item==Items.WATER_BUCKET?1:16));chest.markDirty();
         for(int x=58;x<=62;x++){set(x,65,60,Blocks.SMOOTH_STONE);set(x,73,60,Blocks.SMOOTH_STONE);}
         for(int y=66;y<73;y++){set(58,y,60,Blocks.IRON_BARS);set(62,y,60,Blocks.IRON_BARS);}
         var high=new BlockPos(60,74,60);var low=new BlockPos(60,66,60);for(var q:List.of(high,low)){world.setBlockState(q,Industrial.BREAKOUT.getDefaultState().with(ComponentBlock.FACING,Direction.SOUTH));circuit.track(q,world.getBlockState(q));}
         for(int pin:new int[]{0,4}){var a=circuit.endpoints().get(node(high,pin));var b=circuit.endpoints().get(node(low,pin));var path=circuit.connectionRoute(world,a,b,0,true);var wire=new Wire(UUID.randomUUID(),a.id(),b.id(),pin==0?0:1,path,VerticalWire.units(circuit,path),true,false,true);circuit.wires.put(wire.id(),wire);}
+        var supply=windTower(new BlockPos(60,73,51));world.setBlockState(supply,world.getBlockState(supply).with(ComponentBlock.ENABLED,false));
+        wire(new BlockPos(56,64,48),supply,0,low,0,0,true);wire(new BlockPos(56,64,48),supply,1,low,4,1,true);
+        set(59,69,61,Blocks.IRON_BLOCK);set(59,68,61,Blocks.SMOOTH_STONE);set(59,67,61,Blocks.SMOOTH_STONE);set(59,66,61,Blocks.SMOOTH_STONE);set(59,65,61,Blocks.SMOOTH_STONE);
+        for(int x=57;x<=64;x++)set(x,65,64,Blocks.IRON_BARS);
+        sign(new BlockPos(60,65,66),"arc_demo","arc_demo_1","arc_demo_2","arc_demo_3");
+        device(new BlockPos(36,65,51),5,6,Industrial.LOW_SOCKET);
     }
     private void first(BlockPos b){var s=source(b,1,3,false,100);var r=device(b,5,3,Foundry.RESISTOR_220);var l=device(b,8,8,Foundry.LED);wire(b,s,0,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,s,1,1,false);indicators.add(l);}
     private void battery(BlockPos b){var s=source(b,1,2,false,100);var m=device(b,5,2,Foundry.BATTERY);var bus=device(b,5,7,Foundry.TERMINAL_STRIP);var r=device(b,8,8,Foundry.RESISTOR_220);var l=device(b,8,12,Foundry.LED);e(m).energy=10;wire(b,s,0,m,0,0,false);wire(b,s,1,m,1,1,false);wire(b,m,2,bus,0,0,false);wire(b,m,3,bus,4,1,false);wire(b,bus,1,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,bus,5,1,false);indicators.add(l);}
@@ -200,7 +241,7 @@ public final class AcademyBuilder implements ModInitializer {
     private void sign(BlockPos p,String...keys){world.setBlockState(p,Blocks.OAK_SIGN.getDefaultState().with(SignBlock.ROTATION,0));var sign=(SignBlockEntity)world.getBlockEntity(p);var text=new SignText().withColor(DyeColor.WHITE).withGlowing(true);for(int i=0;i<Math.min(4,keys.length);i++)text=text.withMessage(i,Text.translatable("map.electron."+keys[i]));sign.setText(text,true);sign.setText(text,false);sign.setWaxed(true);sign.markDirty();}
     private void chest(BlockPos p,boolean all){world.setBlockState(p,Blocks.CHEST.getDefaultState().with(ChestBlock.FACING,Direction.SOUTH));var chest=(ChestBlockEntity)world.getBlockEntity(p);List<ItemStack> items=new ArrayList<>();for(var item:new Item[]{Foundry.HANDBOOK,Foundry.METER,Foundry.CUTTER,Foundry.WRENCH,Foundry.MAGNIFIER})items.add(new ItemStack(item));for(int color=0;color<4;color++){items.add(CircuitToolItem.spool(4096,color,false));items.add(CircuitToolItem.spool(4096,color,true));}items.add(new ItemStack(Foundry.BRIDGE,32));items.add(new ItemStack(Foundry.TERMINAL,32));items.add(new ItemStack(Foundry.WALL_PORT,8));for(var item:all?new Item[]{Foundry.CRANK.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.LED.asItem(),Foundry.BATTERY.asItem(),Foundry.MOSFET.asItem(),Foundry.RELAY.asItem(),Foundry.BOOST.asItem(),Foundry.BUCK_3V3.asItem(),Foundry.BUCK_12.asItem(),Foundry.GENERATOR.asItem(),Foundry.MOTOR.asItem()}:new Item[]{Foundry.LED.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.BREAKER.asItem(),Foundry.FUSE.asItem()})items.add(new ItemStack(item,item==Foundry.BATTERY.asItem()?1:4));for(int i=0;i<Math.min(27,items.size());i++)chest.setStack(i,items.get(i));chest.markDirty();}
     private void verify(){
-        if(circuit.wires.size()!=98||circuit.devices.size()!=74)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size());
+        if(circuit.wires.size()!=100||circuit.devices.size()!=77)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size());
         for(var p:circuit.devices.keySet()){
             if(world.getBlockState(p).isOf(Foundry.TOWER_TERMINAL)){if(!OverheadCable.tower(world,p))throw new IllegalStateException("Invalid demonstration tower");}
             else if(world.getBlockState(p).isOf(Foundry.WIND)||world.getBlockState(p).isOf(Foundry.LIGHTNING)){if(!top.lacrus.zephyrzeno.electron.multiblock.Assembly.original(world,p.down()).isOf(world.getBlockState(p).isOf(Foundry.WIND)?Industrial.MAST:Foundry.TOWER_SECTION))throw new IllegalStateException("Missing plant tower: "+p);}
@@ -210,6 +251,8 @@ public final class AcademyBuilder implements ModInitializer {
         for(var p:circuit.devices.keySet())if(world.getBlockState(p).getBlock() instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyControllerBlock&&!top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(world.getBlockState(p)))throw new IllegalStateException("Unformed showcase machine: "+p);
         for(var q:circuit.devices.keySet())if(world.getBlockState(q).isOf(Industrial.PUMP)&&world.getBlockState(q).get(ComponentBlock.LEVEL)==0)throw new IllegalStateException("Unpowered teaching pump: "+q);
         if(circuit.wires.values().stream().filter(Wire::vertical).count()!=2)throw new IllegalStateException("Missing hanging cable lesson");
+        if(world.getBlockState(new BlockPos(60,65,51)).get(ComponentBlock.ENABLED))throw new IllegalStateException("Arc lesson must be switched off before export");
+        report.add("arc_demo_default_off=true");
         report.add("pumps_working=true");report.add("vertical_drops=2");report.add("all_multiblocks_formed=true");
         report.add("components_above_bench=true");
         // Entity chunks load asynchronously; check after ticking, never discard at SERVER_STARTED.

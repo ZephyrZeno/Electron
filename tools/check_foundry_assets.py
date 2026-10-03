@@ -161,7 +161,7 @@ def sheet(filename,title,names):
     canvas.save(OUT/filename)
 
 if '--industrial' in sys.argv:
-    sheet('industrial.png','ELECTRON / 机组部件、供水与接线',[(n,'item/'+n) for n in ['boiler_module','turbine_module','alternator_module','condenser_module','plant_control_module','reactor_vessel_module','control_rod_drive','safety_valve_module','water_pump','wind_mast','wind_base','cable_breakout','iron_pipe','glass_pipe','pipe_valve','boiler_water_tank','reactor_coolant_tank','industrial_assembly_table']])
+    sheet('industrial.png','ELECTRON / 机组部件、供水与接线',[(n,'item/'+n) for n in ['boiler_module','turbine_module','alternator_module','condenser_module','plant_control_module','reactor_vessel_module','control_rod_drive','safety_valve_module','water_pump','wind_mast','wind_base','cable_breakout','iron_pipe','glass_pipe','pipe_valve','boiler_water_tank','reactor_coolant_tank','industrial_assembly_table','low_profile_socket']])
     print(OUT/'industrial.png')
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
     sys.exit(0)

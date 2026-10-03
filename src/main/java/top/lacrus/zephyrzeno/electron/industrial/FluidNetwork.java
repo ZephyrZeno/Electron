@@ -28,11 +28,7 @@ public final class FluidNetwork {
         var intake=p.offset(d.getOpposite());if(!w.isChunkLoaded(intake))return 0;
         if(w.getBlockEntity(intake) instanceof FluidEntity source){if(!((FluidBlock)source.getCachedState().getBlock()).tank())return 0;moved=Math.min(moved,source.amount);source.change(-moved);}
         else{
-            if(motor.pumpIntake<moved&&w.getFluidState(intake).isIn(FluidTags.WATER)&&w.getFluidState(intake).isStill()){
-                // A block of water is exactly one bucket. Vanilla renewable sources may refill it later.
-                if(!w.getBlockState(intake).isOf(Blocks.WATER))return 0;
-                w.setBlockState(intake,Blocks.AIR.getDefaultState(),Block.NOTIFY_ALL);motor.pumpIntake+=1000;
-            }
+            if(motor.pumpIntake<moved)motor.pumpIntake+=WaterBodies.get(w).withdraw(w,intake,moved-motor.pumpIntake);
             moved=Math.min(moved,motor.pumpIntake);motor.pumpIntake-=moved;
         }
         if(moved>0){target.change(moved);route.pipes.forEach(FluidEntity::flow);motor.markDirty();if(w.getTime()%40==0)ElectricalEffects.play(w,p,ElectricalEffects.PUMP,.25f,1);}

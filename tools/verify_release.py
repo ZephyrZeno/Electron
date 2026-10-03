@@ -33,7 +33,7 @@ for label,path,modid,forbidden in [('main',MAIN,'electron',b'top/lacrus/zephyrze
             for item in ('CircuitToolItem','ComponentItem','MagnifierItem'):
                 assert f'top/lacrus/zephyrzeno/electron/item/{item}.class' in names
                 assert not any(f'/{old}/{item}.class' in n for old in ('circuit','foundry') for n in names)
-            for device in ('industrial_assembly_table','water_pump','wind_base','wind_mast','cable_breakout','iron_pipe','glass_pipe','pipe_valve','boiler_water_tank','reactor_coolant_tank'):
+            for device in ('industrial_assembly_table','water_pump','wind_base','wind_mast','cable_breakout','low_profile_socket','iron_pipe','glass_pipe','pipe_valve','boiler_water_tank','reactor_coolant_tank'):
                 assert f'assets/electron/blockstates/{device}.json' in names
                 assert f'data/electron/recipe/{device}.json' in names
             for module in ('boiler_module','turbine_module','alternator_module','condenser_module','plant_control_module','reactor_vessel_module','control_rod_drive','safety_valve_module'):
@@ -71,7 +71,7 @@ localization=json.loads((ROOT/'build/localization-verification.json').read_text(
 summary['map']=json.loads((ROOT/'build/academy-package-verification.json').read_text(encoding='utf-8'))
 summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'client_visual':'Offline model previews and native light propagation tests. Multiblock geometry exported from native tests; no Computer Use or in-game visual acceptance.'}
 audio_report=json.loads((ROOT/'build/industrial-audio-verification.json').read_text(encoding='utf-8'))
-assert audio_report['decoded'] and not audio_report['clipped'] and len(audio_report['original_ogg_samples'])==15
+assert audio_report['decoded'] and not audio_report['clipped'] and len(audio_report['original_ogg_samples'])==23
 summary['audio']=audio_report
 shader_report=ROOT/'build/shader-rollback-verification.json'
 if shader_report.exists():summary['local_shader_rollback']=json.loads(shader_report.read_text(encoding='utf-8'))
@@ -91,21 +91,23 @@ shutil.copy2(ROOT/'build/asset-review/assemblies.png',out/'assembled-preview.png
 shutil.copy2(ROOT/'build/asset-review/industrial.png',out/'industrial-preview.png')
 shutil.copy2(ROOT/'docs/design/MULTIBLOCKS_V5.md',out/'多方块与高压-v5.md')
 shutil.copy2(ROOT/'docs/design/INDUSTRIAL_PLANTS_V6.md',out/'工业机组与供水-v6.md')
+shutil.copy2(ROOT/'docs/design/FAULTS_WATER_DETAIL_V7.md',out/'故障取水与模型-v7.md')
+shutil.copy2(ROOT/'build/asset-review/arcs.png',out/'arc-preview.png')
 (out/'安装说明.txt').write_text(f"""Electron: Circuit Foundry — {VERSION}
 Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-本版新增：大型机组装配台与8种部件、自动成型的7×7火电与30×30核电、专用水槽、电动水泵、透明/铁皮管与阀门、垂直双端悬线、电缆扩展接线座和15段原创音效。
+本版新增：有真实起止坐标的分叉电弧、定位音效、过热及熔断反馈、局部闪光、触电支路、原版动态容器水、按层减少的原版水域抽水、矮型双母线插排及电站模型细化。保留工业机组装配，原创声音共23段。
 主要样机改由真实风机持续供电，入口架空线接入负载。5 V 手摇课程仍需补能，电容需按按钮，故障区需手摇启动。
 普通器件放在平滑石上；风机使用独立白色塔筒与底部出线柜，引雷使用桁架塔。精确建造坐标、配方和供水规则见《工业机组与供水-v6.md》。旧版小型火电、核电及桁架风机需要先拆解、再按新结构重建。
 成型火电 11 kV、水电 6.6 kV、核电 24 kV，使用固定绕组降到 240 V、24 V；雷击为 300 MV / 30 kA 短时事件，仅回收有限能量。网络使用直流等效模型；无免费市电、无免费调压，不模拟交流相位或核反应物理。
 八种颜色的导线和八种颜色的电缆均为独立物品；旧线轴与已付费长度保留。
-电缆加粗并采用贴图，跨线桥加高；240 V 架空线离地或障碍不足两格会漏电放电。
+电缆加粗并采用贴图，跨线桥加高；架空及垂直悬线按实际电压检查净距，240 V为0.45格，6.6/11/24 kV为1.2/1.6/2.4格；详见故障取水与模型-v7.md。
 工程灯在额定供电时发出原版 15 级光照；光源增加 labPBR 发光材质。断电和损坏时熄灭。
 不添加光影包。此前 Electron Lights 副本已备份移出 shaderpacks，原包保持不变。
-24页手册、20张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
+25页手册、21张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
 主线不依赖计算器。PCB 制板、焊接、开发板、三相交流等尚未实现。
 
 教学地图：解压 circuit-academy-{VERSION}.zip，将 Circuit_Foundry_Academy 放入 saves。
