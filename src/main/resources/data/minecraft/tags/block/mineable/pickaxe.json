@@ -43,6 +43,7 @@
     "electron:pipe_valve",
     "electron:plant_casing",
     "electron:plant_control_module",
+    "electron:plant_fuel_port",
     "electron:power_mosfet",
     "electron:reactor_casing",
     "electron:reactor_coolant_tank",

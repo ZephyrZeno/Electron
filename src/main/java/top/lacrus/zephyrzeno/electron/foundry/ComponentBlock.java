@@ -112,6 +112,10 @@ public class ComponentBlock extends BlockWithEntity {
     }
     @Override protected void onBlockAdded(BlockState state,World world,BlockPos pos,BlockState old,boolean notify){super.onBlockAdded(state,world,pos,old,notify);if(world instanceof ServerWorld server)CircuitState.get(server).track(pos,state);}
     @Override protected void onStateReplaced(BlockState state,World world,BlockPos pos,BlockState next,boolean moved){
+        if(!next.isOf(this)&&!world.isClient&&world.getBlockEntity(pos) instanceof ComponentEntity core){
+            for(var stack:core.plantItems)net.minecraft.util.ItemScatterer.spawn(world,pos.getX(),pos.getY(),pos.getZ(),stack);
+            core.plantItems.clear();
+        }
         if(!next.isOf(this)&&top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state)&&world instanceof ServerWorld server)top.lacrus.zephyrzeno.electron.multiblock.Assembly.dismantle(server,pos,pos);
         super.onStateReplaced(state,world,pos,next,moved);
         if(kind==Kind.REDSTONE_SWITCH&&(!next.isOf(this)||redstoneSide(next)!=redstoneSide(state)))world.updateNeighborsAlways(pos.offset(redstoneSide(state)),this);

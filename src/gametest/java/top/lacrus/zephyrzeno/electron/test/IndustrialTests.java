@@ -40,11 +40,12 @@ public final class IndustrialTests implements FabricGameTest {
         t.assertFalse(s.claimLightning(first.getUuid()),"Captured bolt remains consumed after reload");t.assertFalse(s.claimLightning(second.getUuid()),"Both simultaneous UUIDs survive reload");first.discard();second.discard();t.complete();
     }
     @GameTest(templateName="electron:industrial_test",tickLimit=30)
-    public void breakingWorkshopSideReturnsOneTableAndItsInventory(TestContext t){
+    public void breakingWorkshopSideKeepsFivePaidModulesAndReturnsInventory(TestContext t){
         var w=t.getWorld();var p=t.getAbsolutePos(new BlockPos(6,4,6));var state=Industrial.TABLE.getDefaultState();
         for(int i=0;i<6;i++){var q=p.add(IndustrialTableBlock.offset(Direction.NORTH,i));w.setBlockState(q.down(),Blocks.SMOOTH_STONE.getDefaultState());w.setBlockState(q,state.with(IndustrialTableBlock.PART,i));}
+        t.assertTrue(IndustrialTableBlock.form(w,p),"Six separately placed modules form");
         ((IndustrialTableEntity)w.getBlockEntity(p)).setStack(0,new ItemStack(Items.COPPER_INGOT,13));w.breakBlock(p.east(2).south(),true);
-        for(int i=0;i<6;i++)t.assertTrue(w.getBlockState(p.add(IndustrialTableBlock.offset(Direction.NORTH,i))).isAir(),"Every linked table cell is removed");
+        for(int i=0;i<5;i++){var q=p.add(IndustrialTableBlock.offset(Direction.NORTH,i));t.assertTrue(w.getBlockState(q).isOf(Industrial.TABLE)&&!w.getBlockState(q).get(IndustrialTableBlock.FORMED),"Five paid modules remain but cannot be used");}
         int tables=0,copper=0;for(var drop:w.getEntitiesByClass(net.minecraft.entity.ItemEntity.class,new Box(p).expand(5),x->true)){if(drop.getStack().isOf(Industrial.TABLE.asItem()))tables+=drop.getStack().getCount();if(drop.getStack().isOf(Items.COPPER_INGOT))copper+=drop.getStack().getCount();}
         t.assertEquals(tables,1,"Exactly one workbench item is returned");t.assertEquals(copper,13,"Stored ingredients are returned exactly once");t.complete();
     }
@@ -76,9 +77,9 @@ public final class IndustrialTests implements FabricGameTest {
         t.runAtTick(15,()->{t.assertTrue(Assembly.formed(w.getBlockState(p)),"Completing the structure forms without a wrench");t.assertTrue(w.getBlockState(p.north(4)).isOf(Assembly.PART),"Paid boiler incorporated into the model");t.assertTrue(e.energy>0&&e.fuelEnergy<16000,"Finite fuel powers completed structure");t.complete();});
     }
     @GameTest(templateName="electron:industrial_test",tickLimit=30)
-    public void nuclearNeedsWholeThirtyByThirtySiteAndSavedCoolingTank(TestContext t){
+    public void nuclearNeedsWholeThirtySixByThirtySixSiteAndSavedCoolingTank(TestContext t){
         var p=t.getAbsolutePos(new BlockPos(25,4,35));var w=t.getWorld();IndustrialFixtures.plant(w,p,Foundry.NUCLEAR);
-        var missing=p.add(-15,-1,-29);w.setBlockState(missing,Blocks.AIR.getDefaultState());
+        var missing=p.add(20,-1,-35);w.setBlockState(missing,Blocks.AIR.getDefaultState());
         t.assertEquals(Assembly.form(w,p,null),"nuclear_foundation","Even a corner of the full foundation is required");w.setBlockState(missing,Blocks.SMOOTH_STONE.getDefaultState());
         t.assertEquals(Assembly.form(w,p,null),"formed","Complete large facility forms");var e=(ComponentEntity)w.getBlockEntity(p);e.fuelEnergy=200000;
         var tank=(FluidEntity)w.getBlockEntity(PlantStructures.tankPos(p,w.getBlockState(p)));var copy=new FluidEntity(tank.getPos(),tank.getCachedState());copy.read(tank.createNbt(w.getRegistryManager()),w.getRegistryManager());t.assertEquals(copy.amount,200000,"Tank contents survive serialization");

@@ -9,7 +9,7 @@ S=2
 canvas=Image.new('RGB',(1440*S,1050*S),'#101b25');d=ImageDraw.Draw(canvas)
 font=lambda n:ImageFont.truetype('C:/Windows/Fonts/msyh.ttc',n*S)
 d.text((26*S,18*S),'ELECTRON · 多方块模型 / 实际网格离线预览',font=font(27),fill='#a2e2ca')
-names={'DISTRIBUTION':'锥形输电塔 · 三层横担','WIND':'风机 · 锥形塔筒 / 底部出线','THERMAL':'火电 · 锅炉 / 排烟管','HYDRO':'水电 · 涡壳 / 发电机','NUCLEAR':'核电 · 30×30 独立设施','LIGHTNING':'引雷 · 瓷套 / 储能组','SUBSTATION':'变电 · 油箱 / 散热片','MAINS':'进线 · 立式配电柜'}
+names={'DISTRIBUTION':'锥形输电塔 · 三层横担','WIND':'风机 · 锥形塔筒 / 底部出线','THERMAL':'火电 · 锅炉 / 排烟管','HYDRO':'水电 · 涡壳 / 发电机','NUCLEAR':'核电 · 36×36 独立设施','LIGHTNING':'引雷 · 瓷套 / 储能组','SUBSTATION':'变电 · 油箱 / 散热片','MAINS':'进线 · 立式配电柜'}
 order=['DISTRIBUTION','WIND','THERMAL','NUCLEAR','LIGHTNING','HYDRO','SUBSTATION','MAINS']
 def add(a,b):return tuple(x+y for x,y in zip(a,b))
 def sub(a,b):return tuple(x-y for x,y in zip(a,b))

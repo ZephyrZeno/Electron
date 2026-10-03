@@ -13,6 +13,7 @@
     "electron:low_profile_socket",
     "electron:pipe_valve",
     "electron:plant_control_module",
+    "electron:plant_fuel_port",
     "electron:reactor_coolant_tank",
     "electron:reactor_vessel_module",
     "electron:safety_valve_module",

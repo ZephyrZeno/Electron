@@ -15,7 +15,7 @@ for key,value in zh.items():
 for path in (ROOT/'src/main/java').rglob('*.java'):
     code=path.read_text(encoding='utf-8')
     assert not re.search(r'[\u3400-\u9fff]',code),('Hardcoded Chinese remains',path)
-    for key in re.findall(r'"((?:message|error|tooltip|hud|guide|pin|reading|color|direction|itemGroup|block|item|key|meter|motor|map|screen|assembly|plant|subtitles)\.electron\.[a-z_0-9.]+)"',code):
+    for key in re.findall(r'"((?:message|error|tooltip|hud|guide|pin|reading|color|direction|itemGroup|block|item|key|meter|motor|map|screen|assembly|plant|plant_ui|container|subtitles)\.electron\.[a-z_0-9.]+)"',code):
         if not key.endswith(('.', '_')):assert key in en,(path,key)
     for suffix in re.findall(r'line\(lines,"([a-z_0-9]+)"',code):
         if not suffix.endswith('_'):assert 'tooltip.electron.'+suffix in en,suffix

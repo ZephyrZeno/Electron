@@ -17,7 +17,7 @@ import top.lacrus.zephyrzeno.electron.circuit.*;
 import top.lacrus.zephyrzeno.electron.power.PowerPlant;
 
 public final class Assembly {
-    public static final int GEOMETRY_REVISION=2;
+    public static final int GEOMETRY_REVISION=3;
     public static AssemblyPartBlock PART;
     public static BlockEntityType<AssemblyPartEntity> PART_ENTITY;
     private static final Set<String> CHANGING=new HashSet<>();
@@ -62,7 +62,7 @@ public final class Assembly {
             if(!w.isChunkLoaded(q))return "unloaded";
             if(player!=null&&(!player.canModifyBlocks()||!w.canPlayerModifyAt(player,q)||!w.getWorldBorder().contains(q)))return "permission";
             var old=w.getBlockState(q);
-            if(old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.FluidBlock||old.isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE))continue;
+            if(old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.PlantServiceBlock||old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.FluidBlock||old.isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE))continue;
             if(controller.kind==ComponentBlock.Kind.HYDRO&&q.equals(top.lacrus.zephyrzeno.electron.industrial.PlantStructures.at(p,state,0,0,-1))&&(old.isOf(Blocks.WATER)||old.isAir()))continue;
             if(old.isOf(Blocks.FURNACE)&&controller.kind==ComponentBlock.Kind.THERMAL)continue;
             if(old.isOf(Blocks.LIGHTNING_ROD)&&controller.kind==ComponentBlock.Kind.LIGHTNING)continue;
@@ -78,6 +78,7 @@ public final class Assembly {
         }
         w.setBlockState(p,state.with(AssemblyControllerBlock.FORMED,true),Block.NOTIFY_ALL);
         w.updateListeners(p,state,w.getBlockState(p),Block.NOTIFY_LISTENERS);CircuitState.get(w).track(p,w.getBlockState(p));
+        if(controller.kind==ComponentBlock.Kind.THERMAL||controller.kind==ComponentBlock.Kind.NUCLEAR)top.lacrus.zephyrzeno.electron.industrial.PlantOperations.bind(w,core);
         ElectricalEffects.play(w,p,ElectricalEffects.FORM,.6f,1);return "formed";
     }
     /** Add newly detailed collision cells on upgrade, preserving energy, inventories and paid parts. */
@@ -87,7 +88,7 @@ public final class Assembly {
         var offsets=new LinkedHashSet<>(core.assemblyCells);var additions=new ArrayList<BlockPos>();
         for(var offset:AssemblyGeometry.model(kind,core.assemblyHeight,tower,s.get(ComponentBlock.TURN)).cells().keySet()){
             if(offset.equals(BlockPos.ORIGIN)||offsets.contains(offset))continue;var q=p.add(offset);if(!w.isChunkLoaded(q))return "unloaded";var old=w.getBlockState(q);
-            if(old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.FluidBlock||old.isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE))continue;
+            if(old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.PlantServiceBlock||old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.FluidBlock||old.isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE))continue;
             if(kind==ComponentBlock.Kind.HYDRO&&q.equals(top.lacrus.zephyrzeno.electron.industrial.PlantStructures.at(p,s,0,0,-1)))continue;
             if(!old.isAir()||CircuitState.get(w).hasAttachment(q))return "space";additions.add(offset);
         }

@@ -37,6 +37,7 @@ public final class PowerPlant {
     private static boolean water(ServerWorld w,BlockPos p){return w.isChunkLoaded(p)&&w.getFluidState(p).isIn(FluidTags.WATER);}
     public static void prepare(ServerWorld w,BlockPos p,BlockState state,ComponentEntity e){
         var kind=((ComponentBlock)state.getBlock()).kind;
+        if(kind==ComponentBlock.Kind.THERMAL||kind==ComponentBlock.Kind.NUCLEAR)PlantOperations.feed(w,e);
         e.plantStatus=requirement(w,p,kind);e.plantReady=e.plantStatus.equals("ready")&&Assembly.formed(state);
         if(!Assembly.formed(state)&&e.plantStatus.equals("ready"))e.plantStatus=e.assemblyStatus.equals("formed")?"assembly_pending":e.assemblyStatus;
         boolean enabled=state.get(ComponentBlock.ENABLED)&&!state.get(ComponentBlock.BROKEN);
@@ -76,6 +77,14 @@ public final class PowerPlant {
         var kind=((ComponentBlock)s.getBlock()).kind;
         if(player.isSneaking()){w.setBlockState(p,s.cycle(ComponentBlock.ENABLED),Block.NOTIFY_ALL);player.sendMessage(Text.translatable(s.get(ComponentBlock.ENABLED)?"message.electron.source_off":"message.electron.source_on"),true);return;}
         if(s.isOf(Industrial.WIND_BASE)){player.sendMessage(Text.translatable("message.electron.wind_base_output"),true);return;}
+        if((kind==ComponentBlock.Kind.THERMAL||kind==ComponentBlock.Kind.NUCLEAR)&&Assembly.formed(s)){
+            PlantOperations.bind(w,e);
+            if(w.getBlockEntity(PlantStructures.consolePos(p,s)) instanceof PlantServiceEntity service){
+                if(service.insertOne(held)&&!player.isCreative())held.decrement(1);
+                if(player.squaredDistanceTo(net.minecraft.util.math.Vec3d.ofCenter(service.getPos()))<=64)player.openHandledScreen(service);
+                else player.sendMessage(Text.translatable("message.electron.use_control_room",service.getPos().getX(),service.getPos().getY(),service.getPos().getZ()),true);return;
+            }
+        }
         boolean coal=kind==ComponentBlock.Kind.THERMAL&&(held.isOf(Items.COAL)||held.isOf(Items.CHARCOAL));
         boolean nuclear=kind==ComponentBlock.Kind.NUCLEAR&&held.isOf(Foundry.FUEL_ROD);
         if(coal&&e.fuelEnergy<=184000){e.fuelEnergy+=16000;if(!player.isCreative())held.decrement(1);e.markDirty();}

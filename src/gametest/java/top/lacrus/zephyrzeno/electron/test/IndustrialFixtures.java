@@ -8,7 +8,7 @@ import top.lacrus.zephyrzeno.electron.industrial.*;
 
 final class IndustrialFixtures {
     static void plant(ServerWorld w,BlockPos p,ComponentBlock block){
-        boolean nuclear=block==Foundry.NUCLEAR;int xmin=nuclear?-16:-4,xmax=nuclear?16:4,zmin=nuclear?-30:-7;
+        boolean nuclear=block==Foundry.NUCLEAR;int xmin=nuclear?-16:-4,xmax=nuclear?22:4,zmin=nuclear?-36:-7;
         for(var q:BlockPos.iterate(p.add(xmin,0,zmin),p.add(xmax,nuclear?21:8,2)))w.setBlockState(q,Blocks.AIR.getDefaultState());
         for(int x=xmin;x<=xmax;x++)for(int z=zmin;z<=1;z++)w.setBlockState(p.add(x,-1,z),Blocks.SMOOTH_STONE.getDefaultState());
         var state=block.getDefaultState().with(ComponentBlock.FACING,Direction.UP);w.setBlockState(p,state);

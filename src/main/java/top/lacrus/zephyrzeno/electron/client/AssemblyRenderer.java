@@ -28,6 +28,7 @@ final class AssemblyRenderer {
             var out=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/"+p.texture()+".png")));
             if(p.sides()>4)cylinder(out,m,p,light,overlay);
             else if(p.beam())beam(out,m,p.a(),p.b(),p.radius(),light,overlay);
+            else if(java.util.Set.of("hatch","service_panel","console_panel","room_sign","intake_sign","instrument_glass").contains(p.texture()))ComponentRenderer.centeredBox(out,m,p.a().x,p.a().y,p.a().z,p.b().x,p.b().y,p.b().z,light,overlay);
             else tiledBox(out,m,new Box(p.a(),p.b()),light,overlay);
         }
         if(b.kind==ComponentBlock.Kind.WIND){

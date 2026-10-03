@@ -1,6 +1,8 @@
 # Electron: Circuit Foundry
 
-Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.5.1-alpha.1**。Mod ID：`electron`；Java 包：`top.lacrus.zephyrzeno.electron`。
+Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.5.2-alpha.1**。Mod ID：`electron`；Java 包：`top.lacrus.zephyrzeno.electron`。
+
+0.5.2-alpha.1 修复创造背包重复物品导致的崩溃。火电、核电加入控制面板及箱子/漏斗燃料输入口；核电扩建为 36×36 并有可进入控制室、封闭池盖。大型装配台改为六块模块逐块放置后成型；修正台阶、爬梯和铭牌，细化铀燃料材质。当前建造坐标、合成与操作见 [机组操作与装配 v8](docs/design/PLANT_OPERATIONS_V8.md)。
 
 0.5.1-alpha.1 完善电弧、过热、熔断、爆裂、跳闸和精确定位音效；容器水改用原版动态水纹理及生物群系颜色。水泵可共享原版水域的抽水账本，按实际抽水量整层降低水位，面积达到 1024 格的连通水层保持水位。新增矮型双母线插排，细化火电、核电、风机模型与材质。详细规则见 [故障、取水与模型 v7](docs/design/FAULTS_WATER_DETAIL_V7.md)。
 
@@ -16,7 +18,7 @@ Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.5.1-alpha.1**。Mod I
 
 ## 安装
 
-将 `build/libs/electron-0.5.1-alpha.1.jar` 放进 mods，同时安装适用于 Minecraft 1.21.1 的 Fabric Loader 和 Fabric API，使用 Java 21。替换已有的旧 Electron JAR，同一个 Mod ID 不可装两份。旧逻辑门、器件和存储器保留注册 ID，旧线路保留已付费长度。
+将 `build/libs/electron-0.5.2-alpha.1.jar` 放进 mods，同时安装适用于 Minecraft 1.21.1 的 Fabric Loader 和 Fabric API，使用 Java 21。替换已有的旧 Electron JAR，同一个 Mod ID 不可装两份。旧逻辑门、器件和存储器保留注册 ID，旧线路保留已付费长度。
 
 若要继续使用生成器，另装 `calculator/build/libs/electron-calculator-0.2.0-alpha.4.jar`。已经生成的计算器由原版方块组成；正常运算不调用主线电学系统。
 

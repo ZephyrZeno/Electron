@@ -21,7 +21,7 @@ public final class IndustrialTableEntity extends BlockEntity implements Inventor
     @Override public ItemStack removeStack(int slot,int count){var out=Inventories.splitStack(stacks,slot,count);if(!out.isEmpty())markDirty();return out;}
     @Override public ItemStack removeStack(int slot){var out=Inventories.removeStack(stacks,slot);markDirty();return out;}
     @Override public void setStack(int slot,ItemStack stack){stacks.set(slot,stack);stack.capCount(getMaxCountPerStack());markDirty();}
-    @Override public boolean canPlayerUse(PlayerEntity p){return world!=null&&world.getBlockEntity(pos)==this&&p.squaredDistanceTo(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5)<=64;}
+    @Override public boolean canPlayerUse(PlayerEntity p){return world!=null&&world.getBlockEntity(pos)==this&&IndustrialTableBlock.complete(world,pos,getCachedState())&&p.squaredDistanceTo(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5)<=64;}
     @Override public void clear(){stacks.clear();markDirty();}
     @Override public Text getDisplayName(){return Text.translatable("block.electron.industrial_assembly_table");}
     @Override public ScreenHandler createMenu(int sync,PlayerInventory inv,PlayerEntity player){return new IndustrialScreenHandler(sync,inv,this,ScreenHandlerContext.create(world,pos));}

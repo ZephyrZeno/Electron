@@ -20,6 +20,9 @@ public final class Industrial {
     public static ComponentBlock PUMP,WIND_BASE,BREAKOUT,LOW_SOCKET;
     public static FluidBlock IRON_PIPE,GLASS_PIPE,VALVE,THERMAL_TANK,NUCLEAR_TANK;
     public static IndustrialTableBlock TABLE;
+    public static PlantServiceBlock FUEL_PORT;
+    public static BlockEntityType<PlantServiceEntity> SERVICE_ENTITY;
+    public static ScreenHandlerType<PlantScreenHandler> PLANT_SCREEN;
     public static BlockEntityType<FluidEntity> FLUID_ENTITY;
     public static BlockEntityType<IndustrialTableEntity> TABLE_ENTITY;
     public static ScreenHandlerType<IndustrialScreenHandler> SCREEN;
@@ -37,7 +40,10 @@ public final class Industrial {
     });Foundry.DEVICES.put(id,b);return b;}
     public static void registerBlocks(){
         MAST=block("wind_mast",new Block(settings()));
-        BOILER=block("boiler_module",new Block(settings()));TURBINE=block("turbine_module",new Block(settings()));ALTERNATOR=block("alternator_module",new Block(settings()));CONDENSER=block("condenser_module",new Block(settings()));CONTROL=block("plant_control_module",new Block(settings()));REACTOR_VESSEL=block("reactor_vessel_module",new Block(settings()));CONTROL_RODS=block("control_rod_drive",new Block(settings()));SAFETY_VALVE=block("safety_valve_module",new Block(settings()));
+        BOILER=block("boiler_module",new Block(settings()));TURBINE=block("turbine_module",new Block(settings()));ALTERNATOR=block("alternator_module",new Block(settings()));CONDENSER=block("condenser_module",new Block(settings()));CONTROL=block("plant_control_module",new PlantServiceBlock(settings(),false));REACTOR_VESSEL=block("reactor_vessel_module",new Block(settings()));CONTROL_RODS=block("control_rod_drive",new Block(settings()));SAFETY_VALVE=block("safety_valve_module",new Block(settings()));
+        FUEL_PORT=block("plant_fuel_port",new PlantServiceBlock(settings(),true));
+        SERVICE_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("plant_service"),FabricBlockEntityTypeBuilder.create(PlantServiceEntity::new,CONTROL,FUEL_PORT).build());
+        PLANT_SCREEN=Registry.register(Registries.SCREEN_HANDLER,Electron.id("plant_service"),new ScreenHandlerType<>(PlantScreenHandler::new,FeatureFlags.VANILLA_FEATURES));
         PUMP=device("water_pump",ComponentBlock.Kind.MOTOR);WIND_BASE=device("wind_base",ComponentBlock.Kind.MAINS);BREAKOUT=device("cable_breakout",ComponentBlock.Kind.DISTRIBUTION);
         LOW_SOCKET=device("low_profile_socket",ComponentBlock.Kind.TERMINAL_STRIP);
         IRON_PIPE=block("iron_pipe",new FluidBlock(settings(),FluidBlock.Type.IRON));GLASS_PIPE=block("glass_pipe",new FluidBlock(settings(),FluidBlock.Type.GLASS));VALVE=block("pipe_valve",new FluidBlock(settings(),FluidBlock.Type.VALVE));

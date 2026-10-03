@@ -169,7 +169,7 @@ public final class AcademyBuilder implements ModInitializer {
         for(var block:new ComponentBlock[]{Foundry.THERMAL,Foundry.HYDRO,Foundry.NUCLEAR}){
             var p=block==Foundry.NUCLEAR?new BlockPos(103,66,58):new BlockPos(68,66,block==Foundry.THERMAL?10:32);index++;
             if(block==Foundry.THERMAL||block==Foundry.NUCLEAR){
-                boolean nuclear=block==Foundry.NUCLEAR;for(int x=nuclear?-16:-4;x<=(nuclear?16:4);x++)for(int z=nuclear?-30:-7;z<=1;z++)set(p.getX()+x,65,p.getZ()+z,Blocks.SMOOTH_STONE);
+                boolean nuclear=block==Foundry.NUCLEAR;for(int x=nuclear?-16:-4;x<=(nuclear?22:4);x++)for(int z=nuclear?-36:-7;z<=1;z++)set(p.getX()+x,65,p.getZ()+z,Blocks.SMOOTH_STONE);
                 world.setBlockState(p,block.getDefaultState().with(ComponentBlock.FACING,Direction.UP));
                 PlantStructures.modules(p,world.getBlockState(p)).forEach((q,bk)->world.setBlockState(q,bk.getDefaultState()));
                 var tank=(FluidEntity)world.getBlockEntity(PlantStructures.tankPos(p,world.getBlockState(p)));tank.change(nuclear?200000:15000);e(p).fuelEnergy=nuclear?200000:64000;e(p).fuelLoaded=nuclear;
@@ -181,6 +181,11 @@ public final class AcademyBuilder implements ModInitializer {
                 for(int x=-3;x<=3;x++)world.setBlockState(p.add(x,0,-1),Blocks.WATER.getDefaultState().with(net.minecraft.block.FluidBlock.LEVEL,x==-3?0:x+3));
             }
             circuit.track(p,world.getBlockState(p));e(p).markDirty();formed(p);
+            if(block==Foundry.THERMAL||block==Foundry.NUCLEAR){
+                var intake=PlantStructures.fuelPos(p,world.getBlockState(p));var boxPos=intake.offset(block==Foundry.NUCLEAR?Direction.EAST:Direction.WEST);
+                world.setBlockState(boxPos.down(),Blocks.SMOOTH_STONE.getDefaultState());world.setBlockState(boxPos,Blocks.CHEST.getDefaultState());
+                var fuelChest=(ChestBlockEntity)world.getBlockEntity(boxPos);fuelChest.setStack(0,new ItemStack(block==Foundry.NUCLEAR?Foundry.FUEL_ROD:Items.COAL,block==Foundry.NUCLEAR?4:32));fuelChest.markDirty();
+            }
             for(int x=-7;x<=14;x++)for(int z=1;z<=7;z++)world.setBlockState(p.add(x,-1,z),Blocks.SMOOTH_STONE.getDefaultState());
             var stageBase=p.down();var hv=device(stageBase,5,4,block==Foundry.THERMAL?Foundry.STATION_11K:block==Foundry.HYDRO?Foundry.STATION_6K6:Foundry.STATION_24K);stationStructure(hv);
             var lv=device(stageBase,9,4,Foundry.SUBSTATION);stationStructure(lv);var load=device(stageBase,12,4,Foundry.LAMP);
@@ -215,10 +220,12 @@ public final class AcademyBuilder implements ModInitializer {
     private void industrialWorkshop(){
         for(int x=57;x<=64;x++)for(int z=11;z<=19;z++)set(x,65,z,Blocks.SMOOTH_STONE);
         var table=new BlockPos(59,66,12);for(int i=0;i<6;i++)world.setBlockState(table.add(IndustrialTableBlock.offset(Direction.NORTH,i)),Industrial.TABLE.getDefaultState().with(IndustrialTableBlock.PART,i).with(IndustrialTableBlock.FACING,Direction.NORTH));
+        if(!IndustrialTableBlock.form(world,table))throw new IllegalStateException("Six paid teaching table modules did not form");
         var inventory=(IndustrialTableEntity)world.getBlockEntity(table);int slot=0;for(var ingredient:AssemblyRecipes.recipes().getFirst().inputs())inventory.setStack(slot++,new ItemStack(ingredient.item(),ingredient.count()));
         var box=new BlockPos(60,66,17);world.setBlockState(box,Blocks.CHEST.getDefaultState());var chest=(ChestBlockEntity)world.getBlockEntity(box);slot=0;
         for(var block:Industrial.BLOCKS.values())chest.setStack(slot++,new ItemStack(block,4));
-        for(var item:new ItemConvertible[]{Items.IRON_BLOCK,Items.COPPER_BLOCK,Items.WATER_BUCKET,Foundry.RELAY,Foundry.MOTOR,Foundry.RESISTOR_1000,Foundry.MOSFET,Foundry.CAPACITOR})chest.setStack(slot++,new ItemStack(item,item==Items.WATER_BUCKET?1:16));chest.markDirty();
+        for(var item:new ItemConvertible[]{Items.IRON_BLOCK,Items.COPPER_BLOCK,Items.WATER_BUCKET,Foundry.RELAY,Foundry.MOTOR,Foundry.MOSFET,Foundry.CAPACITOR})chest.setStack(slot++,new ItemStack(item,item==Items.WATER_BUCKET?1:16));chest.markDirty();
+        sign(new BlockPos(117,66,61),"service","service_1","service_2","service_3");
         for(int x=58;x<=62;x++){set(x,65,60,Blocks.SMOOTH_STONE);set(x,73,60,Blocks.SMOOTH_STONE);}
         for(int y=66;y<73;y++){set(58,y,60,Blocks.IRON_BARS);set(62,y,60,Blocks.IRON_BARS);}
         var high=new BlockPos(60,74,60);var low=new BlockPos(60,66,60);for(var q:List.of(high,low)){world.setBlockState(q,Industrial.BREAKOUT.getDefaultState().with(ComponentBlock.FACING,Direction.SOUTH));circuit.track(q,world.getBlockState(q));}
@@ -253,6 +260,13 @@ public final class AcademyBuilder implements ModInitializer {
         if(circuit.wires.values().stream().filter(Wire::vertical).count()!=2)throw new IllegalStateException("Missing hanging cable lesson");
         if(world.getBlockState(new BlockPos(60,65,51)).get(ComponentBlock.ENABLED))throw new IllegalStateException("Arc lesson must be switched off before export");
         report.add("arc_demo_default_off=true");
+        for(var p:java.util.List.of(new BlockPos(68,66,10),new BlockPos(103,66,58))){
+            var console=world.getBlockEntity(PlantStructures.consolePos(p,world.getBlockState(p)));
+            var port=world.getBlockEntity(PlantStructures.fuelPos(p,world.getBlockState(p)));
+            if(!(console instanceof PlantServiceEntity c)||!(port instanceof PlantServiceEntity f)||c.core()!=e(p)||f.core()!=e(p)||e(p).plantItems.get(0).isEmpty())throw new IllegalStateException("Unlinked or empty teaching fuel intake at "+p);
+        }
+        if(!IndustrialTableBlock.complete(world,new BlockPos(59,66,12),world.getBlockState(new BlockPos(59,66,12))))throw new IllegalStateException("Teaching workbench missing modules");
+        report.add("fuel_services_working=true");report.add("six_module_workshop=true");
         report.add("pumps_working=true");report.add("vertical_drops=2");report.add("all_multiblocks_formed=true");
         report.add("components_above_bench=true");
         // Entity chunks load asynchronously; check after ticking, never discard at SERVER_STARTED.
