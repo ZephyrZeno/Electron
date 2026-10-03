@@ -5,12 +5,16 @@
     "electron:boiler_module",
     "electron:boiler_water_tank",
     "electron:cable_breakout",
+    "electron:centrifuge",
     "electron:condenser_module",
     "electron:control_rod_drive",
+    "electron:electric_kiln",
+    "electron:fuel_fabricator",
     "electron:glass_pipe",
     "electron:industrial_assembly_table",
     "electron:iron_pipe",
     "electron:low_profile_socket",
+    "electron:ore_crusher",
     "electron:pipe_valve",
     "electron:plant_control_module",
     "electron:plant_fuel_port",
@@ -24,6 +28,8 @@
     "electron:uranium_ore",
     "electron:water_pump",
     "electron:wind_base",
-    "electron:wind_mast"
+    "electron:wind_mast",
+    "electron:workshop_lamp",
+    "electron:yard_lamp"
   ]
 }

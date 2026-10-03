@@ -22,6 +22,7 @@ public final class ComponentItem extends BlockItem {
         super.appendTooltip(stack,context,lines,type);
         if(getBlock() instanceof ComponentBlock block){
             lines.add(Text.translatable(block.kind.large()?"tooltip.electron.large_component":"tooltip.electron.small_component").formatted(Formatting.AQUA));
+            if(block instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock machine){line(lines,"processing_rating",(int)machine.watts);return;}
             if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.PUMP){line(lines,"pump");return;}
             if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.BREAKOUT){line(lines,"breakout");return;}
             if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.LOW_SOCKET){line(lines,"low_socket");return;}
@@ -44,7 +45,7 @@ public final class ComponentItem extends BlockItem {
                 case GENERATOR -> line(lines,"generator_rating");
                 case DISTRIBUTION -> {line(lines,"terminal_strip_buses");line(lines,"distribution_rating");}
                 case BREAKER -> line(lines,"breaker_rating");
-                case LAMP -> line(lines,"lamp_rating");
+                case LAMP -> line(lines,"fixture_rating",String.format(Locale.ROOT,"%.1f",576/block.resistance));
                 case THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR -> {line(lines,"source_"+block.kind.name().toLowerCase(Locale.ROOT));}
                 case SUBSTATION -> {var spec=top.lacrus.zephyrzeno.electron.power.StationSpec.of(block.resistance);line(lines,"station_rating",(int)spec.min(),(int)spec.max(),(int)spec.output());}
                 case MAINS -> line(lines,"mains_inlet");

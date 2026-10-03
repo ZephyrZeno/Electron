@@ -8,6 +8,7 @@ import top.lacrus.zephyrzeno.electron.foundry.*;
 import top.lacrus.zephyrzeno.electron.multiblock.*;
 
 final class AssemblyRenderer {
+    private static final java.util.Map<String,RenderLayer> LAYERS=new java.util.HashMap<>();
     static void windFoot(ComponentEntity e,VertexConsumerProvider consumers,Matrix4f m,int light,int overlay){
         var white=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/turbine_white.png")));
         cylinder(white,m,new AssemblyGeometry.Piece(new Vec3d(.5,.08,.5),new Vec3d(.5,1,.5),.48,"turbine_white",true,24,.58),light,overlay);
@@ -24,12 +25,16 @@ final class AssemblyRenderer {
     }
     static void draw(ComponentEntity e,ComponentBlock b,VertexConsumerProvider consumers,Matrix4f m,double dt,int light,int overlay){
         boolean tower=e.getCachedState().isOf(Foundry.TOWER_TERMINAL);
-        for(var p:AssemblyGeometry.model(b.kind,e.assemblyHeight,tower,e.getCachedState().get(ComponentBlock.TURN)).pieces()){
-            var out=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/"+p.texture()+".png")));
-            if(p.sides()>4)cylinder(out,m,p,light,overlay);
-            else if(p.beam())beam(out,m,p.a(),p.b(),p.radius(),light,overlay);
-            else if(java.util.Set.of("hatch","service_panel","console_panel","room_sign","intake_sign","instrument_glass").contains(p.texture()))ComponentRenderer.centeredBox(out,m,p.a().x,p.a().y,p.a().z,p.b().x,p.b().y,p.b().z,light,overlay);
-            else tiledBox(out,m,new Box(p.a(),p.b()),light,overlay);
+        double distance=net.minecraft.client.MinecraftClient.getInstance().gameRenderer.getCamera().getPos().squaredDistanceTo(Vec3d.ofCenter(e.getPos()));
+        var mesh=AssemblyMesh.get(b.kind,e.assemblyHeight,tower,e.getCachedState().get(ComponentBlock.TURN),distance>48*48);
+        var normal=new org.joml.Matrix3f(m).invert().transpose();
+        for(var batch:mesh.batches()){
+            var out=consumers.getBuffer(LAYERS.computeIfAbsent(batch.texture(),name->RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/"+name+".png"))));
+            var data=batch.vertices();for(int i=0;i<data.length;i+=8){
+                float x=data[i+5],y=data[i+6],z=data[i+7];
+                out.vertex(m,data[i],data[i+1],data[i+2]).color(255,255,255,255).texture(data[i+3],data[i+4]).overlay(overlay).light(light)
+                    .normal(normal.m00()*x+normal.m10()*y+normal.m20()*z,normal.m01()*x+normal.m11()*y+normal.m21()*z,normal.m02()*x+normal.m12()*y+normal.m22()*z);
+            }
         }
         if(b.kind==ComponentBlock.Kind.WIND){
             e.rotorAngle+=dt*.045*e.displayedLight;
@@ -56,13 +61,14 @@ final class AssemblyRenderer {
     }
     private static void blade(VertexConsumer out,Matrix4f m,int light,int overlay){
         // Swept, tapered airfoil outline; its envelope stays inside the physical rotor disk.
+        var normals=new org.joml.Matrix3f(m).invert().transpose();
         double[][] stations={{.12,-.12,.12,.11},{1.2,-.43,.18,.10},{3.3,-.23,.06,.055},{4.8,-.08,-.045,.018}};
         for(int s=1;s<stations.length;s++){
             var a=stations[s-1];var b=stations[s];
             Vec3d[] v={new Vec3d(a[1],a[0],-a[3]),new Vec3d(a[2],a[0],-a[3]),new Vec3d(b[2],b[0],-b[3]),new Vec3d(b[1],b[0],-b[3]),new Vec3d(a[1],a[0],a[3]),new Vec3d(a[2],a[0],a[3]),new Vec3d(b[2],b[0],b[3]),new Vec3d(b[1],b[0],b[3])};
             for(int[] face:new int[][]{{0,3,2,1},{4,5,6,7},{0,4,7,3},{1,2,6,5},{3,7,6,2},{0,1,5,4}}){
-                var normal=v[face[1]].subtract(v[face[0]]).crossProduct(v[face[2]].subtract(v[face[0]])).normalize();
-                for(int i=0;i<4;i++){var q=v[face[i]];out.vertex(m,(float)q.x,(float)q.y,(float)q.z).color(255,255,255,255).texture(i==0||i==3?0:1,i<2?0:1).overlay(overlay).light(light).normal((float)normal.x,(float)normal.y,(float)normal.z);}
+                var normal=v[face[1]].subtract(v[face[0]]).crossProduct(v[face[2]].subtract(v[face[0]])).normalize();var n=normals.transform(new org.joml.Vector3f((float)normal.x,(float)normal.y,(float)normal.z)).normalize();
+                for(int i=0;i<4;i++){var q=v[face[i]];out.vertex(m,(float)q.x,(float)q.y,(float)q.z).color(255,255,255,255).texture(i==0||i==3?0:1,i<2?0:1).overlay(overlay).light(light).normal(n.x,n.y,n.z);}
             }
         }
     }
@@ -81,10 +87,6 @@ final class AssemblyRenderer {
                 for(int j=0;j<4;j++){var q=face[j];out.vertex(m,(float)q.x,(float)q.y,(float)q.z).color(255,255,255,255).texture(j==0||j==3?0:1,j<2?0:1).overlay(overlay).light(light).normal((float)normal.x,(float)normal.y,(float)normal.z);}
             }
         }
-    }
-    private static void tiledBox(VertexConsumer out,Matrix4f m,Box b,int light,int overlay){
-        Vec3d[] p={new Vec3d(b.minX,b.minY,b.minZ),new Vec3d(b.maxX,b.minY,b.minZ),new Vec3d(b.maxX,b.maxY,b.minZ),new Vec3d(b.minX,b.maxY,b.minZ),new Vec3d(b.minX,b.minY,b.maxZ),new Vec3d(b.maxX,b.minY,b.maxZ),new Vec3d(b.maxX,b.maxY,b.maxZ),new Vec3d(b.minX,b.maxY,b.maxZ)};
-        for(int[] f:new int[][]{{0,3,2,1},{4,5,6,7},{0,4,7,3},{1,2,6,5},{3,7,6,2},{0,1,5,4}})quad(out,m,new Vec3d[]{p[f[0]],p[f[1]],p[f[2]],p[f[3]]},light,overlay);
     }
     private static void quad(VertexConsumer out,Matrix4f m,Vec3d[] face,int light,int overlay){
         var normal=face[1].subtract(face[0]).crossProduct(face[2].subtract(face[0])).normalize();

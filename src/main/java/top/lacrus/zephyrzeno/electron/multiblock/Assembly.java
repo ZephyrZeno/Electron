@@ -17,7 +17,7 @@ import top.lacrus.zephyrzeno.electron.circuit.*;
 import top.lacrus.zephyrzeno.electron.power.PowerPlant;
 
 public final class Assembly {
-    public static final int GEOMETRY_REVISION=3;
+    public static final int GEOMETRY_REVISION=5;
     public static AssemblyPartBlock PART;
     public static BlockEntityType<AssemblyPartEntity> PART_ENTITY;
     private static final Set<String> CHANGING=new HashSet<>();
@@ -78,6 +78,7 @@ public final class Assembly {
         }
         w.setBlockState(p,state.with(AssemblyControllerBlock.FORMED,true),Block.NOTIFY_ALL);
         w.updateListeners(p,state,w.getBlockState(p),Block.NOTIFY_LISTENERS);CircuitState.get(w).track(p,w.getBlockState(p));
+        core.assemblyBlueprint.clear();AssemblyRepair.remember(w,p,core);
         if(controller.kind==ComponentBlock.Kind.THERMAL||controller.kind==ComponentBlock.Kind.NUCLEAR)top.lacrus.zephyrzeno.electron.industrial.PlantOperations.bind(w,core);
         ElectricalEffects.play(w,p,ElectricalEffects.FORM,.6f,1);return "formed";
     }
@@ -93,12 +94,14 @@ public final class Assembly {
             if(!old.isAir()||CircuitState.get(w).hasAttachment(q))return "space";additions.add(offset);
         }
         for(var offset:additions){var q=p.add(offset);var old=w.getBlockState(q);w.setBlockState(q,PART.getDefaultState(),Block.NOTIFY_LISTENERS);if(w.getBlockEntity(q) instanceof AssemblyPartEntity e){e.origin=p.toImmutable();e.original=old;e.height=core.assemblyHeight;e.turn=s.get(ComponentBlock.TURN);e.kind=kind;e.tower=tower;e.markDirty();w.updateListeners(q,e.getCachedState(),e.getCachedState(),Block.NOTIFY_LISTENERS);}offsets.add(offset);}
-        core.assemblyCells=List.copyOf(offsets);core.assemblyRevision=GEOMETRY_REVISION;core.markDirty();return "ready";
+        core.assemblyCells=List.copyOf(offsets);core.assemblyRevision=GEOMETRY_REVISION;AssemblyRepair.remember(w,p,core);core.markDirty();return "ready";
     }
     public static void dismantle(ServerWorld w,BlockPos p,BlockPos removed){
         String key=w.getRegistryKey().getValue()+":"+p.asLong();if(!CHANGING.add(key))return;
         try{
             if(!(w.getBlockEntity(p) instanceof ComponentEntity core))return;
+            AssemblyRepair.remember(w,p,core);
+            if(removed!=null)core.manualAssemblyLock=true;
             var offsets=core.assemblyCells;core.assemblyCells=List.of();core.markDirty();
             var s=w.getBlockState(p);
             if(formed(s))w.setBlockState(p,s.with(AssemblyControllerBlock.FORMED,false).with(ComponentBlock.LEVEL,0),Block.NOTIFY_ALL);
@@ -113,6 +116,10 @@ public final class Assembly {
         if(w.getBlockEntity(p) instanceof AssemblyPartEntity e)p=e.origin;
         if(!(w.getBlockState(p).getBlock() instanceof AssemblyControllerBlock))return false;
         if(!player.canModifyBlocks()||!w.isChunkLoaded(p)||!w.canPlayerModifyAt(player,p)){player.sendMessage(Text.translatable("plant.electron.permission"),true);return true;}
+        if(!player.isSneaking()){
+            String status=AssemblyRepair.repair(w,p,player);
+            player.sendMessage(Text.translatable("message.electron.plant_status",Text.translatable("plant.electron."+status)),true);return true;
+        }
         if(formed(w.getBlockState(p))){
             if(player!=null)for(var offset:((ComponentEntity)w.getBlockEntity(p)).assemblyCells){var q=p.add(offset);if(!w.isChunkLoaded(q)||!w.canPlayerModifyAt(player,q)){player.sendMessage(Text.translatable("plant.electron.permission"),true);return true;}}
         }

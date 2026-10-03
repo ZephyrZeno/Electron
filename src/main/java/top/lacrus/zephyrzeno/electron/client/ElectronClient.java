@@ -38,6 +38,7 @@ public final class ElectronClient implements ClientModInitializer {
         BlockEntityRendererFactories.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.FLUID_ENTITY,FluidRenderer::new);
         net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),top.lacrus.zephyrzeno.electron.industrial.Industrial.GLASS_PIPE,top.lacrus.zephyrzeno.electron.industrial.Industrial.THERMAL_TANK,top.lacrus.zephyrzeno.electron.industrial.Industrial.NUCLEAR_TANK);
         Foundry.CREATIVE_READINGS=()->MinecraftClient.getInstance().player!=null&&MinecraftClient.getInstance().player.isCreative();
+        net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.industrial.Processing.SCREEN,ProcessingScreen::new);
         BlockEntityRendererFactories.register(Foundry.COMPONENT_ENTITY,ComponentRenderer::new);
         BlockEntityRendererFactories.register(Foundry.MECHANICAL_ENTITY,MechanicalRenderer::new);
         ClientPlayNetworking.registerGlobalReceiver(CircuitNetworking.Snapshot.ID,(payload,context)->context.client().execute(()->snapshots.accept(payload.data()).ifPresent(data->{state=CircuitState.read(data);dimension=data.getString("dimension");cachedRoute=null;nextRouteUpdate=0;})));

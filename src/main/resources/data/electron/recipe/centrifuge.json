@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:dc_motor"
+    },
+    {
+      "item": "electron:dc_motor"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:copper_coil"
+    },
+    {
+      "item": "electron:electrical_relay"
+    }
+  ],
+  "result": {
+    "id": "electron:centrifuge",
+    "count": 1
+  }
+}

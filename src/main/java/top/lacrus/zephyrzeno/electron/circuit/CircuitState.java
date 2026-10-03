@@ -196,10 +196,15 @@ public final class CircuitState extends PersistentState {
         }
         for(var core:cores.values())for(int pin=0;pin<2;pin++)branches.add(DcSolver.Branch.resistor("core:"+core.id()+":"+pin,core.endpoint(0,pin).id(),core.endpoint(1,pin).id(),.02));
         List<Endpoint> portPins=cores.values().stream().flatMap(c->c.endpoints().stream()).toList();
-        for(int i=0;i<portPins.size();i++)for(int j=i+1;j<portPins.size();j++) {
-            var a=portPins.get(i);var b=portPins.get(j);
-            if(a.point().face()==b.point().face().getOpposite()&&a.point().host().offset(a.point().face()).equals(b.point().host())&&a.point().position().squaredDistanceTo(b.point().position())<.004)
-                branches.add(DcSolver.Branch.resistor("contact:"+a.id()+":"+b.id(),a.id(),b.id(),.01));
+        Map<BlockPos,List<Integer>> portsByHost=new HashMap<>();
+        for(int i=0;i<portPins.size();i++)portsByHost.computeIfAbsent(portPins.get(i).point().host(),p->new ArrayList<>()).add(i);
+        for(int i=0;i<portPins.size();i++){
+            var a=portPins.get(i);
+            for(int j:portsByHost.getOrDefault(a.point().host().offset(a.point().face()),List.of())){
+                if(j<=i)continue;var b=portPins.get(j);
+                if(a.point().face()==b.point().face().getOpposite()&&a.point().position().squaredDistanceTo(b.point().position())<.004)
+                    branches.add(DcSolver.Branch.resistor("contact:"+a.id()+":"+b.id(),a.id(),b.id(),.01));
+            }
         }
         for(var entry:devices.entrySet()) {
             BlockPos pos=entry.getKey();String a=node(pos,0),b=node(pos,1),id="d:"+pos.asLong();

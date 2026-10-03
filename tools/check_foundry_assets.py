@@ -79,6 +79,18 @@ for path in (A/'blockstates').glob('*.json'):
             model(matches[0]['apply']['model']);state_count+=1
 
 zh=read(A/'lang/zh_cn.json')
+for name in ('ore_crusher','centrifuge','electric_kiln','fuel_fabricator','workshop_lamp','yard_lamp'):
+    variants=read(A/'blockstates'/f'{name}.json')['variants']
+    fixture=name in ('workshop_lamp','yard_lamp')
+    assert len(variants)==24*(32 if fixture else 2),(name,'Unexpected mounted variants')
+    for face,turn,broken,power in itertools.product(('up','down','north','south','west','east'),range(4),('false','true'),range(16)):
+        key=f'facing={face},turn={turn},broken={broken}'+(f',power={power}' if fixture else '')
+        assert key in variants,(name,key)
+    for variant in variants.values():
+        for element in model(variant['model'])['elements']:
+            assert all(0<=v<=16 for v in element['from']+element['to']),(name,'Model escapes occupied block')
+    display=model('electron:item/'+name)['display']
+    assert all(hand in display for hand in ('firstperson_righthand','firstperson_lefthand','thirdperson_righthand','thirdperson_lefthand'))
 for p in (A/'models/item').glob('*.json'):
     if p.stem.startswith(('wire_spool_','cable_spool_')) or p.stem.endswith('_item'):continue
     assert 'item.electron.'+p.stem in zh or 'block.electron.'+p.stem in zh,p
@@ -160,6 +172,10 @@ def sheet(filename,title,names):
         d.text((x+10,y+222),zh[key],font=font,fill='#e5edf3')
     canvas.save(OUT/filename)
 
+if '--processing' in sys.argv:
+    sheet('processing.png','ELECTRON / 用电加工、立体材料与照明',[(n,'item/'+n) for n in ['ore_crusher','centrifuge','electric_kiln','fuel_fabricator','crushed_uranium','fuel_concentrate','uranium_tailings','fuel_cladding','iron_plate','copper_coil','workshop_lamp','yard_lamp']])
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    sys.exit(0)
 if '--industrial' in sys.argv:
     sheet('industrial.png','ELECTRON / 机组部件、供水与接线',[(n,'item/'+n) for n in ['boiler_module','turbine_module','alternator_module','condenser_module','plant_control_module','reactor_vessel_module','control_rod_drive','safety_valve_module','water_pump','wind_mast','wind_base','cable_breakout','iron_pipe','glass_pipe','pipe_valve','boiler_water_tank','reactor_coolant_tank','industrial_assembly_table','low_profile_socket','plant_fuel_port']])
     sheet('service.png','ELECTRON / 加料与六模块工作台',[(n,'item/'+n) for n in ['plant_control_module','plant_fuel_port','industrial_assembly_table','uranium_ore','raw_uranium','uranium_pellet','fuel_rod','spent_fuel_rod']])

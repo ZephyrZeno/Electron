@@ -13,6 +13,21 @@ import static top.lacrus.zephyrzeno.electron.circuit.CircuitParts.*;
 
 /** World fixtures use the same physical routing and finite-resistance wires as players. */
 public final class CircuitBehaviorTests implements FabricGameTest {
+    @GameTest(templateName="electron:components_test",tickLimit=30)
+    public void indexedPortContactsMatchPhysicalAllPairsReference(TestContext t){
+        var s=new CircuitState();var base=t.getAbsolutePos(new BlockPos(2,3,2));
+        for(int i=0;i<24;i++){
+            var host=base.add(i%6,0,i/6);t.getWorld().setBlockState(host,Blocks.STONE.getDefaultState());
+            for(int slot=0;slot<4;slot++){var core=new WallCore(UUID.randomUUID(),host,i%3==0?Direction.NORTH:Direction.EAST,slot,"minecraft:stone");s.cores.put(core.id(),core);}
+        }
+        var pins=s.cores.values().stream().flatMap(c->c.endpoints().stream()).toList();var expected=new HashSet<String>();
+        for(int i=0;i<pins.size();i++)for(int j=i+1;j<pins.size();j++){
+            var a=pins.get(i);var b=pins.get(j);
+            if(a.point().face()==b.point().face().getOpposite()&&a.point().host().offset(a.point().face()).equals(b.point().host())&&a.point().position().squaredDistanceTo(b.point().position())<.004)expected.add("contact:"+a.id()+":"+b.id());
+        }
+        s.simulate(t.getWorld());var actual=new HashSet<String>();for(var branch:s.lastBranches)if(branch.id().startsWith("contact:"))actual.add(branch.id());
+        t.assertFalse(expected.isEmpty(),"Fixture has real adjacent electrical contacts");t.assertEquals(actual,expected,"Host lookup preserves all and only the actual contacts");t.complete();
+    }
     private static void floor(TestContext t){
         var s=CircuitState.get(t.getWorld());
         for(int x=0;x<10;x++)for(int z=0;z<18;z++){

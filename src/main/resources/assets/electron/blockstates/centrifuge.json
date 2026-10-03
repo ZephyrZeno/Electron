@@ -1,0 +1,148 @@
+{
+  "variants": {
+    "facing=up,turn=0,broken=false": {
+      "model": "electron:block/centrifuge_up_0"
+    },
+    "facing=up,turn=0,broken=true": {
+      "model": "electron:block/centrifuge_up_0_broken"
+    },
+    "facing=up,turn=1,broken=false": {
+      "model": "electron:block/centrifuge_up_1"
+    },
+    "facing=up,turn=1,broken=true": {
+      "model": "electron:block/centrifuge_up_1_broken"
+    },
+    "facing=up,turn=2,broken=false": {
+      "model": "electron:block/centrifuge_up_2"
+    },
+    "facing=up,turn=2,broken=true": {
+      "model": "electron:block/centrifuge_up_2_broken"
+    },
+    "facing=up,turn=3,broken=false": {
+      "model": "electron:block/centrifuge_up_3"
+    },
+    "facing=up,turn=3,broken=true": {
+      "model": "electron:block/centrifuge_up_3_broken"
+    },
+    "facing=down,turn=0,broken=false": {
+      "model": "electron:block/centrifuge_down_0"
+    },
+    "facing=down,turn=0,broken=true": {
+      "model": "electron:block/centrifuge_down_0_broken"
+    },
+    "facing=down,turn=1,broken=false": {
+      "model": "electron:block/centrifuge_down_1"
+    },
+    "facing=down,turn=1,broken=true": {
+      "model": "electron:block/centrifuge_down_1_broken"
+    },
+    "facing=down,turn=2,broken=false": {
+      "model": "electron:block/centrifuge_down_2"
+    },
+    "facing=down,turn=2,broken=true": {
+      "model": "electron:block/centrifuge_down_2_broken"
+    },
+    "facing=down,turn=3,broken=false": {
+      "model": "electron:block/centrifuge_down_3"
+    },
+    "facing=down,turn=3,broken=true": {
+      "model": "electron:block/centrifuge_down_3_broken"
+    },
+    "facing=north,turn=0,broken=false": {
+      "model": "electron:block/centrifuge_north_0"
+    },
+    "facing=north,turn=0,broken=true": {
+      "model": "electron:block/centrifuge_north_0_broken"
+    },
+    "facing=north,turn=1,broken=false": {
+      "model": "electron:block/centrifuge_north_1"
+    },
+    "facing=north,turn=1,broken=true": {
+      "model": "electron:block/centrifuge_north_1_broken"
+    },
+    "facing=north,turn=2,broken=false": {
+      "model": "electron:block/centrifuge_north_2"
+    },
+    "facing=north,turn=2,broken=true": {
+      "model": "electron:block/centrifuge_north_2_broken"
+    },
+    "facing=north,turn=3,broken=false": {
+      "model": "electron:block/centrifuge_north_3"
+    },
+    "facing=north,turn=3,broken=true": {
+      "model": "electron:block/centrifuge_north_3_broken"
+    },
+    "facing=south,turn=0,broken=false": {
+      "model": "electron:block/centrifuge_south_0"
+    },
+    "facing=south,turn=0,broken=true": {
+      "model": "electron:block/centrifuge_south_0_broken"
+    },
+    "facing=south,turn=1,broken=false": {
+      "model": "electron:block/centrifuge_south_1"
+    },
+    "facing=south,turn=1,broken=true": {
+      "model": "electron:block/centrifuge_south_1_broken"
+    },
+    "facing=south,turn=2,broken=false": {
+      "model": "electron:block/centrifuge_south_2"
+    },
+    "facing=south,turn=2,broken=true": {
+      "model": "electron:block/centrifuge_south_2_broken"
+    },
+    "facing=south,turn=3,broken=false": {
+      "model": "electron:block/centrifuge_south_3"
+    },
+    "facing=south,turn=3,broken=true": {
+      "model": "electron:block/centrifuge_south_3_broken"
+    },
+    "facing=west,turn=0,broken=false": {
+      "model": "electron:block/centrifuge_west_0"
+    },
+    "facing=west,turn=0,broken=true": {
+      "model": "electron:block/centrifuge_west_0_broken"
+    },
+    "facing=west,turn=1,broken=false": {
+      "model": "electron:block/centrifuge_west_1"
+    },
+    "facing=west,turn=1,broken=true": {
+      "model": "electron:block/centrifuge_west_1_broken"
+    },
+    "facing=west,turn=2,broken=false": {
+      "model": "electron:block/centrifuge_west_2"
+    },
+    "facing=west,turn=2,broken=true": {
+      "model": "electron:block/centrifuge_west_2_broken"
+    },
+    "facing=west,turn=3,broken=false": {
+      "model": "electron:block/centrifuge_west_3"
+    },
+    "facing=west,turn=3,broken=true": {
+      "model": "electron:block/centrifuge_west_3_broken"
+    },
+    "facing=east,turn=0,broken=false": {
+      "model": "electron:block/centrifuge_east_0"
+    },
+    "facing=east,turn=0,broken=true": {
+      "model": "electron:block/centrifuge_east_0_broken"
+    },
+    "facing=east,turn=1,broken=false": {
+      "model": "electron:block/centrifuge_east_1"
+    },
+    "facing=east,turn=1,broken=true": {
+      "model": "electron:block/centrifuge_east_1_broken"
+    },
+    "facing=east,turn=2,broken=false": {
+      "model": "electron:block/centrifuge_east_2"
+    },
+    "facing=east,turn=2,broken=true": {
+      "model": "electron:block/centrifuge_east_2_broken"
+    },
+    "facing=east,turn=3,broken=false": {
+      "model": "electron:block/centrifuge_east_3"
+    },
+    "facing=east,turn=3,broken=true": {
+      "model": "electron:block/centrifuge_east_3_broken"
+    }
+  }
+}

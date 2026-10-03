@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:furnace"
+    },
+    {
+      "item": "minecraft:iron_block"
+    },
+    {
+      "item": "minecraft:copper_block"
+    },
+    {
+      "item": "electron:electrical_relay"
+    },
+    {
+      "item": "electron:resistor_100"
+    }
+  ],
+  "result": {
+    "id": "electron:electric_kiln",
+    "count": 1
+  }
+}

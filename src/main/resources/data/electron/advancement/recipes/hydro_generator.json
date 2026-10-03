@@ -1,14 +1,11 @@
 {
-  "parent": "minecraft:recipes/root",
   "criteria": {
-    "copper": {
+    "has_item": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
-            "items": [
-              "minecraft:copper_ingot"
-            ]
+            "items": "electron:turbine_module"
           }
         ]
       }
@@ -16,7 +13,7 @@
   },
   "requirements": [
     [
-      "copper"
+      "has_item"
     ]
   ],
   "rewards": {

@@ -1,21 +1,33 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
+  "category": "misc",
   "ingredients": [
     {
+      "item": "electron:capacitor_100mf"
+    },
+    {
+      "item": "electron:capacitor_100mf"
+    },
+    {
+      "item": "electron:capacitor_100mf"
+    },
+    {
+      "item": "electron:capacitor_100mf"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:copper_coil"
+    },
+    {
+      "item": "electron:electrical_relay"
+    },
+    {
       "item": "minecraft:lightning_rod"
-    },
-    {
-      "item": "electron:capacitor_100mf"
-    },
-    {
-      "item": "electron:capacitor_100mf"
-    },
-    {
-      "item": "electron:plant_casing"
-    },
-    {
-      "item": "minecraft:copper_block"
     }
   ],
   "result": {

@@ -39,6 +39,12 @@ for label,path,modid,forbidden in [('main',MAIN,'electron',b'top/lacrus/zephyrze
             for module in ('boiler_module','turbine_module','alternator_module','condenser_module','plant_control_module','reactor_vessel_module','control_rod_drive','safety_valve_module'):
                 assert f'assets/electron/models/item/{module}.json' in names
                 assert f'data/electron/recipe/{module}.json' not in names, 'Industrial modules must be assembled in the workshop'
+            for device in ('ore_crusher','centrifuge','electric_kiln','fuel_fabricator','workshop_lamp','yard_lamp'):
+                assert f'assets/electron/blockstates/{device}.json' in names and f'data/electron/recipe/{device}.json' in names
+            for item in ('raw_uranium','uranium_pellet','fuel_rod','spent_fuel_rod','crushed_uranium','fuel_concentrate','uranium_tailings','fuel_cladding','iron_plate','copper_coil'):
+                assert json.loads(jar.read(f'assets/electron/models/item/{item}.json')).get('elements'), (item,'Expected solid model')
+            assert not any(f'data/electron/recipe/{item}.json' in names for item in ('uranium_pellet','fuel_rod')), 'Powered processing must not have legacy recipe bypasses'
+            assert 'top/lacrus/zephyrzeno/electron/industrial/ProcessingEntity.class' in names
             sounds=json.loads(jar.read('assets/electron/sounds.json'))
             for event in ('wire_connect','cable_connect','wire_cut','terminal_attach','machine_assemble','machine_form','pump_run','valve_turn','water_fill','motor_run','wind_rotor','hydro_run','turbine_run','plant_alarm','pressure_burst'):
                 assert event in sounds and jar.read(f'assets/electron/sounds/{event}.ogg').startswith(b'OggS')
@@ -73,6 +79,7 @@ summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'nati
 audio_report=json.loads((ROOT/'build/industrial-audio-verification.json').read_text(encoding='utf-8'))
 assert audio_report['decoded'] and not audio_report['clipped'] and len(audio_report['original_ogg_samples'])==23
 summary['audio']=audio_report
+summary['static_meshes']=json.loads((ROOT/'build/gametest-runs/assembly-render-audit.json').read_text())
 shader_report=ROOT/'build/shader-rollback-verification.json'
 if shader_report.exists():summary['local_shader_rollback']=json.loads(shader_report.read_text(encoding='utf-8'))
 (ROOT/'build/foundry-release-verification.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
@@ -95,13 +102,17 @@ shutil.copy2(ROOT/'docs/design/FAULTS_WATER_DETAIL_V7.md',out/'故障取水与�
 shutil.copy2(ROOT/'docs/design/PLANT_OPERATIONS_V8.md',out/'机组操作与装配-v8.md')
 shutil.copy2(ROOT/'build/asset-review/service.png',out/'service-preview.png')
 shutil.copy2(ROOT/'build/asset-review/arcs.png',out/'arc-preview.png')
+shutil.copy2(ROOT/'docs/design/ELECTRICAL_GAMEPLAY_V9.md',out/'用电与加工-v9.md')
+shutil.copy2(ROOT/'build/asset-review/processing.png',out/'processing-preview.png')
+shutil.copy2(ROOT/'build/asset-review/materials.png',out/'material-preview.png')
 (out/'安装说明.txt').write_text(f"""Electron: Circuit Foundry — {VERSION}
 Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-本版修复创造物品栏崩溃，加入控制面板、箱子/漏斗燃料输入口、六块拼装工作台和 36×36 核电控制室，封闭水池；修正梯子和铭牌，细化铀燃料贴图。改建与操作以《机组操作与装配-v8.md》为准。
+本版修复手册偏绿、风机检修门穿模，增加按材料维修成型设施。新增四台 24 V 耗电加工机、工坊防护灯和庭院柱灯；铀矿、燃料及加工材料使用立体模型。提高机组部件制作门槛，移除工作台燃料棒和熔炉芯块捷径。当前玩法和清单见《用电与加工-v9.md》，大型结构坐标以《机组操作与装配-v8.md》为准。
+细化 21 类大型材质与 9 类小型器件材质，管道使用圆管和法兰。静态模型缓存并在远处简化细节；电路端口接触使用相邻位置索引。新增加工动件和定位运行、完成音效。没有以网格减少量冒充帧率实测。
 此前新增：有真实起止坐标的分叉电弧、定位音效、过热及熔断反馈、局部闪光、触电支路、原版动态容器水、按层减少的原版水域抽水、矮型双母线插排及电站模型细化。保留工业机组装配，原创声音共23段。
 主要样机改由真实风机持续供电，入口架空线接入负载。5 V 手摇课程仍需补能，电容需按按钮，故障区需手摇启动。
 普通器件放在平滑石上；风机使用独立白色塔筒与底部出线柜，引雷使用桁架塔。当前精确建造坐标与加料规则见《机组操作与装配-v8.md》。旧版小型火电、核电及桁架风机需要先拆解、再按新结构重建。
@@ -110,7 +121,7 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 电缆加粗并采用贴图，跨线桥加高；架空及垂直悬线按实际电压检查净距，240 V为0.45格，6.6/11/24 kV为1.2/1.6/2.4格；详见故障取水与模型-v7.md。
 工程灯在额定供电时发出原版 15 级光照；光源增加 labPBR 发光材质。断电和损坏时熄灭。
 不添加光影包。此前 Electron Lights 副本已备份移出 shaderpacks，原包保持不变。
-25页手册、21张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
+26页手册、22张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
 主线不依赖计算器。PCB 制板、焊接、开发板、三相交流等尚未实现。
 
 教学地图：解压 circuit-academy-{VERSION}.zip，将 Circuit_Foundry_Academy 放入 saves。

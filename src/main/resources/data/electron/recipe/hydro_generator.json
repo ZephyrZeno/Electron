@@ -1,18 +1,21 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
+  "category": "misc",
   "ingredients": [
     {
-      "item": "electron:dc_generator"
+      "item": "electron:turbine_module"
+    },
+    {
+      "item": "electron:alternator_module"
     },
     {
       "item": "minecraft:bucket"
     },
     {
-      "item": "minecraft:iron_ingot"
+      "item": "electron:iron_plate"
     },
     {
-      "item": "minecraft:iron_ingot"
+      "item": "electron:iron_plate"
     },
     {
       "item": "electron:plant_casing"

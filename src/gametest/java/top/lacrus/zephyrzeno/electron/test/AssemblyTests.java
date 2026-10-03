@@ -14,6 +14,79 @@ import top.lacrus.zephyrzeno.electron.industrial.*;
 import top.lacrus.zephyrzeno.electron.circuit.*;
 
 public final class AssemblyTests implements FabricGameTest {
+    @GameTest(templateName="electron:industrial_test",tickLimit=60)
+    public void bakedMeshesHaveFiniteVerticesUnitNormalsAndReusableDistanceVariants(TestContext t){
+        var report=new com.google.gson.JsonObject();
+        for(var kind:new ComponentBlock.Kind[]{ComponentBlock.Kind.THERMAL,ComponentBlock.Kind.NUCLEAR,ComponentBlock.Kind.WIND,ComponentBlock.Kind.HYDRO}){
+            int height=kind==ComponentBlock.Kind.WIND?7:0;
+            for(int turn=0;turn<4;turn++){
+                var near=AssemblyMesh.get(kind,height,false,turn,false);var far=AssemblyMesh.get(kind,height,false,turn,true);
+                t.assertTrue(near==AssemblyMesh.get(kind,height,false,turn,false),"Static geometry is cached across frames");
+                t.assertTrue(far.vertices()<=near.vertices(),"Distance variant never adds geometry");
+                for(var batch:near.batches())for(int i=0;i<batch.vertices().length;i+=8){
+                    var data=batch.vertices();for(int j=0;j<8;j++)t.assertTrue(Float.isFinite(data[i+j]),"Position, UV and normal must be finite");
+                    double length=data[i+5]*data[i+5]+data[i+6]*data[i+6]+data[i+7]*data[i+7];t.assertTrue(Math.abs(length-1)<.002,"Lighting normal has unit length");
+                }
+                if(turn==0){var row=new com.google.gson.JsonObject();row.addProperty("near_vertices",near.vertices());row.addProperty("distant_vertices",far.vertices());row.addProperty("material_batches",near.batches().size());report.add(kind.name(),row);}
+            }
+        }
+        try{java.nio.file.Files.writeString(java.nio.file.Path.of("../assembly-render-audit.json"),new com.google.gson.GsonBuilder().setPrettyPrinting().create().toJson(report));}catch(java.io.IOException e){throw new RuntimeException(e);}t.complete();
+    }
+    @GameTest(templateName="electron:industrial_test",tickLimit=35)
+    public void wrenchRepairsOnlyPaidMissingModulesAndRetainsInventory(TestContext t){
+        var p=plant(t,Foundry.THERMAL);var w=t.getWorld();Assembly.form(w,p,null);
+        var core=(ComponentEntity)w.getBlockEntity(p);core.plantItems.set(0,new ItemStack(Items.COAL,9));
+        var tank=(FluidEntity)w.getBlockEntity(PlantStructures.tankPos(p,w.getBlockState(p)));
+        var missing=p.north(4);w.setBlockState(missing,Blocks.AIR.getDefaultState());
+        t.assertTrue(core.manualAssemblyLock,"Breaking a formed part pauses automatic recreation");
+        var player=t.createMockPlayer(net.minecraft.world.GameMode.SURVIVAL);
+        t.assertEquals(AssemblyRepair.repair(w,p,player),"repair_materials","No free boiler restoration");
+        t.assertTrue(w.isAir(missing),"Missing material leaves the world unchanged");
+        player.getInventory().setStack(0,new ItemStack(Industrial.BOILER,2));
+        t.assertEquals(AssemblyRepair.repair(w,p,player),"repaired","Wrench rebuilds the stored shape with paid parts");
+        t.assertEquals(player.getInventory().getStack(0).getCount(),1,"Exactly one boiler consumed");
+        t.assertTrue(Assembly.formed(w.getBlockState(p)),"Whole assembly restored");
+        t.assertEquals(core.plantItems.get(0).getCount(),9,"Queued fuel retained");t.assertEquals(tank.amount,15000,"Reservoir retained");
+        t.assertEquals(AssemblyRepair.repair(w,p,player),"repair_intact","Ordinary wrench use never dismantles a healthy plant");t.complete();
+    }
+    @GameTest(templateName="electron:industrial_test",tickLimit=30)
+    public void repairBlueprintSurvivesSaveAndRejectsOccupiedCellsWithoutPayment(TestContext t){
+        var p=plant(t,Foundry.THERMAL);var w=t.getWorld();Assembly.form(w,p,null);var core=(ComponentEntity)w.getBlockEntity(p);
+        w.setBlockState(p.north(4),Blocks.AIR.getDefaultState());
+        var copy=new ComponentEntity(p,core.getCachedState());copy.read(core.createNbt(w.getRegistryManager()),w.getRegistryManager());
+        t.assertTrue(copy.assemblyBlueprint.get(new BlockPos(0,0,-4)).isOf(Industrial.BOILER),"Broken original block is retained in saved repair layout");
+        w.setBlockState(p.north(4),Blocks.DIAMOND_BLOCK.getDefaultState());var player=t.createMockPlayer(net.minecraft.world.GameMode.SURVIVAL);
+        player.getInventory().setStack(0,new ItemStack(Industrial.BOILER));
+        t.assertEquals(AssemblyRepair.repair(w,p,player),"repair_obstructed","Repair must not replace occupied space");
+        t.assertEquals(player.getInventory().getStack(0).getCount(),1,"Blocked repair consumes nothing");
+        t.assertTrue(w.getBlockState(p.north(4)).isOf(Blocks.DIAMOND_BLOCK),"Player block remains");t.complete();
+    }
+    @GameTest(templateName="electron:industrial_test",tickLimit=30)
+    public void failedRepairReturnsNewPartsWithoutRefillingTank(TestContext t){
+        var p=plant(t,Foundry.THERMAL);var w=t.getWorld();Assembly.form(w,p,null);w.setBlockState(p.north(4),Blocks.AIR.getDefaultState());
+        w.setBlockState(p.north(4).up(2),Blocks.DIAMOND_BLOCK.getDefaultState());
+        var player=t.createMockPlayer(net.minecraft.world.GameMode.SURVIVAL);player.getInventory().setStack(0,new ItemStack(Industrial.BOILER));
+        t.assertEquals(AssemblyRepair.repair(w,p,player),"space","Obstructed visual volume prevents full reconstruction");
+        t.assertTrue(w.isAir(p.north(4)),"Staged replacement is rolled back");t.assertEquals(player.getInventory().getStack(0).getCount(),1,"Failed formation never charges the player");t.complete();
+    }
+    @GameTest(templateName="electron:industrial_test",tickLimit=30)
+    public void damagedControllerRequiresReplacementAndRestartsOff(TestContext t){
+        var p=plant(t,Foundry.THERMAL);var w=t.getWorld();Assembly.form(w,p,null);var core=(ComponentEntity)w.getBlockEntity(p);
+        w.setBlockState(p,w.getBlockState(p).with(ComponentBlock.BROKEN,true));core.temperature=90;
+        var player=t.createMockPlayer(net.minecraft.world.GameMode.SURVIVAL);player.getInventory().setStack(0,new ItemStack(Foundry.THERMAL));
+        t.assertEquals(AssemblyRepair.repair(w,p,player),"repair_hot","Hot plant cannot be repaired during the accident");
+        core.temperature=20;t.assertEquals(AssemblyRepair.repair(w,p,player),"repair_controller_done","Replacement controller repairs the burnt original");
+        t.assertTrue(player.getInventory().getStack(0).isEmpty(),"Replacement controller actually consumed");
+        t.assertFalse(w.getBlockState(p).get(ComponentBlock.ENABLED),"Repair leaves output off for deliberate restart");
+        t.assertFalse(w.getBlockState(p).get(ComponentBlock.BROKEN),"Burnt state cleared");t.complete();
+    }
+    @GameTest(templateName="electron:industrial_test",tickLimit=30)
+    public void windHatchIsEntirelyInFrontOfTheCone(TestContext t){
+        var model=AssemblyGeometry.model(ComponentBlock.Kind.WIND,7,false);
+        var hatch=model.pieces().stream().filter(p->p.texture().equals("hatch")).findFirst().orElseThrow();
+        t.assertTrue(Math.max(hatch.a().z,hatch.b().z)<.5-.58,"Hatch stays outside even the widest tower skin");
+        t.assertTrue(hatch.a().x>.1&&hatch.b().x<.9,"Single door is centered on the mast");t.complete();
+    }
     private static BlockPos plant(TestContext t,ComponentBlock block){
         var p=t.getAbsolutePos(new BlockPos(24,4,34));var w=t.getWorld();
         if(block==Foundry.THERMAL||block==Foundry.NUCLEAR){IndustrialFixtures.plant(w,p,block);return p;}

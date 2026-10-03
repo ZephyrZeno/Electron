@@ -16,7 +16,7 @@ assert_no_dropped_items(WORLD)
 level=read_gzip(WORLD/'level.dat')['Data'];assert level['GameType']==0 and level['Difficulty']==0
 assert (level['SpawnX'],level['SpawnY'],level['SpawnZ'])==(8,65,-4)
 circuit=read_gzip(WORLD/'data/electron_circuits.dat')['data']
-assert len(circuit['devices'])==77 and len(circuit['wires'])==100
+assert len(circuit['devices'])==95 and len(circuit['wires'])==120
 assert any(w.get('cable') for w in circuit['wires']) and any(not w.get('cable') for w in circuit['wires'])
 blocks=[];saved_chunks={}
 for file in (WORLD/'region').glob('*.mca'):
@@ -24,11 +24,11 @@ for file in (WORLD/'region').glob('*.mca'):
         saved_chunks[(data['xPos'],data['zPos'])]=data
         blocks.extend(data.get('block_entities',[]))
 components=[b for b in blocks if b['id']=='electron:component'];signs=[b for b in blocks if b['id']=='minecraft:sign'];chests=[b for b in blocks if b['id']=='minecraft:chest']
-assert len(components)==77 and len(signs)==15 and len(chests)==16
+assert len(components)==95 and len(signs)==16 and len(chests)==17
 chest_stacks=sum(len(b.get('Items',[])) for b in chests)
-assert chest_stacks==290, f'Missing toolbox contents: {chest_stacks}/290 stacks'
+assert chest_stacks==312, f'Missing toolbox contents: {chest_stacks}/312 stacks'
 assert all('map.electron.' in message and 'translate' in message for sign in signs for message in sign['front_text']['messages']),'Sign instructions must remain client-translated'
-assert len({(b['x'],b['y'],b['z']) for b in components})==77
+assert len({(b['x'],b['y'],b['z']) for b in components})==95
 assert {(b['x'],b['y'],b['z']) for b in components}=={position(d['p']) for d in circuit['devices']}
 assert all(not b.get('converter_target') for b in components),'Fixed modules must have no free setting'
 
@@ -54,7 +54,11 @@ for fluid in fluids:
     capacity=256000 if state['Name']=='electron:reactor_coolant_tank' else 16000 if state['Name']=='electron:boiler_water_tank' else 250
     assert 0<fluid['water_mb']<=capacity, ('Invalid or empty teaching fluid storage',fluid)
 tables=[b for b in blocks if b['id']=='electron:industrial_assembly_table']
-assert len(tables)==6 and sum(len(b.get('Items',[])) for b in tables)==4, 'Workshop origin must retain the four boiler ingredients'
+assert len(tables)==6 and sum(len(b.get('Items',[])) for b in tables)==5, 'Workshop origin must retain all five boiler ingredients'
+assert report.count('processing_machines_working=4')==2
+for i,product in enumerate(('crushed_uranium','fuel_concentrate','uranium_pellet','fuel_rod')):
+    machine=next(b for b in components if (b['x'],b['y'],b['z'])==(i*18+8,66,83))
+    assert any(v['Slot']==2 and v['id']=='electron:'+product and v['count']>0 for v in machine['Items']), ('Processing line failed',product)
 for entity in components:
     x,y,z=entity['x'],entity['y'],entity['z']
     state=block_state(saved_chunks[(x//16,z//16)],x,y,z)
@@ -106,7 +110,7 @@ d.text((40,1345),'风机 → 两座输电塔 → 市电进线 → 24 V 变电 �
 d.text((40,1380),'火电 (68,66,10)    水电 (68,66,32)    36×36 核电 (103,66,58)',font=font(19),fill='#c5d6df')
 d.text((40,1413),'机组装配台 (59,66,12)    引雷 (66,72,60)    悬线 (60,66,60)',font=font(19),fill='#c5d6df')
 d.text((40,1444),'两套透明供水回路已通电；补充燃料与储水，使用手册查看装配坐标。',font=font(17),fill='#92a9b9')
-d.text((30,1496),f"77 个器件 / 100 段线路 / {len(circuit['bridges'])} 座跨线桥 / 2 套水泵 / 11 组变电验证",font=font(18),fill='#a3bbca')
+d.text((30,1496),f"95 个器件 / 120 段线路 / {len(circuit['bridges'])} 座跨线桥 / 4 台加工机 / 2 套水泵",font=font(18),fill='#a3bbca')
 im.save(out/'地图导览.png')
 instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 
@@ -125,6 +129,7 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 07 配电 (0..11, z=51..68)：发电机→1 A 断路器→双母线分线箱→工程灯与电机。电机右键切换负载。
 08 故障 (18..29, z=51..68)：电机预设锁轴、电源初始为空；摇动电源后观察断路器跳闸。把电机切回空载，再复位断路器。
 09 实验 (36..47, z=51..68)：拿材料和工具，自行搭线、合成器件，使用工程手册查看接法。
+12 加工 (0..65, z=80..92)：四台通电机器从左到右为粉碎机、离心分离机、电炉、压制封装机。每台都有有限演示原料，检查输出后可取出并放到下一台；不是自动跨机物流。材料箱 (10,66,92)，右端有工坊防护灯和庭院柱灯。手册新增加工配方页。
 
 入口外 (14,74,-4)、(46,74,-4) 两座玩家可拆改的电线塔，A/B 各一条架空电缆，由风机供电，经市电进线柜和变电柜带动灯和旋转夹持台。旁边箱子有塔架、塔顶座与长电缆卷。
 所有台面器件放在平滑石上方，导线沿台面跨高差连接；不再把器件嵌进台面。
@@ -138,13 +143,13 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 选 COM 再选探针测压；潜行点设备/导线测流；潜行对空切换 V/Ω；对空右键清除测点。
 未加载区块中的网络会暂停，走近实验区会恢复；没有免费持续发电或远程逻辑控制器。
 地图导览是从实际保存的线路数据绘制的平面示意，不是游戏截图。
-验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 9 个指示负载与 2 个旋转电机；两次均接通悬线展台 40 刻并确认漏电电流，随后断开再保存。
-生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、14 个工具箱与 2 个供料箱中的 290 组物品完整，并检查两套供水和装配台配料。
-全部 77 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
+验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 11 个指示负载、2 个旋转电机和 4 台加工机产出；两次均接通悬线展台 40 刻并确认漏电电流，随后断开再保存。
+生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、15 个工具／材料箱与 2 个供料箱中的 312 组物品完整，并检查两套供水和装配台配料。
+全部 95 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
 '''
 (out/'地图说明.txt').write_text(instructions,encoding='utf-8')
 audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'components_above_bench':True,'overhead_spans':2,'reopened_and_powered':True,'all_plants_and_substations_powered':True,'generator_required':False,'formed_parts':len(parts),'all_multiblocks_formed':True}
-audit.update(vertical_drops=2,powered_pumps=2,fluid_stores=len(fluids),workshop_cells=6,nuclear_foundation=[36,36],arc_demo_powered_test=True,arc_demo_default_off=True,fuel_services_working=True,six_module_workshop=True)
+audit.update(vertical_drops=2,powered_pumps=2,processing_machines=4,fluid_stores=len(fluids),workshop_cells=6,nuclear_foundation=[36,36],arc_demo_powered_test=True,arc_demo_default_off=True,fuel_services_working=True,six_module_workshop=True)
 (out/'map-verification.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
 archive=ROOT/f'dist/circuit-academy-{VERSION}.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:

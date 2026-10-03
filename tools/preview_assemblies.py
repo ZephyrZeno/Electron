@@ -19,7 +19,10 @@ def norm(v):return mul(v,1/math.sqrt(sum(x*x for x in v)))
 def verts(p):
     a,b=p['a'],p['b']
     if p.get('sides',0)>4:
-        n=p['sides'];return [(a[0]+r*math.cos(i*math.tau/n),y,a[2]+r*math.sin(i*math.tau/n)) for y,r in ((a[1],p['r']),(b[1],p.get('top_r',p['r']))) for i in range(n)]
+        n=p['sides'];axis=norm(sub(b,a));u=cross(axis,(0,0,1))
+        if sum(v*v for v in u)<1e-8:u=cross(axis,(1,0,0))
+        u=norm(u);v=norm(cross(u,axis))
+        return [add(c,add(mul(u,r*math.cos(i*math.tau/n)),mul(v,r*math.sin(i*math.tau/n)))) for c,r in ((a,p['r']),(b,p.get('top_r',p['r']))) for i in range(n)]
     if not p['beam']:
         return [(a[0],a[1],a[2]),(b[0],a[1],a[2]),(b[0],b[1],a[2]),(a[0],b[1],a[2]),(a[0],a[1],b[2]),(b[0],a[1],b[2]),(b[0],b[1],b[2]),(a[0],b[1],b[2])]
     axis=norm(sub(b,a));u=cross(axis,(0,1,0))

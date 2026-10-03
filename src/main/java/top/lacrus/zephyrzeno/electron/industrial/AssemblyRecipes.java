@@ -11,11 +11,11 @@ public final class AssemblyRecipes {
     public record Recipe(String id,Item output,List<Ingredient> inputs){}
     private static Ingredient of(ItemConvertible item,int count){return new Ingredient(item.asItem(),count);}
     public static List<Recipe> recipes(){return List.of(
-        new Recipe("boiler",Industrial.BOILER.asItem(),List.of(of(Items.IRON_BLOCK,4),of(Items.COPPER_BLOCK,2),of(Foundry.RELAY,2),of(Foundry.RESISTOR_1000,2))),
-        new Recipe("turbine",Industrial.TURBINE.asItem(),List.of(of(Items.IRON_BLOCK,3),of(Items.IRON_INGOT,12),of(Foundry.SHAFT,2),of(Foundry.MOTOR,1))),
-        new Recipe("alternator",Industrial.ALTERNATOR.asItem(),List.of(of(Items.COPPER_BLOCK,4),of(Items.IRON_BLOCK,2),of(Foundry.MOTOR,2),of(Foundry.DIODE,4))),
-        new Recipe("condenser",Industrial.CONDENSER.asItem(),List.of(of(Items.COPPER_BLOCK,3),of(Industrial.IRON_PIPE,8),of(Foundry.CAPACITOR,2),of(Foundry.RELAY,1))),
-        new Recipe("control",Industrial.CONTROL.asItem(),List.of(of(Foundry.MOSFET,4),of(Foundry.RELAY,4),of(Foundry.RESISTOR_1000,4),of(Foundry.LED,4),of(Items.IRON_INGOT,8))),
+        new Recipe("boiler",Industrial.BOILER.asItem(),List.of(of(Items.IRON_BLOCK,4),of(Items.COPPER_BLOCK,2),of(Foundry.RELAY,2),of(Foundry.RESISTOR_1000,2),of(Processing.IRON_PLATE,8))),
+        new Recipe("turbine",Industrial.TURBINE.asItem(),List.of(of(Items.IRON_BLOCK,3),of(Processing.IRON_PLATE,6),of(Foundry.SHAFT,2),of(Foundry.MOTOR,1))),
+        new Recipe("alternator",Industrial.ALTERNATOR.asItem(),List.of(of(Items.COPPER_BLOCK,4),of(Items.IRON_BLOCK,2),of(Foundry.MOTOR,2),of(Foundry.DIODE,4),of(Processing.COPPER_COIL,8))),
+        new Recipe("condenser",Industrial.CONDENSER.asItem(),List.of(of(Items.COPPER_BLOCK,3),of(Industrial.IRON_PIPE,8),of(Foundry.CAPACITOR,2),of(Foundry.RELAY,1),of(Processing.IRON_PLATE,4))),
+        new Recipe("control",Industrial.CONTROL.asItem(),List.of(of(Foundry.MOSFET,4),of(Foundry.RELAY,4),of(Foundry.RESISTOR_1000,4),of(Foundry.LED,4),of(Processing.IRON_PLATE,4),of(Processing.COPPER_COIL,2))),
         new Recipe("vessel",Industrial.REACTOR_VESSEL.asItem(),List.of(of(Foundry.REACTOR_CASING,16),of(Items.IRON_BLOCK,8),of(Industrial.CONDENSER,2),of(Industrial.CONTROL,1))),
         new Recipe("control_rods",Industrial.CONTROL_RODS.asItem(),List.of(of(Items.IRON_BLOCK,4),of(Foundry.MOTOR,4),of(Foundry.RELAY,4),of(Industrial.CONTROL,1))),
         new Recipe("safety_valve",Industrial.SAFETY_VALVE.asItem(),List.of(of(Items.IRON_INGOT,8),of(Foundry.RELAY,2),of(Foundry.RESISTOR_100,2),of(Industrial.IRON_PIPE,2)))

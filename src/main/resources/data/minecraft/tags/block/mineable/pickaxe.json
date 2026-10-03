@@ -14,6 +14,7 @@
     "electron:buffer_gate",
     "electron:cable_breakout",
     "electron:capacitor_100mf",
+    "electron:centrifuge",
     "electron:circuit_switch",
     "electron:condenser_module",
     "electron:control_rod_drive",
@@ -21,9 +22,11 @@
     "electron:dc_generator",
     "electron:dc_motor",
     "electron:distribution_box",
+    "electron:electric_kiln",
     "electron:electrical_redstone_switch",
     "electron:electrical_relay",
     "electron:engineering_lamp",
+    "electron:fuel_fabricator",
     "electron:fuse_25ma",
     "electron:glass_pipe",
     "electron:hand_crank",
@@ -40,6 +43,7 @@
     "electron:not_gate",
     "electron:nuclear_reactor",
     "electron:or_gate",
+    "electron:ore_crusher",
     "electron:pipe_valve",
     "electron:plant_casing",
     "electron:plant_control_module",
@@ -79,7 +83,9 @@
     "electron:wire_or_gate",
     "electron:wire_xnor_gate",
     "electron:wire_xor_gate",
+    "electron:workshop_lamp",
     "electron:xnor_gate",
-    "electron:xor_gate"
+    "electron:xor_gate",
+    "electron:yard_lamp"
   ]
 }

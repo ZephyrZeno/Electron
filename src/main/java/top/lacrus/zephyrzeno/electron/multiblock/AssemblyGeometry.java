@@ -67,7 +67,8 @@ public final class AssemblyGeometry {
         if(height>0&&kind!=Kind.WIND)lattice(height);
         if(kind==Kind.WIND){
             for(int i=0;i<height;i++){double r=.58-.31*i/Math.max(1d,height),R=.58-.31*(i+1)/Math.max(1d,height);cone(.5,i-height,.5,r,R,1,"turbine_white");if(i%3==0)cylinder(.5,i-height,.5,r+.018,.055,"galvanized");}
-            box(.12,-height,.0,.88,-height+1.25,.04,"service_panel");
+            // Keep the whole hatch outside the widest tower skin; burying its middle left two visible strips.
+            box(.23,-height+.1,-.125,.77,-height+1.4,-.095,"hatch");
             for(int i=0;i<12;i++){double a=i*Math.PI/6;box(.5+.59*Math.cos(a)-.035,-height,.5+.59*Math.sin(a)-.035,.5+.59*Math.cos(a)+.035,-height+.08,.5+.59*Math.sin(a)+.035,"cast_base");}
         }
         // This service panel keeps the existing eight/six/two electrical pin coordinates accessible.
@@ -93,6 +94,9 @@ public final class AssemblyGeometry {
         switch(kind){
             case WIND -> {
                 cone(.5,0,.5,.27,.23,2.4,"turbine_white");
+                cylinder(.5,1.96,.5,.34,.09,"galvanized");
+                for(int i=0;i<8;i++){double a=i*Math.PI/4;double x=.5+.29*Math.cos(a),z=.5+.29*Math.sin(a);box(x-.025,2.05,z-.025,x+.025,2.09,z+.025,"cast_base");}
+                for(int i=0;i<12;i++){double a=i*Math.PI/6,b=(i+1)*Math.PI/6;beam(.5+.2*Math.cos(a),2.5+.2*Math.sin(a),-.77,.5+.2*Math.cos(b),2.5+.2*Math.sin(b),-.77,.035,"galvanized");}
                 // Nacelle, service hatch, hub and a swept rotor envelope.
                 box(-.02,2.04,-.34,1.02,2.96,1.7,"turbine_white");
                 for(int i=0;i<6;i++)box(.13,2.95,.25+i*.18,.87,2.98,.32+i*.18,"cast_base");
@@ -136,9 +140,19 @@ public final class AssemblyGeometry {
             }
             case HYDRO -> {
                 tank(.5,.04,-.5,.46,1.28,"hydro_blue");
-                box(.2,.15,1.08,.8,1.05,1.86,"cast_base");
                 beam(.5,.6,-.5,.5,.6,1.5,.13,"galvanized");
-                for(int i=0;i<6;i++)box(.12,.16+i*.13,1.13,.88,.22+i*.13,1.82,"hydro_blue");
+                // A horizontal alternator, bearing pedestals and a flanged volute cover.
+                parts.add(new Piece(new Vec3d(.5,.6,1.1),new Vec3d(.5,.6,1.84),.36,"hydro_blue",true,16));
+                for(double z:new double[]{1.13,1.75})box(.19,.04,z,.81,.27,z+.12,"cast_base");
+                for(int i=0;i<8;i++){double z=1.12+i*.095;parts.add(new Piece(new Vec3d(.5,.6,z),new Vec3d(.5,.6,z+.028),.385,"galvanized",true,16));}
+                for(double z:new double[]{1.08,1.85}){
+                    parts.add(new Piece(new Vec3d(.5,.6,z),new Vec3d(.5,.6,z+.04),.32,"cast_base",true,16));
+                    for(int i=0;i<8;i++){double a=i*Math.PI/4,x=.5+.275*Math.cos(a),y=.6+.275*Math.sin(a);beam(x,y,z-.015,x,y,z+.055,.017,"galvanized");}
+                }
+                box(.32,.96,1.32,.68,1.1,1.67,"control_case");box(.36,1.1,1.38,.64,1.115,1.6,"service_panel");
+                for(int i=0;i<8;i++){double a=i*Math.PI/4,x=.5+.36*Math.cos(a),z=-.5+.36*Math.sin(a);box(x-.025,1.3,z-.025,x+.025,1.37,z+.025,"cast_base");}
+                wheel(.5,.68,-.972,.26);
+                box(.77,.35,-.82,.84,.7,-.4,"service_panel");
             }
             case NUCLEAR -> {
                 // Thirty-six-by-thirty-six site with a walk-in control room and outside intake.
@@ -194,16 +208,48 @@ public final class AssemblyGeometry {
                 for(double x:new double[]{.13,.87})for(int i=0;i<7;i++)box(x-.13,1.5+i*.09,-.62,x+.13,1.55+i*.09,-.35,"porcelain");
                 for(double x:new double[]{-.5,1.5})box(x-.32,0,.12,x+.32,.7,.88,"transformer_oil");
                 box(.08,0,1.08,.92,.85,1.92,"control_case");
+                parts.add(new Piece(new Vec3d(-.12,1.72,-.81),new Vec3d(1.12,1.72,-.81),.16,"transformer_oil",true,16));
+                for(double x:new double[]{.06,.94})beam(x,1.48,-.81,x,1.63,-.81,.035,"galvanized");
+                box(.17,1.67,-.98,.39,1.78,-.969,"instrument_glass");
+                pipe(.67,1.66,-.81,.67,1.27,-.81,.035);
+                box(.13,.14,1.925,.87,.75,1.947,"hatch");
+                for(double y:new double[]{.28,.64})box(.15,y,1.949,.19,y+.07,1.972,"galvanized");
+                beam(.7,.37,1.973,.7,.58,1.973,.02,"galvanized");
             }
             case MAINS -> {
                 box(.02,0,-.98,.98,1.95,-.12,"control_case");
                 box(.08,.22,-1,.92,1.8,-.97,"service_panel");
                 box(.75,.75,-1.08,.8,1.22,-.99,"galvanized");
+                box(.045,.035,-.975,.955,.15,-.125,"cast_base");
+                box(.14,1.36,-1.028,.66,1.7,-1.006,"instrument_glass");
+                for(double y:new double[]{.34,1.05,1.66}){
+                    box(.065,y,-1.04,.115,y+.13,-1.012,"galvanized");
+                    beam(.089,y+.01,-1.05,.089,y+.12,-1.05,.013,"cast_base");
+                }
+                for(int i=0;i<7;i++)box(.175,.31+i*.052,-1.022,.64,.33+i*.052,-1.004,"cast_base");
+                for(double x:new double[]{.2,.4,.6}){
+                    box(x,.17,-1.045,x+.055,.23,-1.01,"porcelain");
+                    parts.add(new Piece(new Vec3d(x+.028,.09,.915),new Vec3d(x+.028,.09,.987),.037,"cast_base",true,12));
+                }
+                box(.705,1.38,-1.038,.82,1.5,-1.009,"porcelain");
+                box(.01,1.948,-.99,.99,1.985,-.11,"galvanized");
             }
             default -> {}
         }
     }
-    private void pipe(double x,double y,double z,double X,double Y,double Z,double r){beam(x,y,z,X,Y,Z,r,"steel_pipe");var a=new Vec3d(x,y,z);var b=new Vec3d(X,Y,Z);int n=Math.max(1,(int)a.distanceTo(b));for(int i=0;i<=n;i++){var q=a.lerp(b,i/(double)n);box(q.x-r*1.35,q.y-r*1.35,q.z-r*1.35,q.x+r*1.35,q.y+r*1.35,q.z+r*1.35,"galvanized");}}
+    private void pipe(double x,double y,double z,double X,double Y,double Z,double r){
+        var a=new Vec3d(x,y,z);var b=new Vec3d(X,Y,Z);var axis=b.subtract(a).normalize();
+        parts.add(new Piece(a,b,r,"steel_pipe",true,12));
+        var u=axis.crossProduct(new Vec3d(0,1,0));if(u.lengthSquared()<1e-8)u=axis.crossProduct(new Vec3d(1,0,0));u=u.normalize();var v=axis.crossProduct(u).normalize();
+        int n=Math.max(1,(int)Math.ceil(a.distanceTo(b)/3));
+        for(int i=0;i<=n;i++){
+            var q=a.lerp(b,i/(double)n);parts.add(new Piece(q.subtract(axis.multiply(.035)),q.add(axis.multiply(.035)),r*1.5,"galvanized",true,12));
+            if(r>=.09)for(int j=0;j<6;j++){
+                double angle=j*Math.PI/3;var bolt=q.add(u.multiply(Math.cos(angle)*r*1.23)).add(v.multiply(Math.sin(angle)*r*1.23));
+                var begin=bolt.subtract(axis.multiply(.055));var end=bolt.add(axis.multiply(.055));parts.add(new Piece(begin,end,.018,"cast_base",true));
+            }
+        }
+    }
     private void controlRoom(){
         // Interior is empty and reachable through a two-block-wide front opening.
         box(14,0,-7,21,.08,-.1,"floor_tiles");box(14,0,-7,14.18,3.55,-.1,"room_wall");
@@ -233,6 +279,10 @@ public final class AssemblyGeometry {
         Map<BlockPos,List<Box>> boxes=new LinkedHashMap<>();
         for(var p:parts){
             if(p.sides>4){
+                if(Math.abs(p.a.x-p.b.x)>1e-7||Math.abs(p.a.z-p.b.z)>1e-7){
+                    int n=Math.max(1,(int)Math.ceil(p.a.distanceTo(p.b)*8));
+                    for(int i=0;i<n;i++)clip(boxes,beamBounds(p.a.lerp(p.b,i/(double)n),p.a.lerp(p.b,(i+1d)/n),Math.max(p.radius,p.topRadius)));continue;
+                }
                 if(p.texture.equals("cooling_concrete")){
                     double rr=Math.max(p.radius,p.topRadius),inner=Math.max(0,Math.min(p.radius,p.topRadius)-.15);
                     for(int x=0;x<32;x++)for(int z=0;z<32;z++){double dx=-rr+(x+.5)*rr/16,dz=-rr+(z+.5)*rr/16,d=Math.hypot(dx,dz);if(d<=rr+.12&&d>=inner-.08)clip(boxes,new Box(p.a.x-rr+x*rr/16,p.a.y,p.a.z-rr+z*rr/16,p.a.x-rr+(x+1)*rr/16,p.b.y,p.a.z-rr+(z+1)*rr/16));}continue;

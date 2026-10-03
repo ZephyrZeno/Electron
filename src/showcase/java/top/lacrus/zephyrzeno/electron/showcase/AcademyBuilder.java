@@ -66,6 +66,7 @@ public final class AcademyBuilder implements ModInitializer {
         motors.add(new BlockPos(8,66,58));
         indicators.add(new BlockPos(80,66,14));indicators.add(new BlockPos(80,66,36));indicators.add(new BlockPos(115,66,62));
         indicators.add(new BlockPos(53,66,3));motors.add(new BlockPos(50,66,6));
+        indicators.add(new BlockPos(61,66,87));indicators.add(new BlockPos(64,66,89));
     }
     private void build(MinecraftServer server){
         if(!circuit.devices.isEmpty()||!circuit.wires.isEmpty())throw new IllegalStateException("Export requires a fresh world. Run tools/build_academy.ps1 instead of rebuilding an existing map.");
@@ -90,7 +91,7 @@ public final class AcademyBuilder implements ModInitializer {
             chest(base.add(10,1,17),false);
             switch(i){case 0->first(base);case 1->battery(base);case 2->timing(base);case 3->mosfet(base);case 4->relay(base);case 5->conversion(base);case 6->distribution(base,false);case 7->distribution(base,true);case 8->sandbox(base);}
         }
-        towers();gridWorkshop();industrialWorkshop();
+        towers();gridWorkshop();industrialWorkshop();processingWorkshop();
         circuit.bridges.values().removeIf(b->circuit.wires.values().stream().noneMatch(w->w.path().stream().anyMatch(p->p.host().equals(b.host())&&p.layer()==1)));
         if(circuit.bridges.size()>CircuitState.MAX_BRIDGES)throw new IllegalStateException("Map exceeded normal bridge budget");
         for(var pos:circuit.devices.keySet())if(world.getBlockState(pos).getBlock() instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyControllerBlock&&!top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(world.getBlockState(pos)))throw new IllegalStateException("Construction overlapped a formed machine at "+pos);
@@ -237,6 +238,22 @@ public final class AcademyBuilder implements ModInitializer {
         sign(new BlockPos(60,65,66),"arc_demo","arc_demo_1","arc_demo_2","arc_demo_3");
         device(new BlockPos(36,65,51),5,6,Industrial.LOW_SOCKET);
     }
+    private void processingWorkshop(){
+        for(int x=-4;x<=71;x++)for(int z=75;z<=94;z++){set(x,63,z,Blocks.STONE_BRICKS);set(x,64,z,Blocks.SMOOTH_QUARTZ);}
+        for(int x=5;x<=10;x++)set(x,65,74,Blocks.AIR);
+        var machines=List.of(Processing.CRUSHER,Processing.CENTRIFUGE,Processing.KILN,Processing.FABRICATOR);
+        var ingredients=List.of(Foundry.RAW_URANIUM,Processing.CRUSHED_URANIUM,Processing.CONCENTRATE,Foundry.URANIUM_PELLET);
+        for(int i=0;i<4;i++){
+            var b=new BlockPos(i*18,65,80);for(int x=0;x<12;x++)for(int z=0;z<13;z++)set(b.getX()+x,65,b.getZ()+z,Blocks.SMOOTH_STONE);
+            var source=source(b,1,3,true,1000);var machine=device(b,8,3,machines.get(i));e(machine).plantItems.set(0,new ItemStack(ingredients.get(i),64));
+            if(i==3)e(machine).plantItems.set(1,new ItemStack(Processing.CLADDING,16));e(machine).markDirty();
+            wire(b,source,0,machine,0,0,true);wire(b,source,1,machine,1,1,true);
+            if(i==3){var indoor=device(b,7,7,Lighting.WORKSHOP);var yard=device(b,10,9,Lighting.YARD);for(var light:List.of(indoor,yard)){wire(b,source,0,light,0,2,true);wire(b,source,1,light,1,1,true);indicators.add(light);}}
+        }
+        sign(new BlockPos(7,65,78),"processing","processing_1","processing_2","processing_3");
+        var p=new BlockPos(10,66,92);world.setBlockState(p,Blocks.CHEST.getDefaultState().with(ChestBlock.FACING,Direction.SOUTH));var chest=(ChestBlockEntity)world.getBlockEntity(p);int slot=0;
+        for(var item:new ItemConvertible[]{Processing.CRUSHER,Processing.CENTRIFUGE,Processing.KILN,Processing.FABRICATOR,Processing.CRUSHED_URANIUM,Processing.CONCENTRATE,Processing.TAILINGS,Processing.IRON_DUST,Processing.COPPER_DUST,Processing.CLADDING,Processing.IRON_PLATE,Processing.COPPER_COIL,Lighting.WORKSHOP,Lighting.YARD,Foundry.RAW_URANIUM,Items.RAW_IRON,Items.RAW_COPPER,Items.IRON_INGOT,Items.COPPER_INGOT,Foundry.HANDBOOK,Foundry.METER,Foundry.WRENCH})chest.setStack(slot++,new ItemStack(item,Math.min(16,item.asItem().getMaxCount())));chest.markDirty();
+    }
     private void first(BlockPos b){var s=source(b,1,3,false,100);var r=device(b,5,3,Foundry.RESISTOR_220);var l=device(b,8,8,Foundry.LED);wire(b,s,0,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,s,1,1,false);indicators.add(l);}
     private void battery(BlockPos b){var s=source(b,1,2,false,100);var m=device(b,5,2,Foundry.BATTERY);var bus=device(b,5,7,Foundry.TERMINAL_STRIP);var r=device(b,8,8,Foundry.RESISTOR_220);var l=device(b,8,12,Foundry.LED);e(m).energy=10;wire(b,s,0,m,0,0,false);wire(b,s,1,m,1,1,false);wire(b,m,2,bus,0,0,false);wire(b,m,3,bus,4,1,false);wire(b,bus,1,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,bus,5,1,false);indicators.add(l);}
     private void timing(BlockPos b){var s=source(b,1,2,false,100);var button=device(b,5,2,Foundry.BUTTON);var cap=device(b,5,7,Foundry.CAPACITOR);var r=device(b,8,7,Foundry.RESISTOR_220);var l=device(b,8,12,Foundry.LED);wire(b,s,0,button,0,0,false);wire(b,button,1,cap,0,2,false);wire(b,cap,1,s,1,1,false);wire(b,cap,0,r,0,2,false);wire(b,r,1,l,0,3,false);wire(b,l,1,cap,1,1,false);}
@@ -248,7 +265,9 @@ public final class AcademyBuilder implements ModInitializer {
     private void sign(BlockPos p,String...keys){world.setBlockState(p,Blocks.OAK_SIGN.getDefaultState().with(SignBlock.ROTATION,0));var sign=(SignBlockEntity)world.getBlockEntity(p);var text=new SignText().withColor(DyeColor.WHITE).withGlowing(true);for(int i=0;i<Math.min(4,keys.length);i++)text=text.withMessage(i,Text.translatable("map.electron."+keys[i]));sign.setText(text,true);sign.setText(text,false);sign.setWaxed(true);sign.markDirty();}
     private void chest(BlockPos p,boolean all){world.setBlockState(p,Blocks.CHEST.getDefaultState().with(ChestBlock.FACING,Direction.SOUTH));var chest=(ChestBlockEntity)world.getBlockEntity(p);List<ItemStack> items=new ArrayList<>();for(var item:new Item[]{Foundry.HANDBOOK,Foundry.METER,Foundry.CUTTER,Foundry.WRENCH,Foundry.MAGNIFIER})items.add(new ItemStack(item));for(int color=0;color<4;color++){items.add(CircuitToolItem.spool(4096,color,false));items.add(CircuitToolItem.spool(4096,color,true));}items.add(new ItemStack(Foundry.BRIDGE,32));items.add(new ItemStack(Foundry.TERMINAL,32));items.add(new ItemStack(Foundry.WALL_PORT,8));for(var item:all?new Item[]{Foundry.CRANK.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.LED.asItem(),Foundry.BATTERY.asItem(),Foundry.MOSFET.asItem(),Foundry.RELAY.asItem(),Foundry.BOOST.asItem(),Foundry.BUCK_3V3.asItem(),Foundry.BUCK_12.asItem(),Foundry.GENERATOR.asItem(),Foundry.MOTOR.asItem()}:new Item[]{Foundry.LED.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.BREAKER.asItem(),Foundry.FUSE.asItem()})items.add(new ItemStack(item,item==Foundry.BATTERY.asItem()?1:4));for(int i=0;i<Math.min(27,items.size());i++)chest.setStack(i,items.get(i));chest.markDirty();}
     private void verify(){
-        if(circuit.wires.size()!=100||circuit.devices.size()!=77)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size());
+        if(circuit.wires.size()!=120||circuit.devices.size()!=95)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size());
+        for(int i=0;i<4;i++){var p=new BlockPos(i*18+8,66,83);if(!(e(p) instanceof ProcessingEntity)||e(p).plantItems.get(2).isEmpty())throw new IllegalStateException("Powered processing did not produce output at "+p);}
+        report.add("processing_machines_working=4");
         for(var p:circuit.devices.keySet()){
             if(world.getBlockState(p).isOf(Foundry.TOWER_TERMINAL)){if(!OverheadCable.tower(world,p))throw new IllegalStateException("Invalid demonstration tower");}
             else if(world.getBlockState(p).isOf(Foundry.WIND)||world.getBlockState(p).isOf(Foundry.LIGHTNING)){if(!top.lacrus.zephyrzeno.electron.multiblock.Assembly.original(world,p.down()).isOf(world.getBlockState(p).isOf(Foundry.WIND)?Industrial.MAST:Foundry.TOWER_SECTION))throw new IllegalStateException("Missing plant tower: "+p);}
