@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_display"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:display_panel",
+    "count": 1
+  }
+}

@@ -28,7 +28,7 @@ for event,settings in sounds.items():
         rms=float(np.sqrt(np.mean(data**2)))
         assert .01<peak<1 and rms>.005,(event,peak,rms)
         rows.append({'event':event,'seconds':round(len(data)/rate,3),'peak':round(peak,3),'rms':round(rms,3),'channels':1,'rate':rate})
-assert len(rows)==34
+assert len(rows)==37
 # A running loop must retain energy at its seam, without one-shot fades or large discontinuities.
 loops=('wind_rotor','hydro_run','pump_run','turbine_run','reactor_cooling','transformer_hum','motor_run','centrifuge_run','crusher_run','kiln_run','fabricator_run','pcb_drill_run','process_bath')
 loop_report=[]

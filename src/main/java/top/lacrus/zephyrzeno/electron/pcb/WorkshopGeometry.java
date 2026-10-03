@@ -12,11 +12,11 @@ public final class WorkshopGeometry {
     public static VoxelShape shape(String machine,Direction face,int turn){return CACHE.computeIfAbsent(machine+face+turn,k->{
         var boxes=new ArrayList<double[]>();
         boxes.add(new double[]{.8,5.2,0,13.2,8.8,1.5});
-        if(machine.equals("precision_workbench")){
+        if(machine.equals("precision_workbench")||machine.equals("pcb_design_station")){
             boxes.add(new double[]{.45,10.85,.45,15.55,11.8,15.55});
             for(double x:new double[]{1.2,13.4})for(double z:new double[]{1.2,13.4})boxes.add(new double[]{x,0,z,x+1,10.85,z+1});
-            boxes.add(new double[]{10,7,3,15.25,10.85,14.5});
-            boxes.add(new double[]{1.4,11.8,1.8,6.9,15.4,3.6});boxes.add(new double[]{8,11.8,1.5,14.8,15.4,6.8});
+            if(machine.equals("pcb_design_station")){boxes.add(new double[]{2,7.2,2,14,10.85,9.4});boxes.add(new double[]{3.5,13,1.8,12.5,15.4,2.64});boxes.add(new double[]{3,11.8,7.6,13.7,12.2,14});}
+            else{boxes.add(new double[]{10,7,3,15.25,10.85,14.5});boxes.add(new double[]{1.4,11.8,1.8,6.9,15.4,3.6});boxes.add(new double[]{8,11.8,1.5,14.8,15.4,6.8});}
         }else if(machine.equals("emergency_lamp")){
             boxes.add(new double[]{1,1.4,1.5,15,9.1,7.3});
             for(double x:new double[]{2.4,9.9})boxes.add(new double[]{x,9.1,2.3,x+4.4,14.1,7.3});

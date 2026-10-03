@@ -55,9 +55,9 @@ public final class PowerPlant {
             if(e.temperature>180&&!state.get(ComponentBlock.BROKEN)){
                 e.energy=e.fuelEnergy=e.decayHeat=0;e.plantReady=false;e.plantStatus="plant_failure";
                 w.setBlockState(p,w.getBlockState(p).with(ComponentBlock.BROKEN,true).with(ComponentBlock.ENABLED,false),Block.NOTIFY_ALL);
-                ElectricalEffects.play(w,p,ElectricalEffects.PRESSURE_BURST,1,1);
+                PlantAccident.emit(w,p,state,nuclear?PlantAccident.NUCLEAR:PlantAccident.THERMAL);
                 // A bounded industrial steam/pressure accident; no nuclear-weapon simulation.
-                w.createExplosion(null,p.getX()+.5,p.getY()+1,p.getZ()+.5,nuclear?5:3,net.minecraft.world.World.ExplosionSourceType.BLOCK);e.markDirty();return;
+                var accident=PlantAccident.origin(p,state);w.createExplosion(null,accident.x,accident.y,accident.z,nuclear?5:3,net.minecraft.world.World.ExplosionSourceType.BLOCK);e.markDirty();return;
             }
         }
         if(!enabled||!e.plantReady){if(!e.plantStatus.equals("unloaded"))e.energy=0;e.markDirty();return;}

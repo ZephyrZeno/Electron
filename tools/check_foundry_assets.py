@@ -178,6 +178,10 @@ if '--ports' in sys.argv:
     sheet('ports.png','ELECTRON / 专用接口与插电供电',[(n,'item/'+n) for n in ['plant_fuel_port','reactor_fuel_intake','plant_ash_outlet','spent_rod_outlet','plant_water_inlet','wall_outlet','power_strip','appliance_adapter','appliance_power_cord','workshop_lamp','immersion_gold_line','precision_workbench']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
     sys.exit(0)
+if '--digital' in sys.argv:
+    sheet('pcb-digital.png','ELECTRON / 独立设计、焊接装配与数字显示',[(n,'item/'+n) for n in ['pcb_design_station','precision_workbench','decimal_input','numeric_display','display_panel','smd_half_adder','smd_display','pcb_socket']])
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    sys.exit(0)
 if '--pcb' in sys.argv:
     sheet('pcb-workshop.png','ELECTRON / 俯视工坊、PCB 加工与沉金',[(n,'item/'+n) for n in ['precision_workbench','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','pcb_socket','assembled_pcb','water_level_sensor','temperature_sensor','emergency_lamp','smd_not']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')

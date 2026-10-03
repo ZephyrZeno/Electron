@@ -34,6 +34,7 @@ public final class ComponentPins {
         return new Endpoint(node(pos,pin),point,name(kind,pin));
     }
     public static Endpoint endpoint(BlockPos pos,Direction face,int turn,ComponentBlock block,int pin){
+        if(block instanceof top.lacrus.zephyrzeno.electron.display.DisplayBlock){var e=endpoint(pos,face,turn,block.kind,pin);return new Endpoint(e.id(),e.point(),Text.literal(pin==0?"VCC":pin==1?"GND":"D"+(pin-2)));}
         if(!block.rearPowerPorts())return endpoint(pos,face,turn,block.kind,pin);
         // Canonical rear sockets are at (3,7,0) and (11,7,0) in an upright chassis.
         var at=ComponentGeometry.local(face,turn,pin==0?3:11,0,9);

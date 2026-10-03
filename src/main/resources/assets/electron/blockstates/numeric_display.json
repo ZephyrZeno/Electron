@@ -1,0 +1,148 @@
+{
+  "variants": {
+    "facing=up,turn=0,broken=false": {
+      "model": "electron:block/numeric_display_off_up_0"
+    },
+    "facing=up,turn=1,broken=false": {
+      "model": "electron:block/numeric_display_off_up_1"
+    },
+    "facing=up,turn=2,broken=false": {
+      "model": "electron:block/numeric_display_off_up_2"
+    },
+    "facing=up,turn=3,broken=false": {
+      "model": "electron:block/numeric_display_off_up_3"
+    },
+    "facing=down,turn=0,broken=false": {
+      "model": "electron:block/numeric_display_off_down_0"
+    },
+    "facing=down,turn=1,broken=false": {
+      "model": "electron:block/numeric_display_off_down_1"
+    },
+    "facing=down,turn=2,broken=false": {
+      "model": "electron:block/numeric_display_off_down_2"
+    },
+    "facing=down,turn=3,broken=false": {
+      "model": "electron:block/numeric_display_off_down_3"
+    },
+    "facing=north,turn=0,broken=false": {
+      "model": "electron:block/numeric_display_off_north_0"
+    },
+    "facing=north,turn=1,broken=false": {
+      "model": "electron:block/numeric_display_off_north_1"
+    },
+    "facing=north,turn=2,broken=false": {
+      "model": "electron:block/numeric_display_off_north_2"
+    },
+    "facing=north,turn=3,broken=false": {
+      "model": "electron:block/numeric_display_off_north_3"
+    },
+    "facing=south,turn=0,broken=false": {
+      "model": "electron:block/numeric_display_off_south_0"
+    },
+    "facing=south,turn=1,broken=false": {
+      "model": "electron:block/numeric_display_off_south_1"
+    },
+    "facing=south,turn=2,broken=false": {
+      "model": "electron:block/numeric_display_off_south_2"
+    },
+    "facing=south,turn=3,broken=false": {
+      "model": "electron:block/numeric_display_off_south_3"
+    },
+    "facing=west,turn=0,broken=false": {
+      "model": "electron:block/numeric_display_off_west_0"
+    },
+    "facing=west,turn=1,broken=false": {
+      "model": "electron:block/numeric_display_off_west_1"
+    },
+    "facing=west,turn=2,broken=false": {
+      "model": "electron:block/numeric_display_off_west_2"
+    },
+    "facing=west,turn=3,broken=false": {
+      "model": "electron:block/numeric_display_off_west_3"
+    },
+    "facing=east,turn=0,broken=false": {
+      "model": "electron:block/numeric_display_off_east_0"
+    },
+    "facing=east,turn=1,broken=false": {
+      "model": "electron:block/numeric_display_off_east_1"
+    },
+    "facing=east,turn=2,broken=false": {
+      "model": "electron:block/numeric_display_off_east_2"
+    },
+    "facing=east,turn=3,broken=false": {
+      "model": "electron:block/numeric_display_off_east_3"
+    },
+    "facing=up,turn=0,broken=true": {
+      "model": "electron:block/numeric_display_broken_up_0"
+    },
+    "facing=up,turn=1,broken=true": {
+      "model": "electron:block/numeric_display_broken_up_1"
+    },
+    "facing=up,turn=2,broken=true": {
+      "model": "electron:block/numeric_display_broken_up_2"
+    },
+    "facing=up,turn=3,broken=true": {
+      "model": "electron:block/numeric_display_broken_up_3"
+    },
+    "facing=down,turn=0,broken=true": {
+      "model": "electron:block/numeric_display_broken_down_0"
+    },
+    "facing=down,turn=1,broken=true": {
+      "model": "electron:block/numeric_display_broken_down_1"
+    },
+    "facing=down,turn=2,broken=true": {
+      "model": "electron:block/numeric_display_broken_down_2"
+    },
+    "facing=down,turn=3,broken=true": {
+      "model": "electron:block/numeric_display_broken_down_3"
+    },
+    "facing=north,turn=0,broken=true": {
+      "model": "electron:block/numeric_display_broken_north_0"
+    },
+    "facing=north,turn=1,broken=true": {
+      "model": "electron:block/numeric_display_broken_north_1"
+    },
+    "facing=north,turn=2,broken=true": {
+      "model": "electron:block/numeric_display_broken_north_2"
+    },
+    "facing=north,turn=3,broken=true": {
+      "model": "electron:block/numeric_display_broken_north_3"
+    },
+    "facing=south,turn=0,broken=true": {
+      "model": "electron:block/numeric_display_broken_south_0"
+    },
+    "facing=south,turn=1,broken=true": {
+      "model": "electron:block/numeric_display_broken_south_1"
+    },
+    "facing=south,turn=2,broken=true": {
+      "model": "electron:block/numeric_display_broken_south_2"
+    },
+    "facing=south,turn=3,broken=true": {
+      "model": "electron:block/numeric_display_broken_south_3"
+    },
+    "facing=west,turn=0,broken=true": {
+      "model": "electron:block/numeric_display_broken_west_0"
+    },
+    "facing=west,turn=1,broken=true": {
+      "model": "electron:block/numeric_display_broken_west_1"
+    },
+    "facing=west,turn=2,broken=true": {
+      "model": "electron:block/numeric_display_broken_west_2"
+    },
+    "facing=west,turn=3,broken=true": {
+      "model": "electron:block/numeric_display_broken_west_3"
+    },
+    "facing=east,turn=0,broken=true": {
+      "model": "electron:block/numeric_display_broken_east_0"
+    },
+    "facing=east,turn=1,broken=true": {
+      "model": "electron:block/numeric_display_broken_east_1"
+    },
+    "facing=east,turn=2,broken=true": {
+      "model": "electron:block/numeric_display_broken_east_2"
+    },
+    "facing=east,turn=3,broken=true": {
+      "model": "electron:block/numeric_display_broken_east_3"
+    }
+  }
+}

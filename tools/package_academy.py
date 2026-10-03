@@ -16,7 +16,7 @@ assert_no_dropped_items(WORLD)
 level=read_gzip(WORLD/'level.dat')['Data'];assert level['GameType']==0 and level['Difficulty']==0
 assert (level['SpawnX'],level['SpawnY'],level['SpawnZ'])==(8,65,-4)
 circuit=read_gzip(WORLD/'data/electron_circuits.dat')['data']
-assert len(circuit['devices'])==140 and len(circuit['wires'])==168
+assert len(circuit['devices'])==197 and len(circuit['wires'])==575
 assert any(w.get('cable') for w in circuit['wires']) and any(not w.get('cable') for w in circuit['wires'])
 blocks=[];saved_chunks={}
 for file in (WORLD/'region').glob('*.mca'):
@@ -24,16 +24,18 @@ for file in (WORLD/'region').glob('*.mca'):
         saved_chunks[(data['xPos'],data['zPos'])]=data
         blocks.extend(data.get('block_entities',[]))
 components=[b for b in blocks if b['id']=='electron:component'];signs=[b for b in blocks if b['id']=='minecraft:sign'];chests=[b for b in blocks if b['id']=='minecraft:chest']
-assert len(components)==140 and len(signs)==25 and len(chests)==23
+assert len(components)==197 and len(signs)==29 and len(chests)==24
 chest_stacks=sum(len(b.get('Items',[])) for b in chests)
 ash_chest=next(b for b in chests if (b['x'],b['y'],b['z'])==(64,67,6))
 assert len(ash_chest['Items'])==1 and ash_chest['Items'][0]['id']=='electron:combustion_ash' and ash_chest['Items'][0]['count']>0
-assert chest_stacks==361, f'Missing toolbox contents: {chest_stacks}/361 stacks'
+assert chest_stacks==374, f'Missing toolbox contents: {chest_stacks}/374 stacks'
 assert all('map.electron.' in message and 'translate' in message for sign in signs for message in sign['front_text']['messages']),'Sign instructions must remain client-translated'
-assert len({(b['x'],b['y'],b['z']) for b in components})==140
+assert len({(b['x'],b['y'],b['z']) for b in components})==197
 assert {(b['x'],b['y'],b['z']) for b in components}=={position(d['p']) for d in circuit['devices']}
 assert all(not b.get('converter_target') for b in components),'Fixed modules must have no free setting'
 
+assert report.count('decimal_gate_calculator=true')==2 and report.count('decimal_input_changes_verified=true')==2
+assert report.count('pcb_assembly_working=true')==2
 assert report.count('components_above_bench=true')==2
 parts={(b['x'],b['y'],b['z']):b for b in blocks if b['id']=='electron:assembly_part'}
 for device in circuit['devices']:
@@ -60,6 +62,13 @@ tables=[b for b in blocks if b['id']=='electron:industrial_assembly_table']
 assert len(tables)==6 and sum(len(b.get('Items',[])) for b in tables)==5, 'Workshop origin must retain all five boiler ingredients'
 assert report.count('pcb_fabrication_stages=5')==2 and report.count('pcb_control_working=true')==2 and report.count('emergency_lamp_charged=true')==2
 assert report.count('processing_machines_working=4')==2
+for xyz, product in (((43,66,152),'assembled_pcb'),((98,66,103),'pcb_photomask'),((122,66,110),'pcb_photomask')):
+    machine=next(b for b in components if (b['x'],b['y'],b['z'])==xyz)
+    assert machine.get('pcb_inventory_version')==2
+    assert any(v['Slot']==13 and v['id']=='electron:'+product and v.get('components',{}).get('minecraft:custom_data',{}).get('layout','').startswith('2|') for v in machine['pcb_items']['Items']), ('Separate station failed',xyz)
+assert sum(d['block']=='electron:display_panel' for d in circuit['devices'])==12
+assert len(circuit['junctions'])==232
+
 for i,product in enumerate(('exposed_pcb','drilled_pcb','etched_pcb','masked_pcb','gold_finished_pcb')):
     machine=next(b for b in components if (b['x'],b['y'],b['z'])==(i*18+8,66,103))
     assert any(v['Slot']==2 and v['id']=='electron:'+product and v.get('components',{}).get('minecraft:custom_data',{}).get('layout','').startswith('2|') for v in machine['Items']), ('PCB line failed',product)
@@ -87,7 +96,7 @@ for xyz,owner in owners.items():
 
 out=ROOT/f'dist/circuit-academy-{VERSION}';out.mkdir(parents=True,exist_ok=True)
 font=lambda n:ImageFont.truetype('C:/Windows/Fonts/msyh.ttc',n)
-im=Image.new('RGB',(1000,1760),'#0d1922');d=ImageDraw.Draw(im)
+im=Image.new('RGB',(1000,1940),'#0d1922');d=ImageDraw.Draw(im)
 d.text((30,18),'ELECTRON · CIRCUIT FOUNDRY',font=font(27),fill='#a3e9ce')
 d.text((30,61),'教学馆实际存档线路俯视示意 · 非游戏截图',font=font(18),fill='#92a9b9')
 titles=['01 测量与第一颗灯','02 储能与分线','03 按钮与电容','04 MOSFET 控制','05 隔离继电器','06 固定升降压','07 配电与电机','08 堵转与保护','09 自由实验']
@@ -123,9 +132,39 @@ d.text((40,1503),'13–15 PCB 制造、板控与自动联锁 · 南侧新工坊'
 d.text((40,1541),'24 V：曝光 → 钻孔 → 蚀刻清洗 → 阻焊固化 → 沉金 → 精密台焊接',font=font(19),fill='#a3e9ce')
 d.text((40,1578),'工序机 x=8 / 26 / 44 / 62 / 80，y=66，z=103；工作台 (98,66,103)',font=font(18),fill='#c5d6df')
 d.text((40,1614),'5 V 板控实验 (5,66,123)；水位联锁与应急灯 (x=18..29, z=123..131)',font=font(18),fill='#c5d6df')
-d.text((40,1650),'材料箱 (40,65,126) / (43,65,126)；光绘与微型配件拖放见手册新增教程。',font=font(18),fill='#92a9b9')
-d.text((30,1720),f"140 个器件 / 168 段线路 + 4 根电源线 / {len(circuit['bridges'])} 座跨线桥 / 9 台加工机 / 2 套水泵",font=font(18),fill='#a3bbca')
+d.text((40,1650),'材料箱 (40,65,126) / (43,65,126)；设计站与焊接站独立，拖放教程见手册。',font=font(18),fill='#92a9b9')
+d.rounded_rectangle((24,1711,977,1888),radius=12,fill='#182a35',outline='#a87855',width=3)
+d.text((40,1724),'17 逻辑门与 PCB 计算器 · 南侧独立电路实验台',font=font(23),fill='#eaf4f1')
+d.text((40,1762),'输入 A (54,66,144) / B (60,66,144)，右键加一、潜行右键减一',font=font(19),fill='#a3e9ce')
+d.text((40,1797),'运算开关 (66,66,144)：关闭加法、打开减法；结果屏 z=169',font=font(19),fill='#c5d6df')
+d.text((40,1832),'16 张半加器板 + 20 个逻辑门；装配站 (43,66,152) 已产出样板',font=font(19),fill='#c5d6df')
+d.text((40,1863),'红黑为供电干线，蓝黄为输入，紫色为中间结果；详见单独线路图。',font=font(17),fill='#92a9b9')
+d.text((30,1908),f"197 个器件 / 575 段线路 + 4 根电源线 / {len(circuit['bridges'])} 座跨线桥 / 9 台加工机 / 2 套水泵",font=font(18),fill='#a3bbca')
 im.save(out/'地图导览.png')
+calc=Image.new('RGB',(1240,1210),'#10212d');cd=ImageDraw.Draw(calc)
+cd.text((28,18),'PCB + 逻辑门计算器 · 实际存档线路',font=font(29),fill='#e5f1f6')
+cd.text((28,60),'非游戏截图 · 供电红/黑，输入蓝/黄，运算控制绿，中间信号紫',font=font(19),fill='#a5bbc9')
+def cxy(x,z):return 30+(x-32)*28,120+(z-140)*28
+for x in range(32,74):
+    cd.line((*cxy(x,140),*cxy(x,175)),fill='#213542')
+for z in range(140,176):
+    cd.line((*cxy(32,z),*cxy(74,z)),fill='#213542')
+for wire in circuit['wires']:
+    hosts=[position(v) for v in wire['hosts']]
+    if not hosts or not all(p[2]>=142 for p in hosts):continue
+    points=[cxy(p[0]+((v>>3)&15)/16,p[2]+((v>>7)&15)/16) for p,v in zip(hosts,wire['points'])]
+    cd.line(points,fill=['#ed7c76','#99b2c4','#65cbdc','#ebcf80','#8bc997','#c59bdd','#eeeeee','#8296ab'][wire['color']],width=3 if wire.get('cable') else 1)
+labels={'pcb_socket':'HA','decimal_input':'IN','circuit_switch':'±','resistor_10000':'10k','display_panel':'屏','buck_converter':'5V','substation':'24V','wind_generator':'风机','wind_base':'底柜','precision_workbench':'焊接'}
+for device in circuit['devices']:
+    x,y,z=position(device['p'])
+    if z<142:continue
+    px,py=cxy(x+.5,z+.5);name=device['block'].split(':')[1]
+    cd.rounded_rectangle((px-11,py-10,px+11,py+10),radius=3,fill='#314655',outline='#b7d3d5')
+    label=labels.get(name,name.removeprefix('wire_').removesuffix('_gate').upper())
+    cd.text((px,py),label,anchor='mm',font=font(9),fill='#f0f4f8')
+cd.text((28,1110),'A/B 拨盘右键加一、潜行减一；开关关闭加法、打开减法。每个矩形屏显示一位。',font=font(21),fill='#d9e9ee')
+cd.text((28,1148),'输入 0–9，结果 −9…18；32×27 格电路台，全部接线与器件可拆改。',font=font(19),fill='#a5bbc9')
+calc.save(out/'门电路计算器.png')
 instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 
 安装：把压缩包中的 Circuit_Foundry_Academy 文件夹完整放入 Minecraft 的 saves。
@@ -145,7 +184,7 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 09 实验 (36..47, z=51..68)：拿材料和工具，自行搭线、合成器件，使用工程手册查看接法。
 12 加工 (0..65, z=80..92)：四台通电机器从左到右为粉碎机、离心分离机、电炉、压制封装机。每台都有有限演示原料，检查输出后可取出并放到下一台；不是自动跨机物流。材料箱 (10,66,92)，右端有工坊防护灯和庭院柱灯。手册新增加工配方页。
 
-13 PCB 工坊 (x=0..107, z=100..114)：五台制造机器位于 (8/26/44/62/80,66,103)，精密工作台 (98,66,103)。各工序已放置独立演示批次，通电后可取产物；光绘台中已有可用非门设计。不是自动跨机生产线。
+13 PCB 工坊 (x=0..107, z=100..114)：五台制造机器位于 (8/26/44/62/80,66,103)，PCB 设计站 (98,66,103)。各工序已放置独立演示批次，通电后可取产物；光绘台中已有可用非门设计。不是自动跨机生产线。
 14 板控 (5,66,123)：底座装有非门板，手摇源输出5 V，右键控制开关切换输入；默认输入低、LED亮，输入高时LED灭。源耗尽需手摇补电。
 15 自动联锁 (x=18..29, z=123..131)：5 V水位开关监测相邻锅炉槽，隔离触点控制24 V工坊灯；空水时灯亮、装满后熄灭。旁边应急灯由实际电源充能，断线后消耗电池继续亮。
 新PCB材料箱 (40,65,126)、(43,65,126)，内有微型配件、带实际设计的各阶段板和工序耗材。
@@ -158,18 +197,19 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 核电控制面板 (119,66,55)，东侧输入口 (123,67,55)；火电控制柜 (68,66,9)，输入口 (65,67,8)。外侧箱子会自动向输入口送料，独立炉灰口 (65,67,6) 和乏燃料口 (123,67,53) 的外侧箱子收集产物，下方也可接漏斗。水由专用进水口供给，不能直接投水桶。核电必须使用燃料棒，不能直接投矿石。
 大型机组装配台 (59,66,12) 由六块独立模块拼成，已放好一套锅炉配料；右侧选择锅炉并装配。新材料箱 (60,66,17) 含塔筒、水泵、透明/铁皮管、专用水槽和机组部件。悬线示例 (60,66,60) 的两根电缆由上、下接线座固定，由新风机供电，出厂断开底座开关。在 (60,65,51) 潜行右键底座启停，护栏外可观察悬线向旁边铁块放电。自由实验台 (41,66,57) 放有矮型双母线插排。
 16 插电工坊 (112..126, z=100..114)：风机 → 市电插孔 → 固定24 V适配器 → 三位插排 → 工坊灯和PCB台。持电源线先点插孔再点电器，潜行点电器拔线。
+17 电路计算器 (46..72, z=142..173)：A (54,66,144)、B (60,66,144)，普通右键加一、潜行右键减一，均为0–9。运算开关 (66,66,144) 关闭为加法、打开为减法。三组2×2屏位于 (51/57/63,66,169)，依次符号、十位、个位，默认9+7=16。16张半加器PCB和20个逻辑门实际完成运算，供电干线用电缆减少压降，信号用导线，每个引脚有短引线与可修改节点。南侧材料箱 (69,66,170)。独立装配站 (43,66,152) 已通电焊好半加器样板。
 生存模式准确读数只显示在万用表 HUD；电压铭牌已移至工程手册。
 固定转换模块没有调压界面，换规格须合成并更换器件；PCB 光绘、曝光、钻孔、蚀刻、阻焊、沉金和焊接已在南侧新工坊开放；电源芯片仍是后续设计。
 选 COM 再选探针测压；潜行点设备/导线测流；潜行对空切换 V/Ω；对空右键清除测点。
 未加载区块中的网络会暂停，走近实验区会恢复；没有免费持续发电或远程逻辑控制器。
 地图导览是从实际保存的线路数据绘制的平面示意，不是游戏截图。
-验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 14 个指示负载、2 个旋转电机、4 台原料加工机与 5 台 PCB 工序产出及光绘工作台；两次均接通悬线展台 40 刻并确认漏电电流，随后断开再保存。
-生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、19 个工具／材料箱、2 个供料箱和2 个出料箱中的 361 组物品（含实际生成的炉灰）完整，并检查两套供水和装配台配料。
-全部 140 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
+验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 14 个指示负载、2 个旋转电机、4 台原料加工机与 5 台 PCB 工序产出及设计/焊接工作站；每轮实际切换验证2−7=−5、9+9=18、0+0=0，最后恢复9+7=16；两次均接通悬线展台 40 刻并确认漏电电流，随后断开再保存。
+生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、20 个工具／材料箱、2 个供料箱和2 个出料箱中的 374 组物品（含实际生成的炉灰）完整，并检查两套供水和装配台配料。
+全部 197 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
 '''
 (out/'地图说明.txt').write_text(instructions,encoding='utf-8')
 audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'components_above_bench':True,'overhead_spans':2,'reopened_and_powered':True,'all_plants_and_substations_powered':True,'generator_required':False,'formed_parts':len(parts),'all_multiblocks_formed':True}
-audit.update(vertical_drops=2,powered_pumps=2,processing_machines=4,pcb_stages=5,pcb_control_working=True,emergency_lamp_charged=True,fluid_stores=len(fluids),workshop_cells=6,nuclear_foundation=[36,36],arc_demo_powered_test=True,arc_demo_default_off=True,fuel_services_working=True,six_module_workshop=True,plug_cords=4,plug_appliances_working=True)
+audit.update(vertical_drops=2,powered_pumps=2,processing_machines=4,pcb_stages=5,pcb_control_working=True,emergency_lamp_charged=True,fluid_stores=len(fluids),workshop_cells=6,nuclear_foundation=[36,36],arc_demo_powered_test=True,arc_demo_default_off=True,fuel_services_working=True,six_module_workshop=True,plug_cords=4,plug_appliances_working=True,decimal_gate_calculator=True,decimal_input_changes_verified=True,pcb_assembly_working=True,calculator_pcbs=16,calculator_gates=20,display_panels=12,junctions=232)
 (out/'map-verification.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
 archive=ROOT/f'dist/circuit-academy-{VERSION}.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:

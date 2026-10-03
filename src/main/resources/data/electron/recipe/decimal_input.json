@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:numeric_display"
+    },
+    {
+      "item": "electron:circuit_switch"
+    },
+    {
+      "item": "electron:circuit_switch"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:decimal_input",
+    "count": 1
+  }
+}

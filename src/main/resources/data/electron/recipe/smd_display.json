@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_led"
+    },
+    {
+      "item": "electron:smd_led"
+    },
+    {
+      "item": "electron:smd_led"
+    },
+    {
+      "item": "electron:smd_nand"
+    },
+    {
+      "item": "electron:smd_nand"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_display",
+    "count": 1
+  }
+}

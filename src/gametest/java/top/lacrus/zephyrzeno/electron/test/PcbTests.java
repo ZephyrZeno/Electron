@@ -47,8 +47,8 @@ public final class PcbTests implements FabricGameTest {
     public void maskToImmersionGoldToSolderPreservesCustomBoardAndPaysMaterials(TestContext t){
         var bench=(PcbBenchEntity)device(t,Pcb.BENCH,2,2);var design=PcbLayout.inverter().cut(12,11);
         bench.draft=design;bench.setStack(0,new ItemStack(PcbFabrication.FILM));bench.setStack(2,new ItemStack(Items.BLACK_DYE));bench.edit(5,0,0,0,0);
-        bench.voltage=0;bench.current=0;bench.process(false);t.assertTrue(bench.getStack(11).isEmpty(),"No free photomask without energy");solder(bench,1000);
-        var mask=bench.removeStack(11);t.assertTrue(mask.isOf(PcbFabrication.MASK),"Photoplotter creates a mask, never an assembled circuit");
+        bench.voltage=0;bench.current=0;bench.process(false);t.assertTrue(bench.getStack(Pcb.OUTPUT_SLOT).isEmpty(),"No free photomask without energy");solder(bench,1000);
+        var mask=bench.removeStack(Pcb.OUTPUT_SLOT);t.assertTrue(mask.isOf(PcbFabrication.MASK),"Photoplotter creates a mask, never an assembled circuit");
         t.assertEquals(Pcb.layout(mask),design,"Mask preserves holes and copper");t.assertTrue(bench.getStack(0).isEmpty()&&bench.getStack(2).isEmpty(),"Film and ink consumed once");
         ItemStack previous=mask;int wetWaste=0;
         for(var stage:PcbFabrication.STAGES){
@@ -59,14 +59,14 @@ public final class PcbTests implements FabricGameTest {
             wetWaste+=e.removeStack(3).getCount();t.assertTrue(e.getStack(0).isEmpty()&&e.getStack(1).isEmpty(),"Stage consumes board and cartridge once");
         }
         t.assertEquals(wetWaste,2,"Etching and gold baths produce two waste cartridges");
-        bench.setStack(0,previous);bench.edit(7,0,0,0,0);var costs=Pcb.costs(design);for(int i=1;i<11;i++)if(costs[i]>0)bench.setStack(i,new ItemStack(Pcb.MATERIALS.get(i),costs[i]));
-        bench.edit(5,0,0,0,0);solder(bench,1000);var board=bench.getStack(11);t.assertTrue(board.isOf(Pcb.BOARD),"Soldered board is finally usable");t.assertEquals(Pcb.layout(board),design,"Soldering preserves layout");t.assertTrue(bench.getStack(0).isEmpty()&&bench.getStack(1).isEmpty()&&bench.getStack(6).isEmpty(),"Gold board, solder and NOT consumed");
-        solder(bench,1000);t.assertEquals(bench.getStack(11).getCount(),1,"No repeated output without inputs");t.complete();
+        bench=(PcbBenchEntity)device(t,Pcb.ASSEMBLY,2,5);bench.setStack(0,previous);bench.edit(7,0,0,0,0);var costs=Pcb.costs(design);for(int i=1;i<Pcb.INPUT_SLOTS;i++)if(costs[i]>0)bench.setStack(i,new ItemStack(Pcb.MATERIALS.get(i),costs[i]));
+        bench.edit(5,0,0,0,0);solder(bench,1000);var board=bench.getStack(Pcb.OUTPUT_SLOT);t.assertTrue(board.isOf(Pcb.BOARD),"Soldered board is finally usable");t.assertEquals(Pcb.layout(board),design,"Soldering preserves layout");t.assertTrue(bench.getStack(0).isEmpty()&&bench.getStack(1).isEmpty()&&bench.getStack(6).isEmpty(),"Gold board, solder and NOT consumed");
+        solder(bench,1000);t.assertEquals(bench.getStack(Pcb.OUTPUT_SLOT).getCount(),1,"No repeated output without inputs");t.complete();
     }
     @GameTest(templateName="electron:components_test")
     public void bareCopperCannotBeRedesignedForFreeAndDamagedBenchCannotWork(TestContext t){
-        var e=(PcbBenchEntity)device(t,Pcb.BENCH,3,3);var design=PcbLayout.inverter();e.draft=design.cut(12,11);e.setStack(0,Pcb.designed(PcbFabrication.GOLD,design));e.setStack(1,new ItemStack(Pcb.SOLDER,16));e.setStack(6,new ItemStack(Pcb.PARTS.get(PcbLayout.Type.NOT)));
-        e.edit(5,0,0,0,0);t.assertFalse(e.working,"Different copper/outline cannot reuse a finished board");e.edit(7,0,0,0,0);e.edit(5,0,0,0,0);t.assertTrue(e.working,"Reading the actual gold board permits assembly");
+        var e=(PcbBenchEntity)device(t,Pcb.ASSEMBLY,3,3);var design=PcbLayout.inverter();e.setStack(0,Pcb.designed(PcbFabrication.GOLD,design));e.setStack(1,new ItemStack(Pcb.SOLDER,16));e.setStack(6,new ItemStack(Pcb.PARTS.get(PcbLayout.Type.NOT)));
+        e.edit(9,12,11,0,0);t.assertEquals(e.draft,design,"Assembly cannot redesign paid copper");t.assertEquals(e.error,5,"Assembly rejects design edits");e.edit(5,0,0,0,0);t.assertTrue(e.working,"Reading the actual gold board permits assembly");
         e.voltage=24;e.current=1;for(int i=0;i<1000;i++)e.process(true);t.assertEquals(e.work,0d,"Broken bench pays no work");e.voltage=17;e.process(false);t.assertEquals(e.work,0d,"Undervoltage cannot process");
         solder(e,12);double saved=e.work;var copy=new PcbBenchEntity(e.getPos(),e.getCachedState());copy.read(e.createNbt(t.getWorld().getRegistryManager()),t.getWorld().getRegistryManager());t.assertEquals(copy.work,saved,"Paid work survives reload");t.assertEquals(copy.draft,design,"Custom design survives reload");t.assertTrue(copy.getStack(0).isOf(PcbFabrication.GOLD),"Gold board inventory survives reload");t.complete();
     }
@@ -114,7 +114,7 @@ public final class PcbTests implements FabricGameTest {
     }
     @GameTest(templateName="electron:components_test",tickLimit=45)
     public void hoppersMoveCarryingDesignsWithoutTakingPartsFromWorkbench(TestContext t){
-        var e=(PcbBenchEntity)device(t,Pcb.BENCH,3,3);e.setStack(1,new ItemStack(Pcb.SOLDER,4));e.setStack(11,Pcb.designed(PcbFabrication.MASK,PcbLayout.inverter()));
-        t.getWorld().setBlockState(e.getPos().down(),Blocks.HOPPER.getDefaultState().with(HopperBlock.FACING,Direction.DOWN));t.runAtTick(30,()->{var hopper=(HopperBlockEntity)t.getWorld().getBlockEntity(e.getPos().down());t.assertTrue(e.getStack(11).isEmpty(),"Hopper extracts photomask");t.assertEquals(Pcb.layout(hopper.getStack(0)),PcbLayout.inverter(),"Hopper preserves layout data");t.assertEquals(e.getStack(1).getCount(),4,"Hopper cannot steal pending solder");t.complete();});
+        var e=(PcbBenchEntity)device(t,Pcb.BENCH,3,3);e.setStack(1,new ItemStack(Pcb.SOLDER,4));e.setStack(Pcb.OUTPUT_SLOT,Pcb.designed(PcbFabrication.MASK,PcbLayout.inverter()));
+        t.getWorld().setBlockState(e.getPos().down(),Blocks.HOPPER.getDefaultState().with(HopperBlock.FACING,Direction.DOWN));t.runAtTick(30,()->{var hopper=(HopperBlockEntity)t.getWorld().getBlockEntity(e.getPos().down());t.assertTrue(e.getStack(Pcb.OUTPUT_SLOT).isEmpty(),"Hopper extracts photomask");t.assertEquals(Pcb.layout(hopper.getStack(0)),PcbLayout.inverter(),"Hopper preserves layout data");t.assertEquals(e.getStack(1).getCount(),4,"Hopper cannot steal pending solder");t.complete();});
     }
 }

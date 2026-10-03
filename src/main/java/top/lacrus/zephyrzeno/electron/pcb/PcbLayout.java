@@ -8,15 +8,17 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
     public static final int WIDTH=16,HEIGHT=12,MAX_PARTS=16;
     public static final int[] PORTS={point(0,1),point(0,10),point(0,4),point(0,7),point(15,4),point(15,7)};
     public enum Type {
-        R1K(null),R10K(null),LED(null),NOT(LogicFunction.NOT),AND(LogicFunction.AND),OR(LogicFunction.OR),XOR(LogicFunction.XOR),NAND(LogicFunction.NAND);
+        R1K(null),R10K(null),LED(null),NOT(LogicFunction.NOT),AND(LogicFunction.AND),OR(LogicFunction.OR),XOR(LogicFunction.XOR),NAND(LogicFunction.NAND),HALF_ADDER(null),DISPLAY(null);
         public final LogicFunction logic;
         Type(LogicFunction logic){this.logic=logic;}
-        public int pins(){return logic==null?2:5;}
+        public boolean digital(){return logic!=null||this==HALF_ADDER||this==DISPLAY;}
+        public int pins(){return this==HALF_ADDER||this==DISPLAY?6:logic==null?2:5;}
+        public String pinName(int pin){return this==HALF_ADDER?new String[]{"VCC","GND","A","B","SUM","CARRY"}[pin]:this==DISPLAY?new String[]{"VCC","GND","D0","D1","D2","D3"}[pin]:logic==null?(pin==0?"A":"K/B"):new String[]{"VCC","GND","A","B","Y"}[pin];}
     }
     public record Part(Type type,int x,int y,int turn){
         public int pin(int pin){
-            int u=type.logic==null?(pin==0?0:2):new int[]{0,2,0,2,1}[pin];
-            int v=type.logic==null?1:new int[]{0,0,2,2,1}[pin];
+            int u=type==Type.HALF_ADDER?new int[]{0,1,0,0,2,2}[pin]:type==Type.DISPLAY?new int[]{0,2,0,2,0,2}[pin]:type.logic==null?(pin==0?0:2):new int[]{0,2,0,2,1}[pin];
+            int v=type==Type.HALF_ADDER?new int[]{0,2,1,2,1,2}[pin]:type==Type.DISPLAY?new int[]{0,0,1,1,2,2}[pin]:type.logic==null?1:new int[]{0,0,2,2,1}[pin];
             for(int i=0;i<turn;i++){int old=u;u=2-v;v=old;}
             return point(x+u,y+v);
         }
@@ -49,6 +51,7 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
     public PcbLayout resize(int w,int h){return new PcbLayout(parts,tracks,w,h,cutouts);}
     public PcbLayout cut(int x,int y){if(x<0||y<0||x>=width||y>=height)throw new IllegalArgumentException();var c=new HashSet<>(cutouts);if(!c.remove(point(x,y)))c.add(point(x,y));return new PcbLayout(parts,tracks,width,height,c);}
     public PcbLayout move(int index,int x,int y,int turn){var list=new ArrayList<>(parts);var old=list.get(index);list.set(index,new Part(old.type,x,y,turn));return new PcbLayout(list,tracks,width,height,cutouts);}
+    public PcbLayout removePart(int index){var list=new ArrayList<>(parts);list.remove(index);return new PcbLayout(list,tracks,width,height,cutouts);}
     public static PcbLayout empty(){return new PcbLayout(List.of(),List.of());}
     public static int point(int x,int y){return y*WIDTH+x;}
     public static int x(int point){return point%WIDTH;}
@@ -84,4 +87,11 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
         .route(PORTS[1],point(8,8),false).route(point(8,8),point(9,3),false).route(point(9,3),point(8,4),false)
         .route(PORTS[2],point(2,4),false).route(point(2,4),point(6,6),true)
         .route(point(7,5),point(7,0),true).route(point(7,0),PORTS[4],false);}
+    /** Two physical gates in one package: Y=A XOR B, Z=A AND B. No arithmetic controller. */
+    public static PcbLayout halfAdder(){return empty().place(Type.HALF_ADDER,6,4,0)
+        .route(PORTS[0],point(6,4),false)
+        .route(PORTS[2],point(3,4),false).route(point(3,4),point(6,5),true)
+        .route(PORTS[3],point(3,7),false).route(point(3,7),point(6,6),true)
+        .route(PORTS[1],point(7,6),false)
+        .route(point(8,5),PORTS[4],false).route(point(8,6),PORTS[5],false);}
 }

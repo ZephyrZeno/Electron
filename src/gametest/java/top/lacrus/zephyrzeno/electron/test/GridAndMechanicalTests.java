@@ -63,7 +63,7 @@ public final class GridAndMechanicalTests implements FabricGameTest {
         e(t,sub).converterEnergy=12;var s=CircuitState.get(t.getWorld());
         var point=s.endpoints().get(node(sub,0)).point();var extra=new ArrayList<UUID>();String previous=node(sub,0);
         // Synthetic branches deliberately exceed the solver budget without placing hundreds of blocks.
-        for(int i=0;i<257;i++){var id=UUID.randomUUID();String next="budget:"+sub.asLong()+":"+i;s.wires.put(id,new Wire(id,previous,next,0,List.of(point,point),1,true));extra.add(id);previous=next;}
+        for(int i=0;i<DcSolver.MAX_ISLAND_NODES+1;i++){var id=UUID.randomUUID();String next="budget:"+sub.asLong()+":"+i;s.wires.put(id,new Wire(id,previous,next,0,List.of(point,point),1,true));extra.add(id);previous=next;}
         try{
             s.simulate(t.getWorld());
             t.assertTrue(e(t,sub).paused&&e(t,lamp).paused,"Input failure pauses the isolated output and its loads");

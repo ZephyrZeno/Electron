@@ -34,6 +34,9 @@ public final class ElectronClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.power.FaultEffects.Event.ID,(payload,context)->context.client().execute(()->ArcRenderer.receive(payload.data())));
         ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->ArcRenderer.clear());
         WorldRenderEvents.AFTER_ENTITIES.register(ArcRenderer::render);
+        ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.power.PlantAccident.Event.ID,(payload,context)->context.client().execute(()->PlantExplosionRenderer.receive(payload.data())));
+        ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->PlantExplosionRenderer.clear());
+        WorldRenderEvents.AFTER_ENTITIES.register(PlantExplosionRenderer::render);
         net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.SCREEN,IndustrialScreen::new);
         net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.PLANT_SCREEN,PlantScreen::new);
         BlockEntityRendererFactories.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.FLUID_ENTITY,FluidRenderer::new);

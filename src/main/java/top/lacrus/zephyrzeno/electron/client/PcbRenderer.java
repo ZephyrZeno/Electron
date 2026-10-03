@@ -17,11 +17,12 @@ public final class PcbRenderer {
         var copper=out.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/pcb/gold_trace.png")));
         for(var t:l.tracks())box(copper,m,face,turn,PcbLayout.x(t.a())-.06,PcbLayout.y(t.a())-.06,PcbLayout.x(t.b())+.06,PcbLayout.y(t.b())+.06,-.27,-.235,light,overlay);
         for(int i=0;i<l.parts().size();i++){
-            var p=l.parts().get(i);String tex=broken?"scorched":"pcb/"+(p.type().logic==null?p.type()==PcbLayout.Type.LED?((e.ledMask&(1<<i))!=0?"led_on":"led_off"):"resistor":"ic_package");
+            var p=l.parts().get(i);String tex=broken?"scorched":"pcb/"+(!p.type().digital()?p.type()==PcbLayout.Type.LED?((e.ledMask&(1<<i))!=0?"led_on":"led_off"):"resistor":"ic_package");
             var body=out.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/"+tex+".png")));
-            double halfX=p.type().logic==null?.65:.52,halfY=p.type().logic==null?.28:.52;
+            double halfX=p.type().digital()?.52:.65,halfY=p.type().digital()?.52:.28;
             if((p.turn()&1)!=0){double swap=halfX;halfX=halfY;halfY=swap;}
             box(body,m,face,turn,p.x()+1-halfX,p.y()+1-halfY,p.x()+1+halfX,p.y()+1+halfY,-.76,-.28,p.type()==PcbLayout.Type.LED&&(e.ledMask&(1<<i))!=0?LightmapTextureManager.MAX_LIGHT_COORDINATE:light,overlay);
+            if(p.type()==PcbLayout.Type.DISPLAY)DisplayRenderer.glyph(out,m,face,turn,12.22,2.8+(p.x()+.5)*.66,3.8+(p.y()+.5)*.66,.66,.66,broken||i>=e.displays.length?-1:e.displays[i],p.turn(),light,overlay);
             var solder=out.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/pcb/solder_joint.png")));
             for(int j=0;j<p.type().pins();j++){
                 int at=p.pin(j);double px=PcbLayout.x(at),py=PcbLayout.y(at),cx=p.x()+1,cy=p.y()+1;

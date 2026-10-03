@@ -15,8 +15,10 @@ import top.lacrus.zephyrzeno.electron.foundry.*;
 
 public final class PcbBlock extends ComponentBlock {
     public final boolean bench;
-    public PcbBlock(boolean bench){super(AbstractBlock.Settings.create().strength(3).sounds(BlockSoundGroup.METAL).nonOpaque().dynamicBounds().pistonBehavior(PistonBehavior.BLOCK),bench?Kind.MOTOR:Kind.PCB,24);this.bench=bench;}
-    @Override protected net.minecraft.util.shape.VoxelShape getOutlineShape(BlockState s,net.minecraft.world.BlockView w,BlockPos p,ShapeContext context){return bench?WorkshopGeometry.shape("precision_workbench",s.get(FACING),s.get(TURN)):super.getOutlineShape(s,w,p,context);}
+    public enum Role { DESIGN,ASSEMBLY,SOCKET }
+    public final Role role;
+    public PcbBlock(Role role){super(AbstractBlock.Settings.create().strength(3).sounds(BlockSoundGroup.METAL).nonOpaque().dynamicBounds().pistonBehavior(PistonBehavior.BLOCK),role==Role.SOCKET?Kind.PCB:Kind.MOTOR,24);this.role=role;this.bench=role!=Role.SOCKET;}
+    @Override protected net.minecraft.util.shape.VoxelShape getOutlineShape(BlockState s,net.minecraft.world.BlockView w,BlockPos p,ShapeContext context){return bench?WorkshopGeometry.shape(role==Role.DESIGN?"pcb_design_station":"precision_workbench",s.get(FACING),s.get(TURN)):super.getOutlineShape(s,w,p,context);}
     @Override public BlockState getPlacementState(ItemPlacementContext c){return bench&&c.getSide()!=Direction.UP?null:super.getPlacementState(c);}
     @Override public boolean rearPowerPorts(){return bench;}
     @Override public BlockEntity createBlockEntity(BlockPos p,BlockState s){return bench?new PcbBenchEntity(p,s):new PcbSocketEntity(p,s);}

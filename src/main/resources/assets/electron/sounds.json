@@ -372,5 +372,32 @@
         "attenuation_distance": 16
       }
     ]
+  },
+  "machine_burst": {
+    "subtitle": "subtitles.electron.machine_burst",
+    "sounds": [
+      {
+        "name": "electron:machine_burst",
+        "attenuation_distance": 32
+      }
+    ]
+  },
+  "boiler_burst": {
+    "subtitle": "subtitles.electron.boiler_burst",
+    "sounds": [
+      {
+        "name": "electron:boiler_burst",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "reactor_burst": {
+    "subtitle": "subtitles.electron.reactor_burst",
+    "sounds": [
+      {
+        "name": "electron:reactor_burst",
+        "attenuation_distance": 128
+      }
+    ]
   }
 }

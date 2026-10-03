@@ -51,7 +51,7 @@ def main():
         raise RuntimeError('Stale release report.')
     if sha(jar) != report['main']['sha256'] or sha(archive) != report['map']['sha256']:
         raise RuntimeError('Release hash mismatch; rerun release verification.')
-    if report['map'].get('dropped_item_entities') != 0 or report['map'].get('chest_stacks') != 361 or not report['map'].get('components_above_bench') or report['map'].get('powered_pumps') != 2 or report['map'].get('processing_machines') != 4 or report['map'].get('pcb_stages') != 5 or not report['map'].get('pcb_control_working'):
+    if report['map'].get('dropped_item_entities') != 0 or report['map'].get('chest_stacks') != 374 or not report['map'].get('components_above_bench') or report['map'].get('powered_pumps') != 2 or report['map'].get('processing_machines') != 4 or report['map'].get('pcb_stages') != 5 or not report['map'].get('pcb_control_working') or not report['map'].get('decimal_input_changes_verified') or not report['map'].get('pcb_assembly_working'):
         raise RuntimeError('Map has not passed the drop/inventory audit.')
     old_mods = []
     for existing in mods.glob('*.jar'):

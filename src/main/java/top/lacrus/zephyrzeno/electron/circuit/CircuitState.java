@@ -17,7 +17,7 @@ import top.lacrus.zephyrzeno.electron.logic.WireLogic;
 
 /** Persistent attachments on ordinary blocks; no replacement wall or hidden remote link. */
 public final class CircuitState extends PersistentState {
-    public static final int MAX_CORES=128,MAX_JUNCTIONS=256,MAX_BRIDGES=256;
+    public static final int MAX_CORES=128,MAX_JUNCTIONS=256,MAX_BRIDGES=1024;
     private static final Map<ServerWorld,CircuitState> LIVE=new WeakHashMap<>();
     private static final Type<CircuitState> TYPE=new Type<>(CircuitState::new,(n,r)->read(n),null);
     public record Device(String block,Direction face,int turn,boolean formed) {public Device(String block,Direction face,int turn){this(block,face,turn,false);}}
@@ -27,6 +27,7 @@ public final class CircuitState extends PersistentState {
     public final Map<UUID,Junction> junctions=new LinkedHashMap<>();
     public final Map<UUID,WallCore> cores=new LinkedHashMap<>();
     public final Map<UUID,Bridge> bridges=new LinkedHashMap<>();
+    private final Map<BlockPos,Integer> bridgeFaces=new HashMap<>();private int indexedBridges=-1;
     public final Map<BlockPos,Device> devices=new HashMap<>();
     public DcSolver.Result readings=new DcSolver.Result(Map.of(),Map.of(),Map.of());
     public final Map<String,String> paused=new HashMap<>();
@@ -47,7 +48,7 @@ public final class CircuitState extends PersistentState {
     public static void register(){ServerTickEvents.END_WORLD_TICK.register(world->get(world).tick(world));ServerLifecycleEvents.SERVER_STOPPED.register(server->LIVE.clear());}
     public static boolean attached(World world,BlockPos pos){return world instanceof ServerWorld s&&LIVE.containsKey(s)&&LIVE.get(s).hasAttachment(pos);}
     public boolean hasAttachment(BlockPos pos){return cords.values().stream().anyMatch(c->c.source().equals(pos)||c.load().equals(pos))||junctions.values().stream().anyMatch(j->j.point().host().equals(pos))||cores.values().stream().anyMatch(c->c.host().equals(pos))||bridges.values().stream().anyMatch(b->b.host().equals(pos))||wires.values().stream().anyMatch(w->w.path().stream().anyMatch(p->p.host().equals(pos)));}
-    public void changed(){overheadCurves.keySet().retainAll(new HashSet<>(wires.values()));markDirty();syncPending=true;}
+    public void changed(){indexedBridges=-1;overheadCurves.keySet().retainAll(new HashSet<>(wires.values()));markDirty();syncPending=true;}
     public void track(BlockPos pos,BlockState state) {
         if(!(state.getBlock() instanceof ComponentBlock))return;
         Device d=new Device(Registries.BLOCK.getId(state.getBlock()).toString(),state.get(ComponentBlock.FACING),state.get(ComponentBlock.TURN),top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state));
@@ -87,7 +88,7 @@ public final class CircuitState extends PersistentState {
         var at=position(p);
         return world.getBlockState(neighbor).getCollisionShape(world,neighbor).getBoundingBoxes().stream().noneMatch(box->box.offset(neighbor).expand(.011).contains(at));
     }
-    public boolean hasBridge(SurfacePoint p){return bridges.values().stream().anyMatch(b->b.host().equals(p.host())&&b.face()==p.face());}
+    public boolean hasBridge(SurfacePoint p){if(indexedBridges!=bridges.size()){bridgeFaces.clear();for(var b:bridges.values())bridgeFaces.merge(b.host(),1<<b.face().ordinal(),(a,c)->a|c);indexedBridges=bridges.size();}return (bridgeFaces.getOrDefault(p.host(),0)&(1<<p.face().ordinal()))!=0;}
     public void validateBridgeSpace(SurfacePoint point){
         java.util.function.Predicate<SurfacePoint> occupied=p->p.host().equals(point.host())&&p.face()==point.face()&&BridgeGeometry.reserved(p);
         if(endpoints().values().stream().anyMatch(e->occupied.test(e.point()))||wires.values().stream().anyMatch(w->w.path().stream().anyMatch(occupied)))throw new CircuitError("error.electron.bridge_feet_occupied");
@@ -236,6 +237,7 @@ public final class CircuitState extends PersistentState {
             if(block instanceof top.lacrus.zephyrzeno.electron.appliance.ApplianceBlock){top.lacrus.zephyrzeno.electron.appliance.Appliances.stamp(world,pos,state,entity,branches);continue;}
             if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.stamp(world,pos,state,entity,branches);continue;}
             if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){pcb.stamp(branches,world.getTime());continue;}
+            if(entity instanceof top.lacrus.zephyrzeno.electron.display.DisplayEntity display){display.stamp(branches);continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.stamp(block,state,entity,pos,branches);continue;}
             if(block.kind==ComponentBlock.Kind.TERMINAL_STRIP){terminalBranches(branches,pos,broken?1e12:.002);continue;}
             if(block.kind==ComponentBlock.Kind.BATTERY){
@@ -312,6 +314,7 @@ public final class CircuitState extends PersistentState {
             entity.current=readings.current(id);entity.voltage=readings.voltage(node(pos,0))-readings.voltage(node(pos,1));
             if(entity.paused){
                 if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb)pcb.pause();
+                if(entity instanceof top.lacrus.zephyrzeno.electron.display.DisplayEntity display)display.pause();
                 if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)&&state.get(ComponentBlock.LEVEL)!=0)world.setBlockState(pos,state.with(ComponentBlock.LEVEL,0),Block.NOTIFY_ALL);
                 if(PowerDevices.handles(block.kind))PowerDevices.pause(world,pos,state,entity);
                 if(block.kind==ComponentBlock.Kind.REDSTONE_SWITCH){entity.signal=0;entity.contactClosed=entity.pendingContact=false;if(state.get(ComponentBlock.LEVEL)!=0||state.get(ComponentBlock.ENABLED))world.setBlockState(pos,state.with(ComponentBlock.LEVEL,0).with(ComponentBlock.ENABLED,false),Block.NOTIFY_ALL);}
@@ -320,6 +323,7 @@ public final class CircuitState extends PersistentState {
             if(block instanceof top.lacrus.zephyrzeno.electron.appliance.ApplianceBlock){top.lacrus.zephyrzeno.electron.appliance.Appliances.update(world,pos,state,entity,readings);continue;}
             if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.update(world,pos,state,entity,readings);continue;}
             if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){pcb.update(readings,n->strong.containsKey(n)&&driven.contains(find(strong,n)));continue;}
+            if(entity instanceof top.lacrus.zephyrzeno.electron.display.DisplayEntity display){display.update(readings,n->strong.containsKey(n)&&driven.contains(find(strong,n)));continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.update(world,pos,state,entity,readings);continue;}
             if(block.kind==ComponentBlock.Kind.GATE) {
                 double supply=entity.voltage;
@@ -373,7 +377,7 @@ public final class CircuitState extends PersistentState {
     private static void terminalBranches(List<DcSolver.Branch> branches,BlockPos pos,double resistance){
         for(int rail=0;rail<2;rail++)for(int pin=0;pin<3;pin++)branches.add(DcSolver.Branch.resistor("bus:"+pos.asLong()+":"+rail+":"+pin,node(pos,rail*4+pin),node(pos,rail*4+pin+1),resistance));
     }
-    private static String find(Map<String,String> p,String n){String x=p.get(n);if(!x.equals(n)){x=find(p,x);p.put(n,x);}return x;}
+    private static String find(Map<String,String> p,String n){String root=n;while(!p.get(root).equals(root))root=p.get(root);while(!n.equals(root)){String next=p.put(n,root);n=next;}return root;}
     public NbtCompound snapshot(){var n=writeNbt(new NbtCompound(),null);n.remove("captured_lightning");return n;}
     @Override public NbtCompound writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup registries) {
         NbtList strikes=new NbtList();for(var id:capturedLightning){var t=new NbtCompound();t.putUuid("id",id);strikes.add(t);}n.put("captured_lightning",strikes);

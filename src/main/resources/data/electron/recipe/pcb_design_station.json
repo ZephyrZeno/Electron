@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:assembly_table"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:copper_coil"
+    },
+    {
+      "item": "electron:blank_pcb"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:black_dye"
+    }
+  ],
+  "result": {
+    "id": "electron:pcb_design_station",
+    "count": 1
+  }
+}
