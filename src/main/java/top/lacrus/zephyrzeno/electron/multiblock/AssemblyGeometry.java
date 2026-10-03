@@ -72,7 +72,10 @@ public final class AssemblyGeometry {
             for(int i=0;i<12;i++){double a=i*Math.PI/6;box(.5+.59*Math.cos(a)-.035,-height,.5+.59*Math.sin(a)-.035,.5+.59*Math.cos(a)+.035,-height+.08,.5+.59*Math.sin(a)+.035,"cast_base");}
         }
         // This service panel keeps the existing eight/six/two electrical pin coordinates accessible.
-        if(kind!=Kind.WIND){box(.03,0,.03,.97,.88,.97,"control_case");box(.04,.88,.04,.96,.9375,.96,"service_panel");}
+        if(kind!=Kind.WIND){
+            box(.03,0,.03,.97,.625,.97,"control_case");
+            if(tower){box(.03,.625,.03,.97,.88,.97,"control_case");box(.04,.88,.04,.96,.9375,.96,"service_panel");}
+        }
         if(tower){
             for(int side:new int[]{-1,1}){
                 double tip=side<0?-1.85:2.85;
@@ -155,7 +158,7 @@ public final class AssemblyGeometry {
                 box(.77,.35,-.82,.84,.7,-.4,"service_panel");
             }
             case NUCLEAR -> {
-                // Thirty-six-by-thirty-six site with a walk-in control room and outside intake.
+                // Thirty-six-by-thirty-six site with separate external material and fluid docks.
                 for(int x=-15;x<21;x+=3){rail(x,0,-35,x+3,0,-35);if((x<-3||x>2)&&x!=18)rail(x,0,.94,x+3,0,.94);}
                 rail(-14.94,0,-35,-14.94,0,1);rail(20.94,0,-35,20.94,0,-4);rail(20.94,0,-1,20.94,0,1);
                 tank(-2.5,0,-19.5,5.45,10,"reactor_shell");
@@ -179,7 +182,7 @@ public final class AssemblyGeometry {
                 pipe(-11.2,1.7,-11.4,-11.2,1.7,-19.5,.16);pipe(-11.2,1.7,-19.5,-7.8,1.7,-19.5,.16);
                 pipe(2.8,5,-19.5,6.5,5,-19.5,.19);pipe(6.5,5,-19.5,6.5,2,-6.5,.19);
                 pipe(10.5,1.4,-6.5,10.5,1.4,-15.5,.16);pipe(10.5,1.4,-15.5,9.5,1.4,-19.2,.16);
-                controlRoom();
+                serviceYard();
                 rail(-8.7,2.4,-12,-8.7,2.4,-5.1);
                 // Containment ribs, accessible service ring, personnel airlock and pipe penetrations.
                 for(int i=0;i<24;i++){double a=i*Math.PI/12,x=-2.5+5.5*Math.cos(a),z=-19.5+5.5*Math.sin(a);beam(x,.25,z,x,9.85,z,.055,"reactor_rib");}
@@ -250,20 +253,24 @@ public final class AssemblyGeometry {
             }
         }
     }
-    private void controlRoom(){
-        // Interior is empty and reachable through a two-block-wide front opening.
-        box(14,0,-7,21,.08,-.1,"floor_tiles");box(14,0,-7,14.18,3.55,-.1,"room_wall");
-        box(14,0,-7,21,3.55,-6.82,"room_wall");
-        box(20.82,0,-7,21,3.55,-3,"room_wall");box(20.82,0,-2,21,3.55,-.1,"room_wall");box(20.82,2,-3,21,3.55,-2,"room_wall");
-        box(14,0,-.28,17,3.55,-.1,"room_wall");box(19,0,-.28,21,3.55,-.1,"room_wall");box(17,2.65,-.28,19,3.55,-.1,"room_wall");
-        box(13.9,3.55,-7.1,21.08,3.75,0,"roof_panels");
-        for(double x:new double[]{14.5,19.4})box(x,1.05,-.095,x+1.1,2.55,-.07,"instrument_glass");
-        box(17,2.67,-.31,19,2.9,-.07,"room_sign");
-        // Desks leave the functional console at (16,0,-3) completely exposed.
-        box(14.45,0,-6.4,15.35,2.65,-5.65,"control_case");box(14.5,1.3,-5.66,15.3,2.5,-5.62,"console_panel");
-        box(17.3,.05,-5.95,19.85,.72,-4.9,"control_case");box(17.2,.72,-6.0,20,.86,-4.85,"console_panel");
-        for(double x:new double[]{14.8,18.5})box(x,3.76,-5.9,x+1.2,4.08,-4.6,"vent");
-        box(20.82,2.08,-3,21.04,2.6,-2,"intake_sign");
+    private void serviceYard(){
+        // Exposed service skid replaces the former walk-in room. Ports at (20,1,-3/-5) stay unobstructed.
+        box(14,0,-7,21,.08,-.1,"floor_tiles");
+        for(double z:new double[]{-4.5,-2.5}){
+            box(16,.1,z-.4,18.6,.28,z+.4,"cast_base");
+            box(17.1,.28,z-.38,18.4,1.4,z+.38,"cabinet_skin");
+            box(17.14,.4,z+.381,18.36,1.25,z+.399,"service_panel");
+            pipe(18.4,1.5,z,20.1,1.5,z,.14);
+            pipe(17.8,1.55,z,17.8,2.6,z,.12);
+            pipe(17.8,2.6,z,13.1,2.6,z,.12);
+            for(double x:new double[]{16.2,18.7})beam(x,.12,z,x,2.5,z,.055,"galvanized");
+        }
+        // Independent rain canopies, pipe racks and grounded metal trays; no walls or hidden inventory.
+        for(double z:new double[]{-4.5,-2.5})box(16,2.78,z-.6,20.9,2.9,z+.6,"roof_panels");
+        for(double x:new double[]{14.4,16.2,18.2})box(x,.09,-6.65,x+.08,.18,-.6,"grating");
+        pipe(-13.5,.5,-4,-13.5,.5,-5.5,.13);
+        box(15.1,.12,-1.45,16.3,1.8,-.9,"cabinet_skin");
+        box(15.2,.5,-.89,16.2,1.6,-.87,"service_panel");
     }
     private void ladder(double x,double y,double z,double top,boolean alongZ){
         for(int side:new int[]{-1,1}){double dx=alongZ?0:side*.3,dz=alongZ?side*.3:0;beam(x+dx,y,z+dz,x+dx,top,z+dz,.035,"galvanized");}

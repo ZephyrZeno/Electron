@@ -11,18 +11,13 @@ final class AssemblyRenderer {
     private static final java.util.Map<String,RenderLayer> LAYERS=new java.util.HashMap<>();
     static void windFoot(ComponentEntity e,VertexConsumerProvider consumers,Matrix4f m,int light,int overlay){
         var white=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/turbine_white.png")));
-        cylinder(white,m,new AssemblyGeometry.Piece(new Vec3d(.5,.08,.5),new Vec3d(.5,1,.5),.48,"turbine_white",true,24,.58),light,overlay);
+        cylinder(white,m,new AssemblyGeometry.Piece(new Vec3d(.5,.08,.5),new Vec3d(.5,1,.5),.48,"turbine_white",true,24,.58),light,overlay,e.getCachedState().get(ComponentBlock.FACING));
         var metal=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/galvanized.png")));
         cylinder(metal,m,new AssemblyGeometry.Piece(new Vec3d(.5,0,.5),new Vec3d(.5,.08,.5),.56,"galvanized",true,24),light,overlay);
         for(int i=0;i<12;i++){double a=i*Math.PI/6;var q=new Vec3d(.5+.51*Math.cos(a),.09,.5+.51*Math.sin(a));ComponentRenderer.centeredBox(metal,m,q.x-.025,.07,q.z-.025,q.x+.025,.13,q.z+.025,light,overlay);}
-        var s=e.getCachedState();for(int pin=2;pin<4;pin++){
-            var tip=ComponentGeometry.local(s.get(ComponentBlock.FACING),s.get(ComponentBlock.TURN),ComponentPins.u(ComponentBlock.Kind.MAINS,pin),ComponentPins.v(ComponentBlock.Kind.MAINS,pin),1);
-            var inside=new Vec3d(.5,Math.clamp(tip.y,.15,.8),.5);var bend=inside.lerp(tip,.7).add(0,.05,0);
-            var rubber=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/cast_base.png")));
-            beam(rubber,m,inside,bend,.045,light,overlay);beam(rubber,m,bend,tip,.04,light,overlay);
-            var copper=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/copper_bus.png")));beam(copper,m,tip,tip.add(net.minecraft.util.math.Vec3d.of(s.get(ComponentBlock.FACING).getVector()).multiply(.025)),.024,light,overlay);
-        }
+        CabinetRenderer.draw(e,consumers,m,light,overlay);
     }
+
     static void draw(ComponentEntity e,ComponentBlock b,VertexConsumerProvider consumers,Matrix4f m,double dt,int light,int overlay){
         boolean tower=e.getCachedState().isOf(Foundry.TOWER_TERMINAL);
         double distance=net.minecraft.client.MinecraftClient.getInstance().gameRenderer.getCamera().getPos().squaredDistanceTo(Vec3d.ofCenter(e.getPos()));
@@ -36,6 +31,7 @@ final class AssemblyRenderer {
                     .normal(normal.m00()*x+normal.m10()*y+normal.m20()*z,normal.m01()*x+normal.m11()*y+normal.m21()*z,normal.m02()*x+normal.m12()*y+normal.m22()*z);
             }
         }
+        if(top.lacrus.zephyrzeno.electron.power.WiringCabinet.present(e.getCachedState()))CabinetRenderer.draw(e,consumers,m,light,overlay);
         if(b.kind==ComponentBlock.Kind.WIND){
             e.rotorAngle+=dt*.045*e.displayedLight;
             for(int i=0;i<3;i++){
@@ -52,7 +48,7 @@ final class AssemblyRenderer {
             }
         }
         // Crossarms provide additional taps bonded to the central service terminals.
-        var s=e.getCachedState();int count=b.kind==ComponentBlock.Kind.WIND?0:ComponentPins.count(b.kind);
+        var s=e.getCachedState();int count=b.kind==ComponentBlock.Kind.WIND||top.lacrus.zephyrzeno.electron.power.WiringCabinet.present(s)?0:ComponentPins.count(b.kind);
         var pin=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/copper.png")));
         for(int i=0;i<count;i++){
             var at=ComponentGeometry.local(Direction.UP,s.get(ComponentBlock.TURN),ComponentPins.u(b.kind,i),ComponentPins.v(b.kind,i),1);
@@ -73,12 +69,20 @@ final class AssemblyRenderer {
         }
     }
     private static void cylinder(VertexConsumer out,Matrix4f m,AssemblyGeometry.Piece p,int light,int overlay){
+        cylinder(out,m,p,light,overlay,null);
+    }
+    private static Vec3d recess(Vec3d p,Direction front){
+        if(front==null)return p;
+        return switch(front){case SOUTH->new Vec3d(p.x,p.y,Math.min(.61,p.z));case NORTH->new Vec3d(p.x,p.y,Math.max(.39,p.z));case EAST->new Vec3d(Math.min(.61,p.x),p.y,p.z);case WEST->new Vec3d(Math.max(.39,p.x),p.y,p.z);default->p;};
+    }
+    private static void cylinder(VertexConsumer out,Matrix4f m,AssemblyGeometry.Piece p,int light,int overlay,Direction front){
         for(int i=0;i<p.sides();i++){
             double a=i*Math.PI*2/p.sides(),b=(i+1d)*Math.PI*2/p.sides();
             var aa=new Vec3d(p.a().x+Math.cos(a)*p.radius(),p.a().y,p.a().z+Math.sin(a)*p.radius());
             var bb=new Vec3d(p.a().x+Math.cos(b)*p.radius(),p.a().y,p.a().z+Math.sin(b)*p.radius());
             var aaTop=new Vec3d(p.b().x+Math.cos(a)*p.topRadius(),p.b().y,p.b().z+Math.sin(a)*p.topRadius());
             var bbTop=new Vec3d(p.b().x+Math.cos(b)*p.topRadius(),p.b().y,p.b().z+Math.sin(b)*p.topRadius());
+            aa=recess(aa,front);bb=recess(bb,front);aaTop=recess(aaTop,front);bbTop=recess(bbTop,front);
             if(p.texture().equals("cooling_concrete")){quad(out,m,new Vec3d[]{aa,aaTop,bbTop,bb},light,overlay);continue;}
             Vec3d[][] faces={{aa,aaTop,bbTop,bb},{p.b(),bbTop,aaTop,p.b()},{p.a(),aa,bb,p.a()}};
             for(var face:faces){

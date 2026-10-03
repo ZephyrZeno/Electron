@@ -23,7 +23,7 @@ final class WireRenderer {
             if(contact!=null&&contact.point().layer()!=p.layer())segment(out,matrix,camera,circuit.position(contact.point()),circuit.position(p),radius,offset);
         }
     }
-    private static void segment(VertexConsumer out,Matrix4f m,Vec3d camera,Vec3d start,Vec3d end,double r,double uv){
+    static void segment(VertexConsumer out,Matrix4f m,Vec3d camera,Vec3d start,Vec3d end,double r,double uv){
         Vec3d axis=end.subtract(start);double length=axis.length();if(length<1e-8)return;
         axis=axis.normalize();Vec3d u=axis.crossProduct(new Vec3d(0,1,0));if(u.lengthSquared()<1e-8)u=axis.crossProduct(new Vec3d(1,0,0));u=u.normalize().multiply(r);Vec3d v=axis.crossProduct(u).normalize().multiply(r);
         var a=start.subtract(camera);var b=end.subtract(camera);

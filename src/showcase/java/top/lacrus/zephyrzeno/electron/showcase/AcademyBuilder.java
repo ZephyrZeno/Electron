@@ -18,6 +18,7 @@ import top.lacrus.zephyrzeno.electron.circuit.*;
 import top.lacrus.zephyrzeno.electron.foundry.*;
 import top.lacrus.zephyrzeno.electron.industrial.*;
 import top.lacrus.zephyrzeno.electron.pcb.*;
+import top.lacrus.zephyrzeno.electron.appliance.*;
 import top.lacrus.zephyrzeno.electron.multiblock.Assembly;
 import static top.lacrus.zephyrzeno.electron.circuit.CircuitParts.*;
 
@@ -92,7 +93,7 @@ public final class AcademyBuilder implements ModInitializer {
             chest(base.add(10,1,17),false);
             switch(i){case 0->first(base);case 1->battery(base);case 2->timing(base);case 3->mosfet(base);case 4->relay(base);case 5->conversion(base);case 6->distribution(base,false);case 7->distribution(base,true);case 8->sandbox(base);}
         }
-        towers();gridWorkshop();industrialWorkshop();processingWorkshop();pcbWorkshop();
+        towers();gridWorkshop();industrialWorkshop();processingWorkshop();pcbWorkshop();plugWorkshop();
         circuit.bridges.values().removeIf(b->circuit.wires.values().stream().noneMatch(w->w.path().stream().anyMatch(p->p.host().equals(b.host())&&p.layer()==1)));
         if(circuit.bridges.size()>CircuitState.MAX_BRIDGES)throw new IllegalStateException("Map exceeded normal bridge budget");
         for(var pos:circuit.devices.keySet())if(world.getBlockState(pos).getBlock() instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyControllerBlock&&!top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(world.getBlockState(pos)))throw new IllegalStateException("Construction overlapped a formed machine at "+pos);
@@ -187,6 +188,8 @@ public final class AcademyBuilder implements ModInitializer {
                 var intake=PlantStructures.fuelPos(p,world.getBlockState(p));var boxPos=intake.offset(block==Foundry.NUCLEAR?Direction.EAST:Direction.WEST);
                 world.setBlockState(boxPos.down(),Blocks.SMOOTH_STONE.getDefaultState());world.setBlockState(boxPos,Blocks.CHEST.getDefaultState());
                 var fuelChest=(ChestBlockEntity)world.getBlockEntity(boxPos);fuelChest.setStack(0,new ItemStack(block==Foundry.NUCLEAR?Foundry.FUEL_ROD:Items.COAL,block==Foundry.NUCLEAR?4:32));fuelChest.markDirty();
+                var output=PlantStructures.outputPos(p,world.getBlockState(p)).offset(block==Foundry.NUCLEAR?Direction.EAST:Direction.WEST);
+                world.setBlockState(output.down(),Blocks.SMOOTH_STONE.getDefaultState());world.setBlockState(output,Blocks.CHEST.getDefaultState());
             }
             for(int x=-7;x<=14;x++)for(int z=1;z<=7;z++)world.setBlockState(p.add(x,-1,z),Blocks.SMOOTH_STONE.getDefaultState());
             var stageBase=p.down();var hv=device(stageBase,5,4,block==Foundry.THERMAL?Foundry.STATION_11K:block==Foundry.HYDRO?Foundry.STATION_6K6:Foundry.STATION_24K);stationStructure(hv);
@@ -200,11 +203,12 @@ public final class AcademyBuilder implements ModInitializer {
         for(int color=0;color<8;color++)chest.setStack(slot++,CircuitToolItem.spool(2048,color,true));for(var hv:new ComponentBlock[]{Foundry.STATION_6K6,Foundry.STATION_11K,Foundry.STATION_24K})chest.setStack(slot++,new ItemStack(hv));chest.markDirty();
     }
     private void coolingDemo(BlockPos core,BlockPos lv,boolean nuclear){
-        var tank=PlantStructures.tankPos(core,world.getBlockState(core));
+        var tank=PlantStructures.waterPos(core,world.getBlockState(core));
         var direction=nuclear?Direction.NORTH:Direction.EAST;
-        var pump=tank.offset(direction.getOpposite(),3);var supply=pump.offset(direction.getOpposite());
+        int distance=2;
+        var pump=tank.offset(direction.getOpposite(),distance);var supply=pump.offset(direction.getOpposite());
         for(var q:BlockPos.iterate(core.add(nuclear?-16:-8,-1,-4),core.add(3,-1,7)))world.setBlockState(q,Blocks.SMOOTH_STONE.getDefaultState());
-        for(int i=1;i<=2;i++)world.setBlockState(tank.offset(direction.getOpposite(),i),Industrial.GLASS_PIPE.getDefaultState());
+        for(int i=1;i<distance;i++)world.setBlockState(tank.offset(direction.getOpposite(),i),Industrial.GLASS_PIPE.getDefaultState());
         if(nuclear){world.setBlockState(supply,Industrial.NUCLEAR_TANK.getDefaultState());((FluidEntity)world.getBlockEntity(supply)).change(200000);}
         else{
             // A raised glass pond keeps the pump terminals dry and the layer withdrawal visible.
@@ -219,14 +223,33 @@ public final class AcademyBuilder implements ModInitializer {
         var stageBase=core.down();var tap=device(stageBase,0,4,Industrial.BREAKOUT);
         wire(stageBase,lv,2,tap,0,0,true);wire(stageBase,lv,3,tap,4,1,true);wire(stageBase,tap,1,pump,0,2,true);wire(stageBase,tap,5,pump,1,1,true);
     }
+    private void plugWorkshop(){
+        var b=new BlockPos(112,65,100);
+        for(int x=110;x<=126;x++)for(int z=98;z<=117;z++){set(x,63,z,Blocks.STONE_BRICKS);set(x,64,z,Blocks.SMOOTH_QUARTZ);if(x>=114)set(x,65,z,Blocks.SMOOTH_STONE);}
+        // Leave the paid wind base on its foundation instead of burying it in the bench.
+        set(112,65,103,Blocks.AIR);
+        var wind=windTower(new BlockPos(112,72,103));
+        var outlet=device(b,3,3,Appliances.WALL);var adapter=device(b,6,3,Appliances.ADAPTER);var strip=device(b,6,6,Appliances.STRIP);
+        var lamp=device(b,10,6,Lighting.WORKSHOP);var bench=device(b,10,10,Pcb.BENCH);
+        wire(b,wind,0,outlet,0,0,true);wire(b,wind,1,outlet,1,1,true);
+        for(var pair:List.of(new BlockPos[]{outlet,adapter},new BlockPos[]{adapter,strip},new BlockPos[]{strip,lamp},new BlockPos[]{strip,bench})){
+            var cord=CordNetwork.connect(world,circuit,pair[0],pair[1]);circuit.cords.put(cord.id(),cord);
+        }
+        var table=(PcbBenchEntity)e(bench);table.draft=PcbLayout.inverter();table.setStack(0,new ItemStack(PcbFabrication.FILM,4));table.setStack(2,new ItemStack(Items.BLACK_DYE,4));table.edit(5,0,0,0,0);
+        indicators.add(lamp);sign(b.add(3,1,14),"plug_power","plug_power_1","plug_power_2","read_book");
+        var p=b.add(9,1,14);world.setBlockState(p,Blocks.CHEST.getDefaultState());var chest=(ChestBlockEntity)world.getBlockEntity(p);int slot=0;
+        for(var item:new ItemConvertible[]{Appliances.WALL,Appliances.STRIP,Appliances.ADAPTER,Appliances.CORD,Lighting.WORKSHOP,Pcb.BENCH,Foundry.WRENCH,Foundry.METER})chest.setStack(slot++,new ItemStack(item,Math.min(4,item.asItem().getMaxCount())));chest.markDirty();
+    }
     private void industrialWorkshop(){
         for(int x=57;x<=64;x++)for(int z=11;z<=19;z++)set(x,65,z,Blocks.SMOOTH_STONE);
         var table=new BlockPos(59,66,12);for(int i=0;i<6;i++)world.setBlockState(table.add(IndustrialTableBlock.offset(Direction.NORTH,i)),Industrial.TABLE.getDefaultState().with(IndustrialTableBlock.PART,i).with(IndustrialTableBlock.FACING,Direction.NORTH));
         if(!IndustrialTableBlock.form(world,table))throw new IllegalStateException("Six paid teaching table modules did not form");
         var inventory=(IndustrialTableEntity)world.getBlockEntity(table);int slot=0;for(var ingredient:AssemblyRecipes.recipes().getFirst().inputs())inventory.setStack(slot++,new ItemStack(ingredient.item(),ingredient.count()));
-        var box=new BlockPos(60,66,17);world.setBlockState(box,Blocks.CHEST.getDefaultState());var chest=(ChestBlockEntity)world.getBlockEntity(box);slot=0;
-        for(var block:Industrial.BLOCKS.values())chest.setStack(slot++,new ItemStack(block,4));
-        for(var item:new ItemConvertible[]{Items.IRON_BLOCK,Items.COPPER_BLOCK,Items.WATER_BUCKET,Foundry.RELAY,Foundry.MOTOR,Foundry.MOSFET,Foundry.CAPACITOR})chest.setStack(slot++,new ItemStack(item,item==Items.WATER_BUCKET?1:16));chest.markDirty();
+        var workshopItems=new ArrayList<ItemStack>();
+        for(var block:Industrial.BLOCKS.values())workshopItems.add(new ItemStack(block,4));
+        for(var item:new ItemConvertible[]{Items.IRON_BLOCK,Items.COPPER_BLOCK,Items.WATER_BUCKET,Foundry.RELAY,Foundry.MOTOR,Foundry.MOSFET,Foundry.CAPACITOR})workshopItems.add(new ItemStack(item,item==Items.WATER_BUCKET?1:16));
+        for(int page=0;page*27<workshopItems.size();page++){var box=new BlockPos(60+page*2,66,17);world.setBlockState(box,Blocks.CHEST.getDefaultState());var chest=(ChestBlockEntity)world.getBlockEntity(box);
+            for(int i=0;i<27&&page*27+i<workshopItems.size();i++)chest.setStack(i,workshopItems.get(page*27+i));chest.markDirty();}
         sign(new BlockPos(117,66,61),"service","service_1","service_2","service_3");
         for(int x=58;x<=62;x++){set(x,65,60,Blocks.SMOOTH_STONE);set(x,73,60,Blocks.SMOOTH_STONE);}
         for(int y=66;y<73;y++){set(58,y,60,Blocks.IRON_BARS);set(62,y,60,Blocks.IRON_BARS);}
@@ -306,7 +329,9 @@ public final class AcademyBuilder implements ModInitializer {
     private void sign(BlockPos p,String...keys){world.setBlockState(p,Blocks.OAK_SIGN.getDefaultState().with(SignBlock.ROTATION,0));var sign=(SignBlockEntity)world.getBlockEntity(p);var text=new SignText().withColor(DyeColor.WHITE).withGlowing(true);for(int i=0;i<Math.min(4,keys.length);i++)text=text.withMessage(i,Text.translatable("map.electron."+keys[i]));sign.setText(text,true);sign.setText(text,false);sign.setWaxed(true);sign.markDirty();}
     private void chest(BlockPos p,boolean all){world.setBlockState(p,Blocks.CHEST.getDefaultState().with(ChestBlock.FACING,Direction.SOUTH));var chest=(ChestBlockEntity)world.getBlockEntity(p);List<ItemStack> items=new ArrayList<>();for(var item:new Item[]{Foundry.HANDBOOK,Foundry.METER,Foundry.CUTTER,Foundry.WRENCH,Foundry.MAGNIFIER})items.add(new ItemStack(item));for(int color=0;color<4;color++){items.add(CircuitToolItem.spool(4096,color,false));items.add(CircuitToolItem.spool(4096,color,true));}items.add(new ItemStack(Foundry.BRIDGE,32));items.add(new ItemStack(Foundry.TERMINAL,32));items.add(new ItemStack(Foundry.WALL_PORT,8));for(var item:all?new Item[]{Foundry.CRANK.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.LED.asItem(),Foundry.BATTERY.asItem(),Foundry.MOSFET.asItem(),Foundry.RELAY.asItem(),Foundry.BOOST.asItem(),Foundry.BUCK_3V3.asItem(),Foundry.BUCK_12.asItem(),Foundry.GENERATOR.asItem(),Foundry.MOTOR.asItem()}:new Item[]{Foundry.LED.asItem(),Foundry.RESISTOR_220.asItem(),Foundry.BREAKER.asItem(),Foundry.FUSE.asItem()})items.add(new ItemStack(item,item==Foundry.BATTERY.asItem()?1:4));for(int i=0;i<Math.min(27,items.size());i++)chest.setStack(i,items.get(i));chest.markDirty();}
     private void verify(){
-        if(circuit.wires.size()!=166||circuit.devices.size()!=133)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size());
+        if(circuit.wires.size()!=168||circuit.devices.size()!=140||circuit.cords.size()!=4)throw new IllegalStateException("Incomplete map: devices="+circuit.devices.size()+", wires="+circuit.wires.size()+", cords="+circuit.cords.size());
+        if(e(new BlockPos(122,66,106)).current<.005||!((PcbBenchEntity)e(new BlockPos(122,66,110))).getStack(11).isOf(PcbFabrication.MASK))throw new IllegalStateException("Plug appliance demonstration failed");
+        report.add("plug_appliances_working=true");
         for(int i=0;i<4;i++){var p=new BlockPos(i*18+8,66,83);if(!(e(p) instanceof ProcessingEntity)||e(p).plantItems.get(2).isEmpty())throw new IllegalStateException("Powered processing did not produce output at "+p);}
         report.add("processing_machines_working=4");
         for(int i=0;i<5;i++){var p=new BlockPos(i*18+8,66,103);if(e(p).plantItems.get(2).isEmpty())throw new IllegalStateException("PCB stage failed at "+p);if(!Pcb.layout(e(p).plantItems.get(2)).equals(PcbLayout.inverter()))throw new IllegalStateException("PCB design changed in stage "+p);}
@@ -329,6 +354,8 @@ public final class AcademyBuilder implements ModInitializer {
             var console=world.getBlockEntity(PlantStructures.consolePos(p,world.getBlockState(p)));
             var port=world.getBlockEntity(PlantStructures.fuelPos(p,world.getBlockState(p)));
             if(!(console instanceof PlantServiceEntity c)||!(port instanceof PlantServiceEntity f)||c.core()!=e(p)||f.core()!=e(p)||e(p).plantItems.get(0).isEmpty())throw new IllegalStateException("Unlinked or empty teaching fuel intake at "+p);
+            if(!(world.getBlockEntity(PlantStructures.outputPos(p,world.getBlockState(p))) instanceof PlantServiceEntity o)||o.core()!=e(p))throw new IllegalStateException("Unlinked teaching output at "+p);
+            if(!(world.getBlockEntity(PlantStructures.waterPos(p,world.getBlockState(p))) instanceof FluidEntity water)||water.plant()!=e(p)||water.amount<=0)throw new IllegalStateException("Dry or unlinked water inlet at "+p);
         }
         if(!IndustrialTableBlock.complete(world,new BlockPos(59,66,12),world.getBlockState(new BlockPos(59,66,12))))throw new IllegalStateException("Teaching workbench missing modules");
         report.add("fuel_services_working=true");report.add("six_module_workshop=true");

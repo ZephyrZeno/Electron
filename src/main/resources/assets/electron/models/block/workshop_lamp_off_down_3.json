@@ -15,7 +15,9 @@
     "steel_pipe": "electron:block/assembled/steel_pipe",
     "hydro_blue": "electron:block/assembled/hydro_blue",
     "boiler": "electron:block/assembled/boiler",
-    "lens": "electron:block/fixture_off"
+    "lens": "electron:block/fixture_off",
+    "cord_inlet": "electron:block/assembled/cast_base",
+    "cord_contact": "electron:block/assembled/galvanized"
   },
   "elements": [
     {
@@ -1437,6 +1439,210 @@
         },
         "west": {
           "texture": "#galvanized",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.03999999999999915,
+        7.800000000000001,
+        6.699999999999999
+      ],
+      "to": [
+        0.2400000000000002,
+        10.2,
+        9.3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.019999999999999574,
+        8.1,
+        7
+      ],
+      "to": [
+        0.03999999999999915,
+        9.9,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cord_contact",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#cord_contact",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#cord_contact",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#cord_contact",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#cord_contact",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#cord_contact",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.009999999999999787,
+        8.35,
+        7.25
+      ],
+      "to": [
+        0.019999999999999574,
+        9.65,
+        8.75
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#cord_inlet",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#cord_inlet",
           "uv": [
             0,
             0,

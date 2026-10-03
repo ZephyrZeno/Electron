@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:copper_coil"
+    },
+    {
+      "item": "electron:power_mosfet"
+    },
+    {
+      "item": "electron:capacitor_100mf"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:quartz"
+    }
+  ],
+  "result": {
+    "id": "electron:appliance_adapter",
+    "count": 1
+  }
+}

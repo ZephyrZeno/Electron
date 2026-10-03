@@ -31,15 +31,19 @@ public final class FaultEffects {
         n.putInt("kind",kind);n.putFloat("strength",(float)Math.clamp(Math.log1p(Math.max(0,power))/7,.15,1));n.putLong("seed",w.random.nextLong());return n;
     }
     public static void emit(ServerWorld w,Vec3d a,Vec3d b,int kind,double power){
+        emit(w,a,b,kind,power,0);
+    }
+    public static boolean hasArc(double voltage,double gap){return Double.isFinite(voltage)&&Math.abs(voltage)>=1000&&gap<=CableFaults.clearance(Math.abs(voltage));}
+    public static void emit(ServerWorld w,Vec3d a,Vec3d b,int kind,double power,double voltage){
         if(!Double.isFinite(power)||!w.isChunkLoaded(BlockPos.ofFloored(a))||!w.isChunkLoaded(BlockPos.ofFloored(b)))return;
         var budget=BUDGET.computeIfAbsent(w,k->new long[]{-1,0});if(budget[0]!=w.getTime()){budget[0]=w.getTime();budget[1]=0;}if(budget[1]++>=32)return;
-        var packet=new Event(packet(w,a,b,kind,power));
+        var data=packet(w,a,b,kind,power);boolean arc=hasArc(voltage,a.distanceTo(b));data.putBoolean("arc",arc);var packet=new Event(data);
         for(var player:w.getPlayers())if(player.squaredDistanceTo(ArcGeometry.closest(player.getPos(),a,b))<96*96&&ServerPlayNetworking.canSend(player,Event.ID))ServerPlayNetworking.send(player,packet);
         // Mono Ogg + exact double coordinates: the impact, never the listener or the host-block centre.
         var position=b;long key=BlockPos.ofFloored(position).asLong();var times=SOUNDS.computeIfAbsent(w,k->new HashMap<>());times.entrySet().removeIf(e->w.getTime()-e.getValue()>40);
-        if(w.getTime()-times.getOrDefault(key,-100L)>=8){times.put(key,w.getTime());var sound=switch(kind){case MELT->ElectricalEffects.WIRE_MELT;case BURST->ElectricalEffects.POP;case TRIP->ElectricalEffects.TRIP;case OVERLOAD->ElectricalEffects.SIZZLE;default->ElectricalEffects.ARC;};ElectricalEffects.play(w,position,sound,kind==BURST?.9f:.55f,.9f+w.random.nextFloat()*.2f);}
+        if(w.getTime()-times.getOrDefault(key,-100L)>=8){times.put(key,w.getTime());var sound=switch(kind){case MELT->ElectricalEffects.WIRE_MELT;case BURST->ElectricalEffects.POP;case TRIP->ElectricalEffects.TRIP;case OVERLOAD->ElectricalEffects.SIZZLE;default->arc?ElectricalEffects.ARC:ElectricalEffects.SPARK;};ElectricalEffects.play(w,position,sound,kind==BURST?.9f:.55f,.9f+w.random.nextFloat()*.2f);}
         if(kind==MELT||kind==BURST)w.spawnParticles(ParticleTypes.SMOKE,b.x,b.y,b.z,12,.08,.08,.08,.02);
-        if(kind!=OVERLOAD&&power>=1&&w.getTime()%4==0)pulse(w,a.lerp(b,.5));
+        if(power>=1)pulse(w,b);
     }
     public static void pulse(ServerWorld w,Vec3d at){
         var p=BlockPos.ofFloored(at);for(var q:List.of(p,p.up(),p.west(),p.east()))if(w.isChunkLoaded(q)&&w.getBlockState(q).isAir()&&w.getFluidState(q).isEmpty()){

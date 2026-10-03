@@ -16,7 +16,7 @@ assert_no_dropped_items(WORLD)
 level=read_gzip(WORLD/'level.dat')['Data'];assert level['GameType']==0 and level['Difficulty']==0
 assert (level['SpawnX'],level['SpawnY'],level['SpawnZ'])==(8,65,-4)
 circuit=read_gzip(WORLD/'data/electron_circuits.dat')['data']
-assert len(circuit['devices'])==133 and len(circuit['wires'])==166
+assert len(circuit['devices'])==140 and len(circuit['wires'])==168
 assert any(w.get('cable') for w in circuit['wires']) and any(not w.get('cable') for w in circuit['wires'])
 blocks=[];saved_chunks={}
 for file in (WORLD/'region').glob('*.mca'):
@@ -24,11 +24,13 @@ for file in (WORLD/'region').glob('*.mca'):
         saved_chunks[(data['xPos'],data['zPos'])]=data
         blocks.extend(data.get('block_entities',[]))
 components=[b for b in blocks if b['id']=='electron:component'];signs=[b for b in blocks if b['id']=='minecraft:sign'];chests=[b for b in blocks if b['id']=='minecraft:chest']
-assert len(components)==133 and len(signs)==24 and len(chests)==19
+assert len(components)==140 and len(signs)==25 and len(chests)==23
 chest_stacks=sum(len(b.get('Items',[])) for b in chests)
-assert chest_stacks==348, f'Missing toolbox contents: {chest_stacks}/348 stacks'
+ash_chest=next(b for b in chests if (b['x'],b['y'],b['z'])==(64,67,6))
+assert len(ash_chest['Items'])==1 and ash_chest['Items'][0]['id']=='electron:combustion_ash' and ash_chest['Items'][0]['count']>0
+assert chest_stacks==361, f'Missing toolbox contents: {chest_stacks}/361 stacks'
 assert all('map.electron.' in message and 'translate' in message for sign in signs for message in sign['front_text']['messages']),'Sign instructions must remain client-translated'
-assert len({(b['x'],b['y'],b['z']) for b in components})==133
+assert len({(b['x'],b['y'],b['z']) for b in components})==140
 assert {(b['x'],b['y'],b['z']) for b in components}=={position(d['p']) for d in circuit['devices']}
 assert all(not b.get('converter_target') for b in components),'Fixed modules must have no free setting'
 
@@ -42,9 +44,10 @@ for device in circuit['devices']:
 assert sum(bool(w.get('overhead')) for w in circuit['wires'])==2
 assert sum(bool(w.get('vertical')) for w in circuit['wires'])==2
 assert report.count('pumps_working=true')==2
+assert report.count('plug_appliances_working=true')==2 and len(circuit['appliance_cords'])==4
 assert report.count('fuel_services_working=true')==2 and report.count('six_module_workshop=true')==2
 services=[b for b in blocks if b['id']=='electron:plant_service']
-assert len(services)==4
+assert len(services)==6
 for service in services:
     assert position(service['controller']) in [(68,66,10),(103,66,58)]
 fluids=[b for b in blocks if b['id']=='electron:fluid_component']
@@ -121,7 +124,7 @@ d.text((40,1541),'24 V：曝光 → 钻孔 → 蚀刻清洗 → 阻焊固化 →
 d.text((40,1578),'工序机 x=8 / 26 / 44 / 62 / 80，y=66，z=103；工作台 (98,66,103)',font=font(18),fill='#c5d6df')
 d.text((40,1614),'5 V 板控实验 (5,66,123)；水位联锁与应急灯 (x=18..29, z=123..131)',font=font(18),fill='#c5d6df')
 d.text((40,1650),'材料箱 (40,65,126) / (43,65,126)；光绘与微型配件拖放见手册新增教程。',font=font(18),fill='#92a9b9')
-d.text((30,1720),f"133 个器件 / 166 段线路 / {len(circuit['bridges'])} 座跨线桥 / 9 台加工机 / 2 套水泵",font=font(18),fill='#a3bbca')
+d.text((30,1720),f"140 个器件 / 168 段线路 + 4 根电源线 / {len(circuit['bridges'])} 座跨线桥 / 9 台加工机 / 2 套水泵",font=font(18),fill='#a3bbca')
 im.save(out/'地图导览.png')
 instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 
@@ -152,20 +155,21 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 
 主要 24 V 负载由风机底柜和变电柜持续供电；5 V 控制/储能课程仍使用手摇源，耗尽后空手右键补能，每秒一次。火电控制器 (68,66,10)、水电 (68,66,32)、36×36 核电 (103,66,58)、引雷 (66,72,60)。三组机组均经对应高压变电站、24 V 变电站实际驱动灯；火电和核电还给自己的水泵供电，透明管送水进入专用槽。
 火电水泵 (63,66,9) 从玻璃围住的原版水域抽水，累计抽完一层才降低水面；核电补给槽 (89,66,57) 是有限水量。按需向机组补充煤和燃料棒。发电停止后仍可能有余热，宜另设独立冷却电源。
-核电控制面板 (119,66,55)，东侧输入口 (123,67,55)；火电控制柜 (68,66,9)，输入口 (65,67,8)。外侧箱子会自动向输入口送料，下方可接漏斗取空桶/乏燃料。核电必须使用燃料棒，不能直接投矿石。
+核电控制面板 (119,66,55)，东侧输入口 (123,67,55)；火电控制柜 (68,66,9)，输入口 (65,67,8)。外侧箱子会自动向输入口送料，独立炉灰口 (65,67,6) 和乏燃料口 (123,67,53) 的外侧箱子收集产物，下方也可接漏斗。水由专用进水口供给，不能直接投水桶。核电必须使用燃料棒，不能直接投矿石。
 大型机组装配台 (59,66,12) 由六块独立模块拼成，已放好一套锅炉配料；右侧选择锅炉并装配。新材料箱 (60,66,17) 含塔筒、水泵、透明/铁皮管、专用水槽和机组部件。悬线示例 (60,66,60) 的两根电缆由上、下接线座固定，由新风机供电，出厂断开底座开关。在 (60,65,51) 潜行右键底座启停，护栏外可观察悬线向旁边铁块放电。自由实验台 (41,66,57) 放有矮型双母线插排。
-生存模式准确读数只显示在万用表 HUD；铭牌上的电压/电流是额定值。
+16 插电工坊 (112..126, z=100..114)：风机 → 市电插孔 → 固定24 V适配器 → 三位插排 → 工坊灯和PCB台。持电源线先点插孔再点电器，潜行点电器拔线。
+生存模式准确读数只显示在万用表 HUD；电压铭牌已移至工程手册。
 固定转换模块没有调压界面，换规格须合成并更换器件；PCB 光绘、曝光、钻孔、蚀刻、阻焊、沉金和焊接已在南侧新工坊开放；电源芯片仍是后续设计。
 选 COM 再选探针测压；潜行点设备/导线测流；潜行对空切换 V/Ω；对空右键清除测点。
 未加载区块中的网络会暂停，走近实验区会恢复；没有免费持续发电或远程逻辑控制器。
 地图导览是从实际保存的线路数据绘制的平面示意，不是游戏截图。
-验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 13 个指示负载、2 个旋转电机、4 台原料加工机与 5 台 PCB 工序产出及光绘工作台；两次均接通悬线展台 40 刻并确认漏电电流，随后断开再保存。
-生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、17 个工具／材料箱与 2 个供料箱中的 348 组物品完整，并检查两套供水和装配台配料。
-全部 133 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
+验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 14 个指示负载、2 个旋转电机、4 台原料加工机与 5 台 PCB 工序产出及光绘工作台；两次均接通悬线展台 40 刻并确认漏电电流，随后断开再保存。
+生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、19 个工具／材料箱、2 个供料箱和2 个出料箱中的 361 组物品（含实际生成的炉灰）完整，并检查两套供水和装配台配料。
+全部 140 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
 '''
 (out/'地图说明.txt').write_text(instructions,encoding='utf-8')
 audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'components_above_bench':True,'overhead_spans':2,'reopened_and_powered':True,'all_plants_and_substations_powered':True,'generator_required':False,'formed_parts':len(parts),'all_multiblocks_formed':True}
-audit.update(vertical_drops=2,powered_pumps=2,processing_machines=4,pcb_stages=5,pcb_control_working=True,emergency_lamp_charged=True,fluid_stores=len(fluids),workshop_cells=6,nuclear_foundation=[36,36],arc_demo_powered_test=True,arc_demo_default_off=True,fuel_services_working=True,six_module_workshop=True)
+audit.update(vertical_drops=2,powered_pumps=2,processing_machines=4,pcb_stages=5,pcb_control_working=True,emergency_lamp_charged=True,fluid_stores=len(fluids),workshop_cells=6,nuclear_foundation=[36,36],arc_demo_powered_test=True,arc_demo_default_off=True,fuel_services_working=True,six_module_workshop=True,plug_cords=4,plug_appliances_working=True)
 (out/'map-verification.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
 archive=ROOT/f'dist/circuit-academy-{VERSION}.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:

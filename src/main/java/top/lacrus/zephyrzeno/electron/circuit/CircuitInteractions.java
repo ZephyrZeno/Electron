@@ -68,8 +68,10 @@ public final class CircuitInteractions {
         NbtCompound n=CircuitToolItem.data(stack);String dimension=world.getRegistryKey().getValue().toString();
         if(!mayEdit(world,player,p.host()))throw new CircuitError("error.electron.edit_permission");
         for(var old:s.wires.values())if(old.path().contains(p)&&old.hosts().stream().anyMatch(pos->!mayEdit(world,player,pos)))throw new CircuitError("error.electron.tap_permission");
+        if(!top.lacrus.zephyrzeno.electron.power.WiringCabinet.accessible(world,p.host()))throw new CircuitError("error.electron.cabinet_closed");
         var copy=s.wiringCopy();Endpoint end=copy.joinAt(world,p,CircuitToolItem.cable(stack));
         Endpoint start=dimension.equals(n.getString("dimension"))?copy.endpoints().get(n.getString("start")):null;
+        if(start!=null&&!top.lacrus.zephyrzeno.electron.power.WiringCabinet.accessible(world,start.point().host()))throw new CircuitError("error.electron.cabinet_closed");
         int nodeCost=copy.junctions.size()-s.junctions.size();
         if(start==null){
             if(!player.isCreative()&&CircuitToolItem.units(stack)<nodeCost)throw new CircuitError("error.electron.node_material");

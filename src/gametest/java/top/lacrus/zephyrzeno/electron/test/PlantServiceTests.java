@@ -61,17 +61,26 @@ public final class PlantServiceTests implements FabricGameTest {
         });
     }
     @GameTest(templateName="electron:industrial_test",tickLimit=30)
-    public void spentRodAndBucketOutputsBlockSafelyAndHoppersExtractOnlyOutputs(TestContext t){
+    public void typedPortsRejectWrongMaterialsAndOutputOnlyFinishedResidue(TestContext t){
         var e=plant(t,true);var w=t.getWorld();var input=(PlantServiceEntity)w.getBlockEntity(PlantStructures.fuelPos(e.getPos(),e.getCachedState()));
         e.fuelLoaded=true;e.fuelEnergy=0;e.plantItems.set(0,new ItemStack(Foundry.FUEL_ROD,2));e.plantItems.set(2,new ItemStack(Foundry.SPENT_ROD,16));
         PlantOperations.feed(w,e);t.assertEquals(e.plantItems.get(0).getCount(),2,"Blocked spent output prevents loading another rod");
-        input.removeStack(2,1);PlantOperations.feed(w,e);t.assertEquals(e.plantItems.get(0).getCount(),1,"Free output permits exactly one new rod");t.assertEquals(e.plantItems.get(2).getCount(),16,"Spent rod is retained exactly once");
-        t.assertFalse(input.canExtract(0,e.plantItems.get(0),Direction.DOWN),"Pending fuel cannot leak to output hopper");
-        t.assertTrue(input.canExtract(2,e.plantItems.get(2),Direction.DOWN),"Spent rods can leave through the bottom");
-        t.assertFalse(input.insertOne(new ItemStack(Foundry.RAW_URANIUM)),"Raw uranium is not a finished fuel rod");
-        var tank=(FluidEntity)w.getBlockEntity(PlantStructures.tankPos(e.getPos(),e.getCachedState()));tank.change(tank.capacity());
-        e.plantItems.set(1,new ItemStack(Items.WATER_BUCKET));PlantOperations.feed(w,e);t.assertTrue(e.plantItems.get(1).isOf(Items.WATER_BUCKET),"Full reservoir does not consume a bucket");
-        tank.change(-1000);PlantOperations.feed(w,e);t.assertTrue(e.plantItems.get(1).isEmpty()&&e.plantItems.get(3).isOf(Items.BUCKET),"A full bucket transfers exactly 1000 mB with empty bucket returned");t.assertEquals(tank.amount,tank.capacity(),"Water volume is conserved");t.complete();
+        var output=(PlantServiceEntity)w.getBlockEntity(PlantStructures.outputPos(e.getPos(),e.getCachedState()));
+        output.removeStack(2,1);PlantOperations.feed(w,e);t.assertEquals(e.plantItems.get(0).getCount(),1,"Free output permits exactly one new rod");t.assertEquals(e.plantItems.get(2).getCount(),16,"Spent rod is retained exactly once");
+        t.assertFalse(input.canExtract(2,e.plantItems.get(2),Direction.DOWN),"Input never exports spent rods");
+        t.assertTrue(output.canExtract(2,e.plantItems.get(2),Direction.DOWN),"Only the dedicated outlet exports spent rods");
+        t.assertFalse(input.insertOne(new ItemStack(Foundry.RAW_URANIUM)),"Raw uranium is not a finished rod");
+        t.assertFalse(input.insertOne(new ItemStack(Items.COAL)),"Nuclear inlet rejects coal");
+        t.assertFalse(input.insertOne(new ItemStack(Items.WATER_BUCKET)),"Fuel inlet rejects water");
+        t.assertFalse(output.insertOne(new ItemStack(Foundry.FUEL_ROD)),"Outlet cannot accept fresh fuel");
+        var tank=(FluidEntity)w.getBlockEntity(PlantStructures.tankPos(e.getPos(),e.getCachedState()));tank.change(-2000);int water=tank.amount;
+        e.plantItems.set(1,new ItemStack(Items.WATER_BUCKET));PlantOperations.feed(w,e);
+        t.assertEquals(tank.amount,water,"Legacy bucket slots cannot bypass the water pipe");
+        t.assertTrue(e.plantItems.get(1).isOf(Items.WATER_BUCKET),"Legacy bucket retained for outlet recovery");
+        t.assertTrue(FluidNetwork.route(w,tank.getPos())==null,"Direct pump into a bound tank is rejected");
+        var inlet=PlantStructures.waterPos(e.getPos(),e.getCachedState());
+        t.assertTrue(FluidNetwork.route(w,inlet).tank()==tank,"Fixed water inlet reaches the actual tank");
+        t.complete();
     }
     @GameTest(templateName="electron:industrial_test",tickLimit=30)
     public void dismantlingDoesNotDuplicateQueuedFuel(TestContext t){
@@ -82,10 +91,11 @@ public final class PlantServiceTests implements FabricGameTest {
     }
     private static boolean blocked(AssemblyGeometry.Model model,Box region){return model.cells().entrySet().stream().anyMatch(e->e.getValue().getBoundingBoxes().stream().anyMatch(b->b.offset(e.getKey()).intersects(region)));}
     @GameTest(templateName="electron:industrial_test",tickLimit=30)
-    public void nuclearControlRoomIsWalkableAndPoolHasSolidCover(TestContext t){
+    public void nuclearServiceYardReplacesRoomAndPoolRemainsCovered(TestContext t){
         var model=AssemblyGeometry.model(ComponentBlock.Kind.NUCLEAR,0,false);
-        t.assertFalse(blocked(model,new Box(17.2,.2,-1.8,17.8,2.1,.6)),"Control room entrance has real player headroom");
-        t.assertFalse(blocked(model,new Box(17.2,.2,-4,17.8,2.1,-3.3)),"Interior aisle is not a solid building cube");
+        t.assertFalse(blocked(model,new Box(17.2,.2,-1.8,17.8,2.1,.6)),"Former doorway is an open service aisle");
+        t.assertFalse(blocked(model,new Box(17.2,.2,-4,17.8,2.1,-3.3)),"Service aisle is not a solid building cube");
+        t.assertFalse(blocked(model,new Box(14.02,.5,-1.8,14.12,2.8,-1.2)),"Former wall is gone");
         t.assertTrue(blocked(model,new Box(-12,2.42,-10,-11.4,3,-9.4)),"Visible grille keeps players out of the cooling basin");t.complete();
     }
 }

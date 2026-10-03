@@ -15,7 +15,10 @@ public final class AssemblyControllerBlock extends ComponentBlock implements Sea
     @Override protected void appendProperties(StateManager.Builder<Block,BlockState> b){super.appendProperties(b);b.add(FORMED);}
     @Override protected BlockRenderType getRenderType(BlockState s){return s.get(FORMED)?BlockRenderType.INVISIBLE:BlockRenderType.MODEL;}
     @Override protected VoxelShape getOutlineShape(BlockState s,BlockView w,BlockPos p,ShapeContext c){
-        if(s.get(FORMED)&&w.getBlockEntity(p) instanceof ComponentEntity e)return AssemblyGeometry.model(kind,e.assemblyHeight,s.isOf(Foundry.TOWER_TERMINAL),s.get(TURN)).cells().get(BlockPos.ORIGIN);
+        if(s.get(FORMED)&&w.getBlockEntity(p) instanceof ComponentEntity e){
+            var shape=AssemblyGeometry.model(kind,e.assemblyHeight,s.isOf(Foundry.TOWER_TERMINAL),s.get(TURN)).cells().getOrDefault(BlockPos.ORIGIN,net.minecraft.util.shape.VoxelShapes.empty());
+            return top.lacrus.zephyrzeno.electron.power.WiringCabinet.present(s)?net.minecraft.util.shape.VoxelShapes.union(shape,top.lacrus.zephyrzeno.electron.power.WiringCabinet.shape(s,e.cabinetOpen)):shape;
+        }
         return super.getOutlineShape(s,w,p,c);
     }
 }

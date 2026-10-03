@@ -38,7 +38,6 @@ public final class PcbBenchEntity extends ComponentEntity implements SidedInvent
     public int process(boolean broken){
         if(!ready()||broken||paused||voltage<18||voltage>30||current<=0)return 0;
         work=Math.min(draft.joules(),work+voltage*current*.05);
-        if(world.getTime()%60==0)ElectricalEffects.play((net.minecraft.server.world.ServerWorld)world,pos,ElectricalEffects.MOTOR,.1f,1.4f);
         if(work+1e-7>=draft.joules()){
             boolean finish=finishing();int[] costs=costs();for(int i=0;i<11;i++)items.get(i).decrement(costs[i]);items.set(11,Pcb.designed(finish?Pcb.BOARD:PcbFabrication.MASK,draft));working=false;work=0;
             ElectricalEffects.play((net.minecraft.server.world.ServerWorld)world,pos,ElectricalEffects.ASSEMBLE,.35f,1.25f);

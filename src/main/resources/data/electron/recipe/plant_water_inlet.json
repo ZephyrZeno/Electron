@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:iron_pipe"
+    },
+    {
+      "item": "electron:pipe_valve"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "id": "electron:plant_water_inlet",
+    "count": 1
+  }
+}

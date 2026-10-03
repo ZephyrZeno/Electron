@@ -75,17 +75,17 @@ public final class CableFaults {
             double current=Math.abs(s.readings.current(f.id)),volts=Math.abs(s.readings.voltage(f.a)-s.readings.voltage(f.b)),power=current*volts;
             if(current<.002||power<.1||s.paused.containsKey(f.a))continue;Vec3d end=f.to;LivingEntity victim=null;
             if(f.victim!=null){var entity=w.getEntity(f.victim);if(!(entity instanceof LivingEntity l)||!l.isAlive()||!l.getBoundingBox().expand(.4).contains(f.to))continue;victim=l;var box=l.getBoundingBox();end=new Vec3d(Math.clamp(f.from.x,box.minX,box.maxX),Math.clamp(f.from.y,box.minY,box.maxY),Math.clamp(f.from.z,box.minZ,box.maxZ));}
-            FaultEffects.emit(w,f.from,end,victim==null?FaultEffects.ARC:FaultEffects.SHOCK,power);
+            FaultEffects.emit(w,f.from,end,victim==null?FaultEffects.ARC:FaultEffects.SHOCK,power,volts);
             if(victim!=null)shock(w,state,victim,power);
             else if(f.id.startsWith("ground:")){double radius=w.getFluidState(BlockPos.ofFloored(f.to)).isEmpty()?1:2;
                 for(var e:w.getEntitiesByClass(LivingEntity.class,new Box(end,end).expand(radius),e->!e.isSpectator()))if(e.getPos().squaredDistanceTo(end)<radius*radius&&visible(w,end.add(0,.06,0),e.getPos().add(0,.1,0),e))shock(w,state,e,power*.25);
             }
         }
-        if(w.getTime()%10==0){var done=new HashSet<String>();for(var source:s.lastBranches)if(!source.led()&&Math.abs(source.emf())>=48){
+        if(w.getTime()%10==0){var done=new HashSet<String>();for(var source:s.lastBranches)if(!source.led()&&Math.abs(source.emf())>=3){
             double current=Math.abs(s.readings.current(source.id())),volts=Math.abs(s.readings.voltage(source.a())-s.readings.voltage(source.b()));
             if(current<.01||volts>Math.abs(source.emf())*.15||volts/current>10||s.paused.containsKey(source.a()))continue;
             String ref=s.readings.reference().get(source.a());if(ref==null||!done.add(ref))continue;
-            s.wires.values().stream().filter(wire->s.readings.commonReference(wire.a(),source.a())).max(Comparator.comparingDouble(wire->Math.abs(s.readings.current("w:"+wire.id())))).ifPresent(wire->{var p=middle(s,wire);FaultEffects.emit(w,p.add(0,.015,0),p.add(.15,.06,0),FaultEffects.ARC,current*Math.abs(source.emf()));});
+            s.wires.values().stream().filter(wire->s.readings.commonReference(wire.a(),source.a())).max(Comparator.comparingDouble(wire->Math.abs(s.readings.current("w:"+wire.id())))).ifPresent(wire->{var p=middle(s,wire);FaultEffects.emit(w,p.add(0,.015,0),p.add(.15,.06,0),FaultEffects.ARC,current*Math.abs(source.emf()),source.emf());});
         }}
     }
     private static void shock(ServerWorld w,State s,LivingEntity e,double power){if(e instanceof PlayerEntity p&&(p.isCreative()||p.isSpectator())||s.shockUntil.getOrDefault(e.getUuid(),-1L)>w.getTime())return;s.shockUntil.put(e.getUuid(),w.getTime()+20);e.damage(w.getDamageSources().lightningBolt(),(float)Math.clamp(.5+Math.sqrt(power)*.5,1,6));e.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS,15,0,false,false,true));}

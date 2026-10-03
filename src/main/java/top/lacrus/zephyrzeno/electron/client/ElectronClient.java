@@ -29,7 +29,7 @@ public final class ElectronClient implements ClientModInitializer {
     private record PathPreview(String start,SurfacePoint target,List<SurfacePoint> path,Endpoint end,Text status,long tick){}
     private static PathPreview cachedRoute;private static long nextRouteUpdate;
     @Override public void onInitializeClient() {
-        MagnifierZoom.register();WorkshopMechanismRenderer.register();
+        MagnifierZoom.register();WorkshopMechanismRenderer.register();MachineSounds.register();
         net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.pcb.Pcb.SCREEN,PcbScreen::new);
         ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.power.FaultEffects.Event.ID,(payload,context)->context.client().execute(()->ArcRenderer.receive(payload.data())));
         ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->ArcRenderer.clear());
@@ -76,6 +76,7 @@ public final class ElectronClient implements ClientModInitializer {
         for(var w:state.wires.values())if(Vec3d.ofCenter(w.path().getFirst().host()).squaredDistanceTo(camera)<128*128){
             WireRenderer.draw(context.consumers(),matrix,camera,state,w);
         }
+        CordRenderer.draw(context.consumers(),matrix,camera,state);
         buffer=context.consumers().getBuffer(RenderLayer.getDebugQuads());
         for(var core:state.cores.values())if(Vec3d.ofCenter(core.host()).squaredDistanceTo(camera)<96*96)for(int side=0;side<2;side++) {
             var first=core.endpoint(side,0).point();var second=core.endpoint(side,1).point();Vec3d mid=first.position().add(second.position()).multiply(.5);

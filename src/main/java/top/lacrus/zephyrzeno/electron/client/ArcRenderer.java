@@ -12,14 +12,14 @@ import top.lacrus.zephyrzeno.electron.power.*;
 
 /** Camera-facing emissive filaments and ballistic metal sparks; no custom shader or global flash. */
 public final class ArcRenderer {
-    private record Arc(Vec3d a,Vec3d b,long seed,int kind,float strength,long born,String dimension){}
+    private record Arc(Vec3d a,Vec3d b,long seed,int kind,float strength,long born,String dimension,boolean filament){}
     private static final Deque<Arc> arcs=new ArrayDeque<>();
     public static void clear(){arcs.clear();}
     public static void receive(NbtCompound n){
         var world=MinecraftClient.getInstance().world;if(world==null)return;
         var a=new Vec3d(n.getDouble("x"),n.getDouble("y"),n.getDouble("z"));var b=new Vec3d(n.getDouble("X"),n.getDouble("Y"),n.getDouble("Z"));
         if(!Double.isFinite(a.lengthSquared()+b.lengthSquared())||a.squaredDistanceTo(b)>4096)return;
-        while(arcs.size()>=128)arcs.removeFirst();arcs.addLast(new Arc(a,b,n.getLong("seed"),n.getInt("kind"),Math.clamp(n.getFloat("strength"),.15f,1),world.getTime(),n.getString("dimension")));
+        while(arcs.size()>=128)arcs.removeFirst();arcs.addLast(new Arc(a,b,n.getLong("seed"),n.getInt("kind"),Math.clamp(n.getFloat("strength"),.15f,1),world.getTime(),n.getString("dimension"),n.getBoolean("arc")));
     }
     public static void render(WorldRenderContext context){
         var world=MinecraftClient.getInstance().world;if(world==null||context.matrixStack()==null||context.consumers()==null)return;
@@ -28,7 +28,11 @@ public final class ArcRenderer {
         arcs.removeIf(a->now-a.born>16||!world.getRegistryKey().getValue().toString().equals(a.dimension));
         for(var arc:arcs){double age=now-arc.born;if(age<0)continue;
             if(arc.kind==FaultEffects.OVERLOAD||arc.kind==FaultEffects.MELT){double heatAlpha=Math.max(0,1-age/16);var a=arc.a;var b=arc.b;if(arc.kind==FaultEffects.MELT){a=a.add(0,-.004*age*age,0);b=b.add(0,-.009*age*age,0);}ribbon(out,matrix,a,b,camera,.033,64,36,25,(int)(heatAlpha*220));ribbon(out,matrix,a,b,camera,.014,255,115,25,(int)(heatAlpha*220));}
-            if(age<5){double alpha=(1-age/5)*(.7+.3*Math.sin(age*9+arc.seed));
+            if(age<2.5){
+                double r=(.025+arc.strength*.07)*(1-age/2.5);
+                for(var axis:List.of(new Vec3d(r,0,0),new Vec3d(0,r,0),new Vec3d(0,0,r)))ribbon(out,matrix,arc.b.subtract(axis),arc.b.add(axis),camera,r*.65,255,238,185,(int)(220*(1-age/2.5)));
+            }
+            if(arc.filament&&age<5){double alpha=(1-age/5)*(.7+.3*Math.sin(age*9+arc.seed));
                 for(var filament:ArcGeometry.create(arc.a,arc.b,arc.seed+((long)age/2)*31)){
                     var points=filament.points();for(int i=1;i<points.size();i++){
                         double width=(.010+arc.strength*.014)*filament.width();

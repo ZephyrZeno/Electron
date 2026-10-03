@@ -15,6 +15,8 @@ public final class ElectricalEffects {
     private static SoundEvent sound(String name){var id=Electron.id(name);return Registry.register(Registries.SOUND_EVENT,id,SoundEvent.of(id));}
     public static void register(){}
     public static final SoundEvent SIZZLE=sound("insulation_sizzle"),WIRE_MELT=sound("wire_melt"),TRIP=sound("breaker_trip");
+    public static final SoundEvent CABINET_OPEN=sound("cabinet_open"),CABINET_CLOSE=sound("cabinet_close"),SPARK=sound("contact_spark");
+    public static final SoundEvent REACTOR=sound("reactor_cooling"),TRANSFORMER=sound("transformer_hum"),CRUSHER=sound("crusher_run"),CENTRIFUGE=sound("centrifuge_run"),KILN=sound("kiln_run"),FABRICATOR=sound("fabricator_run"),DRILL=sound("pcb_drill_run"),BATH=sound("process_bath");
     public static void play(ServerWorld world,BlockPos pos,SoundEvent sound,float volume,float pitch){world.playSound(null,pos,sound,SoundCategory.BLOCKS,volume,pitch);}
     public static void play(ServerWorld world,Vec3d pos,SoundEvent sound,float volume,float pitch){world.playSound(null,pos.x,pos.y,pos.z,sound,SoundCategory.BLOCKS,volume,pitch);}
     public static Vec3d front(BlockPos pos,BlockState state){var b=(ComponentBlock)state.getBlock();return Vec3d.of(pos).add(ComponentGeometry.local(state.get(ComponentBlock.FACING),state.get(ComponentBlock.TURN),7,10,ComponentGeometry.inset(b.kind)-1.5));}

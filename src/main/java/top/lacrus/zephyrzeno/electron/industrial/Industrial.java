@@ -18,9 +18,10 @@ public final class Industrial {
     public static final Map<String,Block> BLOCKS=new LinkedHashMap<>();
     public static Block MAST,BOILER,TURBINE,ALTERNATOR,CONDENSER,CONTROL,REACTOR_VESSEL,CONTROL_RODS,SAFETY_VALVE;
     public static ComponentBlock PUMP,WIND_BASE,BREAKOUT,LOW_SOCKET;
-    public static FluidBlock IRON_PIPE,GLASS_PIPE,VALVE,THERMAL_TANK,NUCLEAR_TANK;
+    public static FluidBlock IRON_PIPE,GLASS_PIPE,VALVE,THERMAL_TANK,NUCLEAR_TANK,WATER_INLET;
     public static IndustrialTableBlock TABLE;
-    public static PlantServiceBlock FUEL_PORT;
+    public static PlantServiceBlock FUEL_PORT,ROD_PORT,ASH_PORT,SPENT_PORT;
+    public static Item ASH;
     public static BlockEntityType<PlantServiceEntity> SERVICE_ENTITY;
     public static ScreenHandlerType<PlantScreenHandler> PLANT_SCREEN;
     public static BlockEntityType<FluidEntity> FLUID_ENTITY;
@@ -35,20 +36,27 @@ public final class Industrial {
             if(!id.equals("wind_base"))return super.getOutlineShape(s,w,p,c);
             var shape=Block.createCuboidShape(0,0,0,16,1.3,16);
             for(int z=0;z<16;z++){double dz=(z+.5)/16-.5,r=Math.sqrt(Math.max(0,.48*.48-dz*dz));if(r>0)shape=net.minecraft.util.shape.VoxelShapes.union(shape,Block.createCuboidShape((.5-r)*16,1.3,z,(.5+r)*16,16,z+1));}
-            for(int pin=2;pin<4;pin++){var q=ComponentGeometry.local(s.get(FACING),s.get(TURN),ComponentPins.u(kind,pin),ComponentPins.v(kind,pin),1);shape=net.minecraft.util.shape.VoxelShapes.union(shape,net.minecraft.util.shape.VoxelShapes.cuboid(new net.minecraft.util.math.Box(q,q).expand(.06)));}return shape;
+            var cavity=top.lacrus.zephyrzeno.electron.power.WiringCabinet.orient(new net.minecraft.util.math.Box(0,.61,0,1,1,1),s);
+            shape=net.minecraft.util.shape.VoxelShapes.combineAndSimplify(shape,net.minecraft.util.shape.VoxelShapes.cuboid(cavity),net.minecraft.util.function.BooleanBiFunction.ONLY_FIRST);
+            return net.minecraft.util.shape.VoxelShapes.union(shape,top.lacrus.zephyrzeno.electron.power.WiringCabinet.shape(s,w.getBlockEntity(p) instanceof ComponentEntity e&&e.cabinetOpen));
         }
     });Foundry.DEVICES.put(id,b);return b;}
     public static void registerBlocks(){
         MAST=block("wind_mast",new Block(settings()));
-        BOILER=block("boiler_module",new Block(settings()));TURBINE=block("turbine_module",new Block(settings()));ALTERNATOR=block("alternator_module",new Block(settings()));CONDENSER=block("condenser_module",new Block(settings()));CONTROL=block("plant_control_module",new PlantServiceBlock(settings(),false));REACTOR_VESSEL=block("reactor_vessel_module",new Block(settings()));CONTROL_RODS=block("control_rod_drive",new Block(settings()));SAFETY_VALVE=block("safety_valve_module",new Block(settings()));
-        FUEL_PORT=block("plant_fuel_port",new PlantServiceBlock(settings(),true));
-        SERVICE_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("plant_service"),FabricBlockEntityTypeBuilder.create(PlantServiceEntity::new,CONTROL,FUEL_PORT).build());
+        BOILER=block("boiler_module",new Block(settings()));TURBINE=block("turbine_module",new Block(settings()));ALTERNATOR=block("alternator_module",new Block(settings()));CONDENSER=block("condenser_module",new Block(settings()));CONTROL=block("plant_control_module",new PlantServiceBlock(settings(),PlantServiceBlock.Role.CONTROL));REACTOR_VESSEL=block("reactor_vessel_module",new Block(settings()));CONTROL_RODS=block("control_rod_drive",new Block(settings()));SAFETY_VALVE=block("safety_valve_module",new Block(settings()));
+        FUEL_PORT=block("plant_fuel_port",new PlantServiceBlock(settings(),PlantServiceBlock.Role.SOLID_FUEL));
+        ROD_PORT=block("reactor_fuel_intake",new PlantServiceBlock(settings(),PlantServiceBlock.Role.FUEL_ROD));
+        ASH_PORT=block("plant_ash_outlet",new PlantServiceBlock(settings(),PlantServiceBlock.Role.ASH_OUTPUT));
+        SPENT_PORT=block("spent_rod_outlet",new PlantServiceBlock(settings(),PlantServiceBlock.Role.SPENT_OUTPUT));
+        ASH=Registry.register(Registries.ITEM,Electron.id("combustion_ash"),new Item(new Item.Settings()));Foundry.ITEMS.put("combustion_ash",ASH);
+        SERVICE_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("plant_service"),FabricBlockEntityTypeBuilder.create(PlantServiceEntity::new,CONTROL,FUEL_PORT,ROD_PORT,ASH_PORT,SPENT_PORT).build());
         PLANT_SCREEN=Registry.register(Registries.SCREEN_HANDLER,Electron.id("plant_service"),new ScreenHandlerType<>(PlantScreenHandler::new,FeatureFlags.VANILLA_FEATURES));
         PUMP=device("water_pump",ComponentBlock.Kind.MOTOR);WIND_BASE=device("wind_base",ComponentBlock.Kind.MAINS);BREAKOUT=device("cable_breakout",ComponentBlock.Kind.DISTRIBUTION);
         LOW_SOCKET=device("low_profile_socket",ComponentBlock.Kind.TERMINAL_STRIP);
         IRON_PIPE=block("iron_pipe",new FluidBlock(settings(),FluidBlock.Type.IRON));GLASS_PIPE=block("glass_pipe",new FluidBlock(settings(),FluidBlock.Type.GLASS));VALVE=block("pipe_valve",new FluidBlock(settings(),FluidBlock.Type.VALVE));
         THERMAL_TANK=block("boiler_water_tank",new FluidBlock(settings(),FluidBlock.Type.BOILER));NUCLEAR_TANK=block("reactor_coolant_tank",new FluidBlock(settings(),FluidBlock.Type.COOLANT));
-        FLUID_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("fluid_component"),FabricBlockEntityTypeBuilder.create(FluidEntity::new,IRON_PIPE,GLASS_PIPE,VALVE,THERMAL_TANK,NUCLEAR_TANK).build());
+        WATER_INLET=block("plant_water_inlet",new FluidBlock(settings(),FluidBlock.Type.INLET));
+        FLUID_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("fluid_component"),FabricBlockEntityTypeBuilder.create(FluidEntity::new,IRON_PIPE,GLASS_PIPE,VALVE,THERMAL_TANK,NUCLEAR_TANK,WATER_INLET).build());
         TABLE=block("industrial_assembly_table",new IndustrialTableBlock(settings()));
         TABLE_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("industrial_assembly_table"),FabricBlockEntityTypeBuilder.create(IndustrialTableEntity::new,TABLE).build());
         SCREEN=Registry.register(Registries.SCREEN_HANDLER,Electron.id("industrial_assembly"),new ScreenHandlerType<>(IndustrialScreenHandler::new,FeatureFlags.VANILLA_FEATURES));

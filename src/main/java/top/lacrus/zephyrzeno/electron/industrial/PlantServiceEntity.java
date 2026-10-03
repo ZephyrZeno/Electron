@@ -18,44 +18,64 @@ public final class PlantServiceEntity extends BlockEntity implements SidedInvent
     private BlockPos controller;
     public PlantServiceEntity(BlockPos p,BlockState s){super(Industrial.SERVICE_ENTITY,p,s);}
     public void bind(BlockPos p){if(!p.equals(controller)){controller=p.toImmutable();markDirty();}}
+    public PlantServiceBlock.Role role(){return ((PlantServiceBlock)getCachedState().getBlock()).role;}
     public ComponentEntity core(){
         if(world==null||controller==null||!world.isChunkLoaded(controller)||!Assembly.formed(world.getBlockState(controller)))return null;
         if(!(world.getBlockEntity(controller) instanceof ComponentEntity e))return null;
         var s=e.getCachedState();
-        return (pos.equals(PlantStructures.consolePos(controller,s))||pos.equals(PlantStructures.fuelPos(controller,s)))?e:null;
+        boolean nuclear=s.isOf(Foundry.NUCLEAR);if(!nuclear&&!s.isOf(Foundry.THERMAL))return null;
+        return switch(role()){
+            case CONTROL->pos.equals(PlantStructures.consolePos(controller,s))?e:null;
+            case SOLID_FUEL->!nuclear&&pos.equals(PlantStructures.fuelPos(controller,s))?e:null;
+            case FUEL_ROD->nuclear&&pos.equals(PlantStructures.fuelPos(controller,s))?e:null;
+            case ASH_OUTPUT->!nuclear&&pos.equals(PlantStructures.outputPos(controller,s))?e:null;
+            case SPENT_OUTPUT->nuclear&&pos.equals(PlantStructures.outputPos(controller,s))?e:null;
+        };
     }
     public static void tick(World w,BlockPos p,BlockState s,PlantServiceEntity e){
-        if(w.getTime()%8!=0||!((PlantServiceBlock)s.getBlock()).port||e.core()==null)return;
-        // Adjacent chests/barrels supply one accepted item every eight ticks. Hoppers use SidedInventory.
-        for(var d:Direction.values()){
-            var q=p.offset(d);if(!w.isChunkLoaded(q))continue;var be=w.getBlockEntity(q);
-            Inventory source=null;
-            if(be instanceof ChestBlockEntity){var state=w.getBlockState(q);source=ChestBlock.getInventory((ChestBlock)state.getBlock(),state,w,q,true);}
-            else if(be instanceof BarrelBlockEntity barrel)source=barrel;
-            if(source==null)continue;
-            for(int i=0;i<source.size();i++)if(e.insertOne(source.getStack(i))){source.removeStack(i,1);source.markDirty();return;}
+        if(w.getTime()%8!=0||e.role()==PlantServiceBlock.Role.CONTROL||e.core()==null)return;
+        // The marked outward face is the only chest/barrel connection. No scanning behind the machine.
+        var q=p.offset(s.get(PlantServiceBlock.FACING));if(!w.isChunkLoaded(q))return;
+        Inventory box=null;var be=w.getBlockEntity(q);
+        if(be instanceof ChestBlockEntity){var bs=w.getBlockState(q);box=ChestBlock.getInventory((ChestBlock)bs.getBlock(),bs,w,q,true);}
+        else if(be instanceof BarrelBlockEntity barrel)box=barrel;
+        if(box==null)return;
+        if(e.role().input()){
+            for(int i=0;i<box.size();i++)if(e.insertOne(box.getStack(i))){box.removeStack(i,1);box.markDirty();return;}
+        }else for(int slot:new int[]{2,1,3}){
+            var stack=e.getStack(slot);if(stack.isEmpty())continue;
+            for(int i=0;i<box.size();i++){var target=box.getStack(i);
+                if(!box.isValid(i,stack)||!target.isEmpty()&&(!ItemStack.areItemsAndComponentsEqual(stack,target)||target.getCount()>=Math.min(target.getMaxCount(),box.getMaxCountPerStack())))continue;
+                if(target.isEmpty())box.setStack(i,stack.copyWithCount(1));else target.increment(1);
+                e.removeStack(slot,1);box.markDirty();return;
+            }
         }
     }
     public boolean insertOne(ItemStack source){
         if(source.isEmpty())return false;
-        int slot=source.isOf(Items.WATER_BUCKET)?1:0;
+        int slot=0;
         if(!isValid(slot,source))return false;
         var target=getStack(slot);if(!target.isEmpty()&&(!ItemStack.areItemsAndComponentsEqual(target,source)||target.getCount()>=target.getMaxCount()))return false;
         if(target.isEmpty())setStack(slot,source.copyWithCount(1));else{target.increment(1);markDirty();}return true;
     }
     @Override public int size(){return 4;}
     @Override public boolean isEmpty(){for(int i=0;i<4;i++)if(!getStack(i).isEmpty())return false;return true;}
-    @Override public ItemStack getStack(int slot){var e=core();return e==null?ItemStack.EMPTY:e.plantItems.get(slot);}
-    @Override public void setStack(int slot,ItemStack stack){var e=core();if(e!=null){e.plantItems.set(slot,stack);stack.capCount(stack.getMaxCount());markDirty();}}
+    private boolean visible(int slot){return slot>=0&&slot<4&&(role()==PlantServiceBlock.Role.CONTROL||role().input()&&slot==0||role().output()&&slot>0);}
+    @Override public ItemStack getStack(int slot){var e=core();return e==null||!visible(slot)?ItemStack.EMPTY:e.plantItems.get(slot);}
+    @Override public void setStack(int slot,ItemStack stack){var e=core();if(e!=null&&visible(slot)&&(stack.isEmpty()||isValid(slot,stack)||role().output()&&ItemStack.areItemsAndComponentsEqual(getStack(slot),stack)&&stack.getCount()<=getStack(slot).getCount())){e.plantItems.set(slot,stack);stack.capCount(stack.getMaxCount());markDirty();}}
     @Override public ItemStack removeStack(int slot,int count){var e=core();if(e==null)return ItemStack.EMPTY;var s=Inventories.splitStack(e.plantItems,slot,count);markDirty();return s;}
     @Override public ItemStack removeStack(int slot){var e=core();if(e==null)return ItemStack.EMPTY;var s=Inventories.removeStack(e.plantItems,slot);markDirty();return s;}
     @Override public void clear(){var e=core();if(e!=null){e.plantItems.clear();markDirty();}}
     @Override public void markDirty(){super.markDirty();var e=core();if(e!=null)e.markDirty();}
     @Override public boolean canPlayerUse(PlayerEntity p){return core()!=null&&world.getBlockEntity(pos)==this&&p.squaredDistanceTo(pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5)<=64;}
-    @Override public boolean isValid(int slot,ItemStack stack){var e=core();return e!=null&&(slot==1?stack.isOf(Items.WATER_BUCKET):slot==0&&PlantOperations.accepts(e,stack));}
-    @Override public int[] getAvailableSlots(Direction side){return side==Direction.DOWN?new int[]{2,3}:new int[]{0,1};}
-    @Override public boolean canInsert(int slot,ItemStack stack,Direction side){return side!=Direction.DOWN&&isValid(slot,stack);}
-    @Override public boolean canExtract(int slot,ItemStack stack,Direction side){return slot==2||slot==3;}
+    @Override public boolean isValid(int slot,ItemStack stack){var e=core();return e!=null&&role().input()&&slot==0&&PlantOperations.accepts(e,stack);}
+    @Override public int[] getAvailableSlots(Direction side){
+        if(role().input()&&(side==Direction.UP||side==getCachedState().get(PlantServiceBlock.FACING)))return new int[]{0};
+        if(role().output()&&(side==Direction.DOWN||side==getCachedState().get(PlantServiceBlock.FACING)))return new int[]{2,1,3};
+        return new int[0];
+    }
+    @Override public boolean canInsert(int slot,ItemStack stack,Direction side){return java.util.Arrays.stream(getAvailableSlots(side)).anyMatch(i->i==slot)&&isValid(slot,stack);}
+    @Override public boolean canExtract(int slot,ItemStack stack,Direction side){return role().output()&&java.util.Arrays.stream(getAvailableSlots(side)).anyMatch(i->i==slot);}
     @Override public Text getDisplayName(){return Text.translatable("container.electron.plant_service");}
     @Override public ScreenHandler createMenu(int sync,PlayerInventory inv,PlayerEntity p){return new PlantScreenHandler(sync,inv,this,properties());}
     private PropertyDelegate properties(){return new PropertyDelegate(){

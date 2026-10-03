@@ -70,7 +70,7 @@ public class ComponentBlock extends BlockWithEntity {
         return stack;
     }
     @Override public BlockEntity createBlockEntity(BlockPos pos,BlockState state){return new ComponentEntity(pos,state);}
-    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world,BlockState state,BlockEntityType<T> type){return world.isClient?null:validateTicker(type,Foundry.COMPONENT_ENTITY,ComponentEntity::tick);}
+    @Override public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world,BlockState state,BlockEntityType<T> type){return world.isClient?validateTicker(type,Foundry.COMPONENT_ENTITY,(w,p,s,e)->ComponentEntity.CLIENT_TICK.accept(e)):validateTicker(type,Foundry.COMPONENT_ENTITY,ComponentEntity::tick);}
     @Override protected ActionResult onUse(BlockState state,World world,BlockPos pos,PlayerEntity player,BlockHitResult hit) {
         if(world.isClient)return ActionResult.SUCCESS;
         if(world.getBlockEntity(pos) instanceof ComponentEntity entity) {

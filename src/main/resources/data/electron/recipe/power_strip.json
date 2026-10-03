@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:wall_outlet"
+    },
+    {
+      "item": "electron:wall_outlet"
+    },
+    {
+      "item": "electron:wall_outlet"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ],
+  "result": {
+    "id": "electron:power_strip",
+    "count": 1
+  }
+}

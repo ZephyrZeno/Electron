@@ -70,26 +70,13 @@ public final class PowerPlant {
         double added=Math.min(watts*GridModel.DT,GridModel.CAPACITY-e.energy);
         if(kind==ComponentBlock.Kind.THERMAL||kind==ComponentBlock.Kind.NUCLEAR){double efficiency=kind==ComponentBlock.Kind.THERMAL?.35:.3;double burned=Math.min(watts*GridModel.DT/efficiency,e.fuelEnergy);added=Math.min(added,burned*efficiency);e.fuelEnergy=Math.max(0,e.fuelEnergy-burned);if(e.fuelEnergy<=1e-8)e.plantStatus="fuel";}
         e.energy+=added;e.markDirty();
-        if(added>0&&w.getTime()%40==0)ElectricalEffects.play(w,p,kind==ComponentBlock.Kind.WIND?ElectricalEffects.WIND:kind==ComponentBlock.Kind.HYDRO?ElectricalEffects.HYDRO:ElectricalEffects.TURBINE,.22f,1);
         if(added>0&&kind==ComponentBlock.Kind.THERMAL&&w.getTime()%20==0){var chimney=PlantStructures.at(p,state,0,7,-5);w.spawnParticles(net.minecraft.particle.ParticleTypes.CAMPFIRE_COSY_SMOKE,chimney.getX()+.5,chimney.getY()+.5,chimney.getZ()+.5,3,.12,.1,.12,.02);}
     }
     public static void interact(ServerWorld w,BlockPos p,BlockState s,ComponentEntity e,PlayerEntity player,ItemStack held){
         var kind=((ComponentBlock)s.getBlock()).kind;
         if(player.isSneaking()){w.setBlockState(p,s.cycle(ComponentBlock.ENABLED),Block.NOTIFY_ALL);player.sendMessage(Text.translatable(s.get(ComponentBlock.ENABLED)?"message.electron.source_off":"message.electron.source_on"),true);return;}
-        if(s.isOf(Industrial.WIND_BASE)){player.sendMessage(Text.translatable("message.electron.wind_base_output"),true);return;}
-        if((kind==ComponentBlock.Kind.THERMAL||kind==ComponentBlock.Kind.NUCLEAR)&&Assembly.formed(s)){
-            PlantOperations.bind(w,e);
-            if(w.getBlockEntity(PlantStructures.consolePos(p,s)) instanceof PlantServiceEntity service){
-                if(service.insertOne(held)&&!player.isCreative())held.decrement(1);
-                if(player.squaredDistanceTo(net.minecraft.util.math.Vec3d.ofCenter(service.getPos()))<=64)player.openHandledScreen(service);
-                else player.sendMessage(Text.translatable("message.electron.use_control_room",service.getPos().getX(),service.getPos().getY(),service.getPos().getZ()),true);return;
-            }
-        }
-        boolean coal=kind==ComponentBlock.Kind.THERMAL&&(held.isOf(Items.COAL)||held.isOf(Items.CHARCOAL));
-        boolean nuclear=kind==ComponentBlock.Kind.NUCLEAR&&held.isOf(Foundry.FUEL_ROD);
-        if(coal&&e.fuelEnergy<=184000){e.fuelEnergy+=16000;if(!player.isCreative())held.decrement(1);e.markDirty();}
-        else if(nuclear&&e.fuelEnergy<=1e-8&&!e.fuelLoaded){e.fuelEnergy=200000;e.fuelLoaded=true;if(!player.isCreative())held.decrement(1);e.markDirty();}
-        else if(kind==ComponentBlock.Kind.NUCLEAR&&e.fuelLoaded&&e.fuelEnergy<=1e-8){var spent=new ItemStack(Foundry.SPENT_ROD);if(!player.getInventory().insertStack(spent))player.dropItem(spent,false);e.fuelLoaded=false;e.markDirty();}
+        if(WiringCabinet.present(s)){WiringCabinet.toggle(w,e);player.sendMessage(Text.translatable(e.cabinetOpen?"message.electron.cabinet_open":"message.electron.cabinet_closed"),true);return;}
+        if(kind==ComponentBlock.Kind.WIND){player.sendMessage(Text.translatable("message.electron.wind_base_output"),true);return;}
         String reason=requirement(w,p,kind);if(reason.equals("ready")&&(kind==ComponentBlock.Kind.THERMAL||kind==ComponentBlock.Kind.NUCLEAR)&&e.fuelEnergy<=1e-8)reason="fuel";
         if(reason.equals("ready")&&s.getBlock() instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyControllerBlock&&!Assembly.formed(s))reason=e.assemblyStatus.equals("formed")?"assembly_pending":e.assemblyStatus;
         player.sendMessage(Text.translatable("message.electron.plant_status",Text.translatable("plant.electron."+reason)),true);

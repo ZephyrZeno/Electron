@@ -18,7 +18,7 @@ import top.lacrus.zephyrzeno.electron.foundry.ElectricalEffects;
 import top.lacrus.zephyrzeno.electron.multiblock.SealedAssembly;
 
 public final class FluidBlock extends BlockWithEntity implements SealedAssembly {
-    public enum Type { IRON,GLASS,VALVE,BOILER,COOLANT }
+    public enum Type { IRON,GLASS,VALVE,BOILER,COOLANT,INLET }
     public final Type type;
     public static final BooleanProperty OPEN=BooleanProperty.of("open");
     public static final BooleanProperty[] LINKS={Properties.DOWN,Properties.UP,Properties.NORTH,Properties.SOUTH,Properties.WEST,Properties.EAST};
@@ -40,7 +40,7 @@ public final class FluidBlock extends BlockWithEntity implements SealedAssembly 
     @Override protected ItemActionResult onUseWithItem(ItemStack held,BlockState s,World w,BlockPos p,PlayerEntity player,Hand hand,BlockHitResult hit){
         if(!(w.getBlockEntity(p) instanceof FluidEntity e))return ItemActionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if(held.isOf(Items.WATER_BUCKET)||held.isOf(Items.BUCKET)){
-            if(!tank())return ItemActionResult.FAIL;
+            if(!tank()||e.plant()!=null){if(!w.isClient)player.sendMessage(Text.translatable("message.electron.plant_pipe_only"),true);return ItemActionResult.FAIL;}
             boolean fill=held.isOf(Items.WATER_BUCKET);if(fill?e.amount+1000>capacity():e.amount<1000)return ItemActionResult.FAIL;
             if(w instanceof ServerWorld server){e.change(fill?1000:-1000);player.setStackInHand(hand,ItemUsage.exchangeStack(held,player,new ItemStack(fill?Items.BUCKET:Items.WATER_BUCKET)));ElectricalEffects.play(server,p,ElectricalEffects.WATER_FILL,.55f,1);}
             return ItemActionResult.SUCCESS;

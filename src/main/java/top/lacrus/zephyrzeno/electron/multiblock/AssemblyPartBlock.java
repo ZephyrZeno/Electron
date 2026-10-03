@@ -21,8 +21,7 @@ public final class AssemblyPartBlock extends BlockWithEntity implements SealedAs
     }
     @Override protected BlockRenderType getRenderType(BlockState s){return BlockRenderType.INVISIBLE;}
     @Override protected net.minecraft.util.ActionResult onUse(BlockState s,World w,BlockPos p,net.minecraft.entity.player.PlayerEntity player,net.minecraft.util.hit.BlockHitResult hit){
-        if(w instanceof net.minecraft.server.world.ServerWorld server&&w.getBlockEntity(p) instanceof AssemblyPartEntity part&&w.isChunkLoaded(part.origin)&&w.getBlockEntity(part.origin) instanceof top.lacrus.zephyrzeno.electron.foundry.ComponentEntity core&&w.canPlayerModifyAt(player,part.origin))
-            core.getCachedState().onUse(server,player,new net.minecraft.util.hit.BlockHitResult(hit.getPos(),net.minecraft.util.math.Direction.UP,part.origin,false));
+        if(!w.isClient)player.sendMessage(net.minecraft.text.Text.translatable("message.electron.plant_body"),true);
         return net.minecraft.util.ActionResult.SUCCESS;
     }
     @Override protected VoxelShape getOutlineShape(BlockState s,BlockView w,BlockPos p,ShapeContext c){return w.getBlockEntity(p) instanceof AssemblyPartEntity e?e.shape():VoxelShapes.empty();}

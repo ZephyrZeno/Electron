@@ -27,13 +27,14 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         Matrix4f matrix=matrices.peek().getPositionMatrix();
         if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE){
             AssemblyRenderer.windFoot(entity,consumers,matrix,light,overlay);
-            for(int i=2;i<4;i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.55,inset-.015,ComponentPins.label(block.kind,i),.0062f,0xe4eeee,light);return;
+            if(entity.cabinetOpen)for(int i=2;i<4;i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.55,inset-.015,ComponentPins.label(block.kind,i),.0062f,0xe4eeee,light);return;
         }
         if(top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state)){
             AssemblyRenderer.draw(entity,block,consumers,matrix,dt,light,overlay);
-            for(int i=0;i<(block.kind==ComponentBlock.Kind.WIND?0:ComponentPins.count(block.kind));i++)label(consumers,matrix,Direction.UP,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.4,.985,ComponentPins.label(block.kind,i),.007f,0xe4eeee,light);
+            if(!top.lacrus.zephyrzeno.electron.power.WiringCabinet.present(state)||entity.cabinetOpen)for(int i=0;i<(block.kind==ComponentBlock.Kind.WIND?0:ComponentPins.count(block.kind));i++)label(consumers,matrix,Direction.UP,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.4,.985,ComponentPins.label(block.kind,i),.007f,0xe4eeee,light);
             return;
         }
+        if(block instanceof top.lacrus.zephyrzeno.electron.appliance.ApplianceBlock)return;
         if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){PcbRenderer.draw(pcb,consumers,matrix,light,overlay);for(int i=0;i<6;i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-.85,12.99,ComponentPins.label(block.kind,i),.005f,0xe4eeee,light);return;}
         if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbBenchEntity)return;
         if(block==top.lacrus.zephyrzeno.electron.industrial.Automation.WATER||block==top.lacrus.zephyrzeno.electron.industrial.Automation.TEMPERATURE)return;
@@ -70,19 +71,11 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
             for(int i=0;i<5;i++)label(consumers,matrix,face,turn,u[i],v[i]-1.55,inset-.015,names[i],.0062f,i==0?0xffd498:0xe4eeee,light);
         }else if(block.kind==ComponentBlock.Kind.RESISTOR)label(consumers,matrix,face,turn,8,12.2,inset-.25,(int)block.resistance+" Ω",.012f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.DIODE||block.kind==ComponentBlock.Kind.FUSE)label(consumers,matrix,face,turn,8,12.2,inset-.25,block.kind==ComponentBlock.Kind.DIODE?"A >| K":"25 mA",.011f,0xf4f5eb,light);
-        else if(block.kind==ComponentBlock.Kind.CRANK)label(consumers,matrix,face,turn,7,3.1,inset-.015,"5 V DC",.010f,0xf4f5eb,light);
-        else if(block.kind==ComponentBlock.Kind.CAPACITOR)label(consumers,matrix,face,turn,7,3.1,inset-.015,"100 mF / 10 V",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.BUTTON)label(consumers,matrix,face,turn,7,3.1,inset-.015,"1 s / NO",.010f,0xf4f5eb,light);
-        else if(!block.rearPowerPorts()&&(block.kind==ComponentBlock.Kind.GENERATOR||block.kind==ComponentBlock.Kind.LAMP||block.kind==ComponentBlock.Kind.MOTOR||block.kind==ComponentBlock.Kind.BREAKER))label(consumers,matrix,face,turn,7,3.1,inset-.015,block.kind==ComponentBlock.Kind.BREAKER?"1 A DC":"24 V DC",.010f,0xf4f5eb,light);
-        else if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind))label(consumers,matrix,face,turn,7.5,11.2,inset-.015,block.kind==ComponentBlock.Kind.SUBSTATION?"240 / 24 V":"240 V DC",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.MOSFET)label(consumers,matrix,face,turn,7,10.5,inset-.92,"N-MOS",.008f,0xf4f5eb,light);
-        else if(block.kind==ComponentBlock.Kind.RELAY)label(consumers,matrix,face,turn,7,9.5,inset-.92,"5 V",.009f,0xf4f5eb,light);
-        else if(block.kind==ComponentBlock.Kind.BOOST||block.kind==ComponentBlock.Kind.BUCK)label(consumers,matrix,face,turn,7,9.5,inset-.92,String.format(java.util.Locale.ROOT,"%s %.1f V",block.kind==ComponentBlock.Kind.BOOST?"UP":"DN",block.resistance),.007f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.BATTERY){
-            label(consumers,matrix,face,turn,7,8.3,inset-.98,"5 V",.010f,0xf4f5eb,light);
             for(int i=0;i<5;i++)glow(consumers,matrix,face,turn,9.75,6.27+i,inset-.24,1.1,(float)Math.clamp(entity.displayedLight*5-i,0,1),.15f,1,.55f);
         }else if(block.kind==ComponentBlock.Kind.REDSTONE_SWITCH){
-            label(consumers,matrix,face,turn,7,10.5,inset-.88,"5 V",.009f,0xf4f5eb,light);
             label(consumers,matrix,face,turn,10,1.3,inset-.015,"RS IN",.007f,0xf7b498,light);
             label(consumers,matrix,face,turn,10,15,inset-.015,"RS OUT",.007f,0xf7b498,light);
         }

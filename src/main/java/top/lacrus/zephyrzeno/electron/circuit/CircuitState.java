@@ -21,6 +21,8 @@ public final class CircuitState extends PersistentState {
     private static final Map<ServerWorld,CircuitState> LIVE=new WeakHashMap<>();
     private static final Type<CircuitState> TYPE=new Type<>(CircuitState::new,(n,r)->read(n),null);
     public record Device(String block,Direction face,int turn,boolean formed) {public Device(String block,Direction face,int turn){this(block,face,turn,false);}}
+    public final Map<UUID,top.lacrus.zephyrzeno.electron.appliance.CordNetwork.Lead> cords=new LinkedHashMap<>();
+    public final Map<UUID,Double> cordHeat=new HashMap<>();
     public final Map<UUID,Wire> wires=new LinkedHashMap<>();
     public final Map<UUID,Junction> junctions=new LinkedHashMap<>();
     public final Map<UUID,WallCore> cores=new LinkedHashMap<>();
@@ -44,7 +46,7 @@ public final class CircuitState extends PersistentState {
     public static CircuitState get(ServerWorld world){return LIVE.computeIfAbsent(world,w->w.getPersistentStateManager().getOrCreate(TYPE,"electron_circuits"));}
     public static void register(){ServerTickEvents.END_WORLD_TICK.register(world->get(world).tick(world));ServerLifecycleEvents.SERVER_STOPPED.register(server->LIVE.clear());}
     public static boolean attached(World world,BlockPos pos){return world instanceof ServerWorld s&&LIVE.containsKey(s)&&LIVE.get(s).hasAttachment(pos);}
-    public boolean hasAttachment(BlockPos pos){return junctions.values().stream().anyMatch(j->j.point().host().equals(pos))||cores.values().stream().anyMatch(c->c.host().equals(pos))||bridges.values().stream().anyMatch(b->b.host().equals(pos))||wires.values().stream().anyMatch(w->w.path().stream().anyMatch(p->p.host().equals(pos)));}
+    public boolean hasAttachment(BlockPos pos){return cords.values().stream().anyMatch(c->c.source().equals(pos)||c.load().equals(pos))||junctions.values().stream().anyMatch(j->j.point().host().equals(pos))||cores.values().stream().anyMatch(c->c.host().equals(pos))||bridges.values().stream().anyMatch(b->b.host().equals(pos))||wires.values().stream().anyMatch(w->w.path().stream().anyMatch(p->p.host().equals(pos)));}
     public void changed(){overheadCurves.keySet().retainAll(new HashSet<>(wires.values()));markDirty();syncPending=true;}
     public void track(BlockPos pos,BlockState state) {
         if(!(state.getBlock() instanceof ComponentBlock))return;
@@ -122,7 +124,7 @@ public final class CircuitState extends PersistentState {
         if(conductors>64)throw new CircuitError("error.electron.tap_cell_budget");
         junctions.put(j.id(),j);return j.endpoint();
     }
-    public int lengthUnits(List<SurfacePoint> path,Endpoint a,Endpoint b){return lengthUnits(path)-2*path.getFirst().layer()-2*path.getLast().layer()+2*Math.abs(path.getFirst().layer()-a.point().layer())+2*Math.abs(path.getLast().layer()-b.point().layer());}
+    public int lengthUnits(List<SurfacePoint> path,Endpoint a,Endpoint b){return lengthUnits(path)-2*(path.getFirst().layer()+path.getLast().layer())+2*Math.abs(path.getFirst().layer()-a.point().layer())+2*Math.abs(path.getLast().layer()-b.point().layer());}
     public List<SurfacePoint> connectionRoute(World world,Endpoint a,Endpoint b,int layer){
         var start=a.point().layer(layer);var end=b.point().layer(layer);Set<SurfacePoint> used=new HashSet<>();wires.values().forEach(w->used.addAll(w.path()));
         Set<SurfacePoint> pins=new HashSet<>();endpoints().values().forEach(e->{if(!e.id().equals(a.id())&&!e.id().equals(b.id()))pins.add(e.point());});
@@ -132,7 +134,17 @@ public final class CircuitState extends PersistentState {
         if(!available.test(start)||!available.test(end))throw new CircuitError("error.electron.endpoint_blocked");
         List<SurfacePoint> base;
         try{base=SurfaceRouter.straight(start,end,available);}catch(IllegalArgumentException blocked){base=SurfaceRouter.route(start,end,available,this::inset);}
-        var result=base.stream().map(height).toList();
+        var result=new ArrayList<>(base.stream().map(height).toList());
+        for(int from=0;from<result.size();from++)if(result.get(from).layer()==1){
+            int to=from;
+            for(int j=from+1;j<result.size()-1&&result.get(j).host().equals(result.get(from).host())&&result.get(j).face()==result.get(from).face();j++){
+                var raised=result.get(j).layer(1);
+                if(!hasBridge(raised)||!traceClear(raised)||used.contains(raised)||pins.contains(raised))break;
+                if(result.get(j).layer()==1)to=j;
+            }
+            for(int j=from+1;j<to;j++)result.set(j,result.get(j).layer(1));
+            from=to;
+        }
         if(lengthUnits(result,a,b)>512)throw new CircuitError("error.electron.length");
         return result;
     }
@@ -188,6 +200,8 @@ public final class CircuitState extends PersistentState {
     }
     public void simulate(ServerWorld world) {
         var pins=endpoints();List<DcSolver.Branch> branches=new ArrayList<>();Set<String> unavailable=new HashSet<>();
+        top.lacrus.zephyrzeno.electron.appliance.CordNetwork.maintain(world,this);
+        top.lacrus.zephyrzeno.electron.appliance.CordNetwork.stamp(world,this,branches,unavailable);
         for(var w:wires.values()) {
             branches.add(DcSolver.Branch.resistor("w:"+w.id(),w.a(),w.b(),w.resistance()));
             if(w.vertical()&&VerticalWire.cells(this,w.path()).stream().anyMatch(p->!world.isChunkLoaded(p))){unavailable.add(w.a());unavailable.add(w.b());}
@@ -219,6 +233,7 @@ public final class CircuitState extends PersistentState {
             if(!(world.getBlockEntity(pos) instanceof ComponentEntity entity))continue;
             BlockState state=world.getBlockState(pos);ComponentBlock block=(ComponentBlock)state.getBlock();
             boolean broken=state.get(ComponentBlock.BROKEN);
+            if(block instanceof top.lacrus.zephyrzeno.electron.appliance.ApplianceBlock){top.lacrus.zephyrzeno.electron.appliance.Appliances.stamp(world,pos,state,entity,branches);continue;}
             if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.stamp(world,pos,state,entity,branches);continue;}
             if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){pcb.stamp(branches,world.getTime());continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.stamp(block,state,entity,pos,branches);continue;}
@@ -285,6 +300,7 @@ public final class CircuitState extends PersistentState {
             else{var result=solved.get(group.getKey());volts.putAll(result.voltage());amps.putAll(result.current());refs.putAll(result.reference());}
         }
         readings=new DcSolver.Result(Map.copyOf(volts),Map.copyOf(amps),Map.copyOf(refs));
+        top.lacrus.zephyrzeno.electron.appliance.CordNetwork.update(world,this);
         Map<String,String> strong=new HashMap<>();Set<String> driven=new HashSet<>();
         for(var branch:branches){strong.putIfAbsent(branch.a(),branch.a());strong.putIfAbsent(branch.b(),branch.b());if(branch.resistance()<1e6&&(!branch.led()||Math.abs(readings.current(branch.id()))>1e-7))strong.put(find(strong,branch.a()),find(strong,branch.b()));}
         for(var branch:branches)if(branch.emf()>0&&!branch.led()&&!paused.containsKey(branch.a()))driven.add(find(strong,branch.a()));
@@ -301,6 +317,7 @@ public final class CircuitState extends PersistentState {
                 if(block.kind==ComponentBlock.Kind.REDSTONE_SWITCH){entity.signal=0;entity.contactClosed=entity.pendingContact=false;if(state.get(ComponentBlock.LEVEL)!=0||state.get(ComponentBlock.ENABLED))world.setBlockState(pos,state.with(ComponentBlock.LEVEL,0).with(ComponentBlock.ENABLED,false),Block.NOTIFY_ALL);}
                 continue;
             }
+            if(block instanceof top.lacrus.zephyrzeno.electron.appliance.ApplianceBlock){top.lacrus.zephyrzeno.electron.appliance.Appliances.update(world,pos,state,entity,readings);continue;}
             if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.update(world,pos,state,entity,readings);continue;}
             if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){pcb.update(readings,n->strong.containsKey(n)&&driven.contains(find(strong,n)));continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.update(world,pos,state,entity,readings);continue;}
@@ -360,6 +377,7 @@ public final class CircuitState extends PersistentState {
     public NbtCompound snapshot(){var n=writeNbt(new NbtCompound(),null);n.remove("captured_lightning");return n;}
     @Override public NbtCompound writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup registries) {
         NbtList strikes=new NbtList();for(var id:capturedLightning){var t=new NbtCompound();t.putUuid("id",id);strikes.add(t);}n.put("captured_lightning",strikes);
+        top.lacrus.zephyrzeno.electron.appliance.CordNetwork.write(this,n);
         NbtList ws=new NbtList();for(var w:wires.values()){var t=new NbtCompound();t.putUuid("id",w.id());t.putString("a",w.a());t.putString("b",w.b());t.putInt("color",w.color());t.putInt("units",w.units());t.putBoolean("cable",w.cable());t.putBoolean("overhead",w.overhead());t.putBoolean("vertical",w.vertical());t.putDouble("heat",wireHeat.getOrDefault(w.id(),0d));long[] hosts=new long[w.path().size()];int[] points=new int[hosts.length];for(int i=0;i<hosts.length;i++){var p=w.path().get(i);hosts[i]=p.host().asLong();points[i]=p.face().getId()|p.u()<<3|p.v()<<7|p.layer()<<11;}t.putLongArray("hosts",hosts);t.putIntArray("points",points);ws.add(t);}n.put("wires",ws);
         NbtList js=new NbtList();junctions.values().forEach(j->{var t=j.point().nbt();t.putUuid("id",j.id());t.putString("block",j.hostBlock());t.putBoolean("wire_node",j.wireNode());t.putBoolean("cable_node",j.cable());js.add(t);});n.put("junctions",js);
         NbtList cs=new NbtList();cores.values().forEach(c->{var t=new NbtCompound();t.putUuid("id",c.id());t.putLong("p",c.host().asLong());t.putInt("f",c.face().getId());t.putInt("slot",c.slot());t.putString("block",c.hostBlock());cs.add(t);});n.put("cores",cs);
@@ -372,6 +390,7 @@ public final class CircuitState extends PersistentState {
         for(var tag:n.getList("wires",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;long[] hosts=t.getLongArray("hosts");int[] packed=t.getIntArray("points");if(hosts.length!=packed.length||hosts.length<2||hosts.length>513)continue;List<SurfacePoint> path=new ArrayList<>();for(int i=0;i<hosts.length;i++)path.add(new SurfacePoint(BlockPos.fromLong(hosts[i]),Direction.byId(packed[i]&7),(packed[i]>>3)&15,(packed[i]>>7)&15,(packed[i]>>11)&1));var w=new Wire(t.getUuid("id"),t.getString("a"),t.getString("b"),t.getInt("color")&7,path,t.contains("units")?Math.clamp(t.getInt("units"),0,16384):SurfaceRouter.lengthUnits(path),t.getBoolean("cable"),t.getBoolean("overhead")&&t.getBoolean("cable")&&hosts.length==2,t.getBoolean("vertical")&&hosts.length==2);s.wires.put(w.id(),w);double heat=t.getDouble("heat");if(Double.isFinite(heat)&&heat>0)s.wireHeat.put(w.id(),Math.min(heat,3));}
         for(var tag:n.getList("junctions",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var j=new Junction(t.getUuid("id"),SurfacePoint.read(t),t.getString("block"),t.getBoolean("wire_node"),t.getBoolean("cable_node"));s.junctions.put(j.id(),j);}
         for(var tag:n.getList("cores",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var c=new WallCore(t.getUuid("id"),BlockPos.fromLong(t.getLong("p")),Direction.byId(t.getInt("f")),t.getInt("slot")&3,t.getString("block"));s.cores.put(c.id(),c);}
+        top.lacrus.zephyrzeno.electron.appliance.CordNetwork.read(s,n);
         for(var tag:n.getList("bridges",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var b=new Bridge(t.getUuid("id"),BlockPos.fromLong(t.getLong("p")),Direction.byId(t.getInt("f")),t.getString("block"));s.bridges.put(b.id(),b);}
         for(var tag:n.getList("devices",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;s.devices.put(BlockPos.fromLong(t.getLong("p")),new Device(t.getString("block"),Direction.byId(t.getInt("f")),t.getInt("turn")&3,t.getBoolean("formed")));}return s;
     }

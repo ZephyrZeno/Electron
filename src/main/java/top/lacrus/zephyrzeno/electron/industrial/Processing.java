@@ -61,7 +61,6 @@ public final class Processing {
         var block=(ProcessingBlock)e.getCachedState().getBlock();
         double paid=Math.max(0,e.voltage*e.current)*.05;
         e.processingEnergy=Math.min(r.joules,e.processingEnergy+paid);e.omega+=(18-e.omega)*.08;
-        if(world.getTime()%60==0)ElectricalEffects.play(world,pos,ElectricalEffects.MOTOR,.12f,block==CENTRIFUGE?1.3f:.75f);
         if(e.processingEnergy+1e-7>=r.joules){
             var pcbOutput=top.lacrus.zephyrzeno.electron.pcb.PcbFabrication.output(e);
             e.plantItems.get(0).decrement(r.firstCount);if(r.secondCount>0)e.plantItems.get(1).decrement(r.secondCount);

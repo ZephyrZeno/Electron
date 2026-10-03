@@ -6,7 +6,7 @@ import net.minecraft.nbt.*;
 
 /** Bounded packets and atomic client replacement; world wire count is not a packet-size limit. */
 public final class CircuitSnapshots {
-    private static final String[] KEYS={"wires","junctions","cores","bridges","devices"};
+    private static final String[] KEYS={"wires","junctions","cores","bridges","devices","appliance_cords"};
     private static final AtomicLong SERIAL=new AtomicLong();
     public static List<NbtCompound> split(NbtCompound snapshot){
         List<NbtCompound> result=new ArrayList<>();var part=new NbtCompound();int count=0;

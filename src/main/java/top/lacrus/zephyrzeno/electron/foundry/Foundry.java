@@ -83,6 +83,7 @@ public final class Foundry {
         top.lacrus.zephyrzeno.electron.pcb.Pcb.register();
         top.lacrus.zephyrzeno.electron.pcb.PcbFabrication.register();
         top.lacrus.zephyrzeno.electron.pcb.PcbNetworking.register();
+        top.lacrus.zephyrzeno.electron.appliance.Appliances.register();
         COMPONENT_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("component"),FabricBlockEntityTypeBuilder.<ComponentEntity>create((p,s)->s.getBlock() instanceof top.lacrus.zephyrzeno.electron.pcb.PcbBlock pcb?(pcb.bench?new top.lacrus.zephyrzeno.electron.pcb.PcbBenchEntity(p,s):new top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity(p,s)):s.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock?new top.lacrus.zephyrzeno.electron.industrial.ProcessingEntity(p,s):new ComponentEntity(p,s),DEVICES.values().toArray(Block[]::new)).build());
         TABLE=block("assembly_table",new AssemblyTableBlock(AbstractBlock.Settings.create().strength(2.5f).sounds(BlockSoundGroup.WOOD).nonOpaque()));
         SPOOL=item("wire_spool",new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.SPOOL));

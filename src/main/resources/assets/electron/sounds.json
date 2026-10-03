@@ -142,7 +142,9 @@
     "sounds": [
       {
         "name": "electron:pump_run",
-        "attenuation_distance": 24
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
       }
     ]
   },
@@ -169,7 +171,9 @@
     "sounds": [
       {
         "name": "electron:motor_run",
-        "attenuation_distance": 24
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
       }
     ]
   },
@@ -178,7 +182,9 @@
     "sounds": [
       {
         "name": "electron:wind_rotor",
-        "attenuation_distance": 24
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
       }
     ]
   },
@@ -187,7 +193,9 @@
     "sounds": [
       {
         "name": "electron:hydro_run",
-        "attenuation_distance": 24
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
       }
     ]
   },
@@ -196,7 +204,9 @@
     "sounds": [
       {
         "name": "electron:turbine_run",
-        "attenuation_distance": 24
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
       }
     ]
   },
@@ -245,6 +255,121 @@
         "name": "electron:breaker_trip",
         "attenuation_distance": 24,
         "stream": false
+      }
+    ]
+  },
+  "reactor_cooling": {
+    "subtitle": "subtitles.electron.reactor_cooling",
+    "sounds": [
+      {
+        "name": "electron:reactor_cooling",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "transformer_hum": {
+    "subtitle": "subtitles.electron.transformer_hum",
+    "sounds": [
+      {
+        "name": "electron:transformer_hum",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "centrifuge_run": {
+    "subtitle": "subtitles.electron.centrifuge_run",
+    "sounds": [
+      {
+        "name": "electron:centrifuge_run",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "crusher_run": {
+    "subtitle": "subtitles.electron.crusher_run",
+    "sounds": [
+      {
+        "name": "electron:crusher_run",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "kiln_run": {
+    "subtitle": "subtitles.electron.kiln_run",
+    "sounds": [
+      {
+        "name": "electron:kiln_run",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "fabricator_run": {
+    "subtitle": "subtitles.electron.fabricator_run",
+    "sounds": [
+      {
+        "name": "electron:fabricator_run",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "pcb_drill_run": {
+    "subtitle": "subtitles.electron.pcb_drill_run",
+    "sounds": [
+      {
+        "name": "electron:pcb_drill_run",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "process_bath": {
+    "subtitle": "subtitles.electron.process_bath",
+    "sounds": [
+      {
+        "name": "electron:process_bath",
+        "attenuation_distance": 32,
+        "stream": false,
+        "preload": true
+      }
+    ]
+  },
+  "cabinet_open": {
+    "subtitle": "subtitles.electron.cabinet_open",
+    "sounds": [
+      {
+        "name": "electron:cabinet_open",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "cabinet_close": {
+    "subtitle": "subtitles.electron.cabinet_close",
+    "sounds": [
+      {
+        "name": "electron:cabinet_close",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "contact_spark": {
+    "subtitle": "subtitles.electron.contact_spark",
+    "sounds": [
+      {
+        "name": "electron:contact_spark",
+        "attenuation_distance": 16
       }
     ]
   }

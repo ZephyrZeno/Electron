@@ -12,7 +12,10 @@ public final class PlantScreenHandler extends ScreenHandler {
     public PlantScreenHandler(int sync,PlayerInventory player){this(sync,player,new SimpleInventory(4),new ArrayPropertyDelegate(6));}
     public PlantScreenHandler(int sync,PlayerInventory player,Inventory inv,PropertyDelegate data){
         super(Industrial.PLANT_SCREEN,sync);inventory=inv;properties=data;checkSize(inv,4);addProperties(data);
-        for(int i=0;i<4;i++){final int slot=i;addSlot(new Slot(inv,i,20+i*44,45){@Override public boolean canInsert(ItemStack s){return slot<2&&inv.isValid(slot,s);}});}
+        for(int i=0;i<4;i++)addSlot(new Slot(inv,i,20+i*44,45){
+            @Override public boolean canInsert(ItemStack s){return false;}
+            @Override public boolean canTakeItems(PlayerEntity p){return false;}
+        });
         for(int y=0;y<3;y++)for(int x=0;x<9;x++)addSlot(new Slot(player,9+x+y*9,8+x*18,130+y*18));
         for(int x=0;x<9;x++)addSlot(new Slot(player,x,8+x*18,188));
     }
@@ -24,8 +27,6 @@ public final class PlantScreenHandler extends ScreenHandler {
         p.getWorld().setBlockState(core.getPos(),core.getCachedState().cycle(ComponentBlock.ENABLED));sendContentUpdates();return true;
     }
     @Override public ItemStack quickMove(PlayerEntity p,int index){
-        if(index<0||index>=slots.size())return ItemStack.EMPTY;var slot=slots.get(index);if(!slot.hasStack())return ItemStack.EMPTY;var s=slot.getStack();var copy=s.copy();
-        if(index<4){if(!insertItem(s,4,40,true))return ItemStack.EMPTY;}else if(!insertItem(s,0,2,false))return ItemStack.EMPTY;
-        if(s.isEmpty())slot.setStack(ItemStack.EMPTY);else slot.markDirty();return copy;
+        return ItemStack.EMPTY;
     }
 }

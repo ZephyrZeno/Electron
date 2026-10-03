@@ -13,12 +13,16 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
-/** A visible console or external intake; both expose the controller's one saved inventory. */
+/** Fixed, typed logistics sockets. The console is read-only except for start/stop. */
 public final class PlantServiceBlock extends BlockWithEntity {
     public static final DirectionProperty FACING=Properties.HORIZONTAL_FACING;
-    public final boolean port;
-    public PlantServiceBlock(Settings settings,boolean port){super(settings);this.port=port;setDefaultState(getDefaultState().with(FACING,Direction.SOUTH));}
-    @Override protected MapCodec<? extends BlockWithEntity> getCodec(){return createCodec(s->new PlantServiceBlock(s,port));}
+    public enum Role { CONTROL, SOLID_FUEL, FUEL_ROD, ASH_OUTPUT, SPENT_OUTPUT;
+        public boolean input(){return this==SOLID_FUEL||this==FUEL_ROD;}
+        public boolean output(){return this==ASH_OUTPUT||this==SPENT_OUTPUT;}
+    }
+    public final Role role;
+    public PlantServiceBlock(Settings settings,Role role){super(settings);this.role=role;setDefaultState(getDefaultState().with(FACING,Direction.SOUTH));}
+    @Override protected MapCodec<? extends BlockWithEntity> getCodec(){return createCodec(s->new PlantServiceBlock(s,role));}
     @Override protected void appendProperties(StateManager.Builder<Block,BlockState> b){b.add(FACING);}
     @Override public BlockState getPlacementState(ItemPlacementContext c){return getDefaultState().with(FACING,c.getHorizontalPlayerFacing().getOpposite());}
     @Override public BlockEntity createBlockEntity(BlockPos p,BlockState s){return new PlantServiceEntity(p,s);}

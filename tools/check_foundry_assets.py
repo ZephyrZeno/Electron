@@ -50,7 +50,7 @@ for p in models:
 
 # The full mounted assembly, including the static crank preview, fits the 4/16 envelope.
 for path in (A/'blockstates').glob('*.json'):
-    if 'multipart' not in read(path) or path.stem in ('iron_pipe','glass_pipe','pipe_valve'):continue
+    if 'multipart' not in read(path) or path.stem in ('iron_pipe','glass_pipe','pipe_valve','plant_water_inlet'):continue
     inventory=model('electron:block/'+path.stem+'_inventory')
     large=path.stem.startswith('substation_') or path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal','thermal_generator','hydro_generator','wind_generator','lightning_collector','nuclear_reactor','substation','mains_inlet')
     assert min(e['from'][2] for e in inventory['elements'])>=(0 if large else 12),path
@@ -65,7 +65,7 @@ for path in (A/'blockstates').glob('*.json'):
     obj=read(path)
     if 'variants' in obj:
         for variant in obj['variants'].values():model(variant['model'])
-    elif path.stem in ('iron_pipe','glass_pipe','pipe_valve'):
+    elif path.stem in ('iron_pipe','glass_pipe','pipe_valve','plant_water_inlet'):
         for flags in itertools.product(['true','false'],repeat=6):
             state=dict(zip(('down','up','north','south','east','west'),flags))
             matches=[p for p in obj['multipart'] if all(state[k]==v for k,v in p.get('when',{}).items())]
@@ -174,6 +174,10 @@ def sheet(filename,title,names):
         d.text((x+10,y+222),zh[key],font=font,fill='#e5edf3')
     canvas.save(OUT/filename)
 
+if '--ports' in sys.argv:
+    sheet('ports.png','ELECTRON / 专用接口与插电供电',[(n,'item/'+n) for n in ['plant_fuel_port','reactor_fuel_intake','plant_ash_outlet','spent_rod_outlet','plant_water_inlet','wall_outlet','power_strip','appliance_adapter','appliance_power_cord','workshop_lamp','immersion_gold_line','precision_workbench']])
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    sys.exit(0)
 if '--pcb' in sys.argv:
     sheet('pcb-workshop.png','ELECTRON / 俯视工坊、PCB 加工与沉金',[(n,'item/'+n) for n in ['precision_workbench','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','pcb_socket','assembled_pcb','water_level_sensor','temperature_sensor','emergency_lamp','smd_not']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')

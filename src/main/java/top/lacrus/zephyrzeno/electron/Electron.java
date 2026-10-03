@@ -56,6 +56,7 @@ public final class Electron implements ModInitializer {
                     top.lacrus.zephyrzeno.electron.industrial.Industrial.BLOCKS.values().stream().filter(b->!(b instanceof top.lacrus.zephyrzeno.electron.foundry.ComponentBlock c)||c.kind.large()))
                     .distinct().forEach(entries::add);
             for(var color:Foundry.CABLE_COLORS)entries.add(color);
+            entries.add(top.lacrus.zephyrzeno.electron.appliance.Appliances.CORD);entries.add(top.lacrus.zephyrzeno.electron.industrial.Industrial.ASH);
             for(var item:new net.minecraft.item.Item[]{top.lacrus.zephyrzeno.electron.industrial.Processing.CRUSHED_URANIUM,top.lacrus.zephyrzeno.electron.industrial.Processing.CONCENTRATE,top.lacrus.zephyrzeno.electron.industrial.Processing.TAILINGS,top.lacrus.zephyrzeno.electron.industrial.Processing.IRON_DUST,top.lacrus.zephyrzeno.electron.industrial.Processing.COPPER_DUST,top.lacrus.zephyrzeno.electron.industrial.Processing.CLADDING,top.lacrus.zephyrzeno.electron.industrial.Processing.IRON_PLATE,top.lacrus.zephyrzeno.electron.industrial.Processing.COPPER_COIL})entries.add(item);
             entries.add(Foundry.TOWER_SECTION);entries.add(Foundry.SHAFT);entries.add(Foundry.TURNTABLE);
             for(var item:new net.minecraft.item.ItemConvertible[]{Foundry.PLANT_CASING,Foundry.REACTOR_CASING,Foundry.URANIUM_ORE,Foundry.RAW_URANIUM,Foundry.URANIUM_PELLET,Foundry.FUEL_ROD,Foundry.SPENT_ROD})entries.add(item);
