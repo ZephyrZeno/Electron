@@ -74,6 +74,7 @@ public class ComponentBlock extends BlockWithEntity {
         if(world.getBlockEntity(pos) instanceof ComponentEntity entity) {
             if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(kind)){
                 top.lacrus.zephyrzeno.electron.power.PowerPlant.interact((ServerWorld)world,pos,state,entity,player,player.getMainHandStack());
+            } else if(state.isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.PUMP)){player.sendMessage(Text.translatable("message.electron.pump_ports"),true);
             } else if(kind==Kind.CRANK) {
                 if(player.isSneaking()){world.setBlockState(pos,state.cycle(ENABLED),Block.NOTIFY_ALL);ElectricalEffects.play((ServerWorld)world,pos,ElectricalEffects.SWITCH,.4f,state.get(ENABLED)?.85f:1.1f);player.sendMessage(Text.translatable(state.get(ENABLED)?"message.electron.source_off":"message.electron.source_on"),true);}
                 else {boolean charged=entity.crank(world.getTime());if(charged){world.addSyncedBlockEvent(pos,this,ComponentEntity.EVENT_CRANK,0);ElectricalEffects.play((ServerWorld)world,pos,ElectricalEffects.CRANK,.6f,1);}

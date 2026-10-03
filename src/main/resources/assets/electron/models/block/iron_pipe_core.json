@@ -1,0 +1,93 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "steel_pipe": "electron:block/assembled/steel_pipe",
+    "cooling_concrete": "electron:block/assembled/cooling_concrete",
+    "roof_panels": "electron:block/assembled/roof_panels",
+    "instrument_glass": "electron:block/assembled/instrument_glass",
+    "safety_yellow": "electron:block/assembled/safety_yellow",
+    "galvanized": "electron:block/assembled/galvanized",
+    "cast_base": "electron:block/assembled/cast_base",
+    "control_case": "electron:block/assembled/control_case",
+    "service_panel": "electron:block/assembled/service_panel",
+    "copper_bus": "electron:block/assembled/copper_bus",
+    "turbine_white": "electron:block/assembled/turbine_white",
+    "boiler": "electron:block/assembled/boiler",
+    "hydro_blue": "electron:block/assembled/hydro_blue",
+    "reactor_shell": "electron:block/assembled/reactor_shell",
+    "porcelain": "electron:block/assembled/porcelain",
+    "glass": "electron:block/industrial/glass",
+    "particle": "electron:block/assembled/galvanized"
+  },
+  "elements": [
+    {
+      "from": [
+        4.8,
+        4.8,
+        4.8
+      ],
+      "to": [
+        11.2,
+        11.2,
+        11.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#steel_pipe",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#steel_pipe",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#steel_pipe",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#steel_pipe",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#steel_pipe",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#steel_pipe",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

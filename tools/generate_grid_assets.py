@@ -98,3 +98,5 @@ print('Grid, independent colors, mechanical models, ores and emissive materials 
 
 # Current multiblock assets are applied after the earlier grid catalog.
 runpy.run_path(str(Path(__file__).with_name("generate_assembly_assets.py")))
+runpy.run_path(str(Path(__file__).with_name("generate_industrial_assets.py")))
+runpy.run_path(str(Path(__file__).with_name("generate_industrial_guide.py")))

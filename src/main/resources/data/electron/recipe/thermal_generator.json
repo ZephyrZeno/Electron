@@ -1,18 +1,15 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
+  "category": "misc",
   "ingredients": [
     {
-      "item": "electron:dc_generator"
+      "item": "electron:plant_control_module"
     },
     {
-      "item": "minecraft:furnace"
+      "item": "electron:boiler_module"
     },
     {
-      "item": "minecraft:copper_ingot"
-    },
-    {
-      "item": "minecraft:iron_ingot"
+      "item": "electron:alternator_module"
     },
     {
       "item": "electron:plant_casing"

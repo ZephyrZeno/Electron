@@ -12,7 +12,9 @@ public final class GridDevices {
     public static boolean handles(ComponentBlock.Kind kind){return PowerPlant.source(kind)||kind==ComponentBlock.Kind.SUBSTATION||kind==ComponentBlock.Kind.MAINS;}
     public static void stamp(ServerWorld w,BlockPos p,BlockState s,ComponentEntity e,List<DcSolver.Branch> b){
         var component=(ComponentBlock)s.getBlock();var kind=component.kind;var spec=StationSpec.of(component.resistance);String id="d:"+p.asLong(),a=node(p,0),z=node(p,1);boolean enabled=s.get(ComponentBlock.ENABLED)&&!s.get(ComponentBlock.BROKEN);
-        if(PowerPlant.source(kind)){PowerPlant.prepare(w,p,s,e);b.add(GridModel.source(id,a,z,e.energy,enabled&&e.plantReady,PowerPlant.voltage(s)));}
+        if(PowerPlant.source(kind)){
+            if(kind==ComponentBlock.Kind.WIND&&top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(s)){var base=top.lacrus.zephyrzeno.electron.industrial.PlantStructures.windBase(w,p);if(w.getBlockState(base).isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE)){b.add(DcSolver.Branch.resistor(id+":downlead+",a,node(base,0),.02));b.add(DcSolver.Branch.resistor(id+":downlead-",z,node(base,1),.02));}}
+            PowerPlant.prepare(w,p,s,e);b.add(GridModel.source(id,a,z,e.energy,enabled&&e.plantReady,PowerPlant.voltage(s)));}
         else if(kind==ComponentBlock.Kind.SUBSTATION){e.plantReady=PowerPlant.requirement(w,p,kind).equals("ready");b.add(GridModel.stationInput("in:"+id,a,z,e.converterEnergy,enabled&&e.plantReady?e.inputVoltage:0,spec));b.add(GridModel.stationOutput(id,node(p,2),node(p,3),e.converterEnergy,enabled&&e.plantReady,spec));}
         else{b.add(DcSolver.Branch.resistor(id,a,node(p,2),enabled?.02:1e12));b.add(DcSolver.Branch.resistor("return:"+id,z,node(p,3),enabled?.02:1e12));}
     }

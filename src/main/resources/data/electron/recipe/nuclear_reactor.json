@@ -1,21 +1,18 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
+  "category": "misc",
   "ingredients": [
     {
-      "item": "electron:thermal_generator"
+      "item": "electron:plant_control_module"
+    },
+    {
+      "item": "electron:reactor_vessel_module"
+    },
+    {
+      "item": "electron:control_rod_drive"
     },
     {
       "item": "electron:reactor_casing"
-    },
-    {
-      "item": "electron:reactor_casing"
-    },
-    {
-      "item": "minecraft:diamond"
-    },
-    {
-      "item": "minecraft:quartz"
     }
   ],
   "result": {

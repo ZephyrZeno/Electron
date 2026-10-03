@@ -33,7 +33,7 @@ public final class Assembly {
         return part.original.isAir()&&(part.origin.equals(p)||w.getBlockEntity(p) instanceof AssemblyPartEntity host&&host.origin.equals(part.origin)&&host.original.isOf(Foundry.TOWER_SECTION));
     }
     public static int height(World w,BlockPos p){
-        int h=0;while(h<64&&original(w,p.down(h+1)).isOf(Foundry.TOWER_SECTION))h++;return h;
+        int h=0;while(h<64&&(original(w,p.down(h+1)).isOf(Foundry.TOWER_SECTION)||original(w,p.down(h+1)).isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.MAST)))h++;return h;
     }
     public static String form(ServerWorld w,BlockPos p,PlayerEntity player){
         var state=w.getBlockState(p);
@@ -41,10 +41,10 @@ public final class Assembly {
         if(formed(state)){dismantle(w,p,null);return "dismantled";}
         boolean tower=state.isOf(Foundry.TOWER_TERMINAL);
         if(tower&&CircuitState.get(w).wires.values().stream().anyMatch(wire->wire.overhead()&&wire.hosts().contains(p)))return "attached";
-        String reason=tower?(OverheadCable.tower(w,p)?"ready":"tower"):PowerPlant.requirement(w,p,controller.kind);
+        String reason=tower?(OverheadCable.tower(w,p)?"ready":"tower"):PowerPlant.structure(w,p,controller.kind);
         if(!reason.equals("ready"))return reason;
         int h=tower||controller.kind==ComponentBlock.Kind.WIND||controller.kind==ComponentBlock.Kind.LIGHTNING?height(w,p):0;
-        if(h>0){
+        if(h>0&&controller.kind!=ComponentBlock.Kind.WIND){
             double r=AssemblyGeometry.baseRadius(h);
             for(int sx:new int[]{-1,1})for(int sz:new int[]{-1,1}){
                 var foot=p.add((int)Math.floor(.5+sx*r),-h-1,(int)Math.floor(.5+sz*r));
@@ -54,14 +54,18 @@ public final class Assembly {
         }
         var model=AssemblyGeometry.model(controller.kind,h,tower,state.get(ComponentBlock.TURN));
         var replacements=new LinkedHashMap<BlockPos,BlockState>();
-        for(var offset:model.cells().keySet()){
+        var occupied=new LinkedHashSet<>(model.cells().keySet());
+        top.lacrus.zephyrzeno.electron.industrial.PlantStructures.modules(p,state).keySet().forEach(q->occupied.add(q.subtract(p)));
+        for(var offset:occupied){
             if(offset.equals(BlockPos.ORIGIN))continue;var q=p.add(offset);
             if(!w.isChunkLoaded(q))return "unloaded";
             if(player!=null&&(!player.canModifyBlocks()||!w.canPlayerModifyAt(player,q)||!w.getWorldBorder().contains(q)))return "permission";
             var old=w.getBlockState(q);
+            if(old.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.FluidBlock||old.isOf(top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE))continue;
+            if(controller.kind==ComponentBlock.Kind.HYDRO&&q.equals(top.lacrus.zephyrzeno.electron.industrial.PlantStructures.at(p,state,0,0,-1))&&(old.isOf(Blocks.WATER)||old.isAir()))continue;
             if(old.isOf(Blocks.FURNACE)&&controller.kind==ComponentBlock.Kind.THERMAL)continue;
             if(old.isOf(Blocks.LIGHTNING_ROD)&&controller.kind==ComponentBlock.Kind.LIGHTNING)continue;
-            if(!old.isAir()&&!old.isOf(Foundry.PLANT_CASING)&&!old.isOf(Foundry.REACTOR_CASING)&&!old.isOf(Foundry.TOWER_SECTION))return "space";
+            if(!old.isAir()&&!old.isOf(Foundry.PLANT_CASING)&&!old.isOf(Foundry.REACTOR_CASING)&&!old.isOf(Foundry.TOWER_SECTION)&&!top.lacrus.zephyrzeno.electron.industrial.Industrial.module(old))return "space";
             if(old.hasBlockEntity()||CircuitState.get(w).hasAttachment(q))return "attached";
             replacements.put(q,old);
         }
@@ -73,7 +77,7 @@ public final class Assembly {
         }
         w.setBlockState(p,state.with(AssemblyControllerBlock.FORMED,true),Block.NOTIFY_ALL);
         w.updateListeners(p,state,w.getBlockState(p),Block.NOTIFY_LISTENERS);CircuitState.get(w).track(p,w.getBlockState(p));
-        return "formed";
+        ElectricalEffects.play(w,p,ElectricalEffects.FORM,.6f,1);return "formed";
     }
     public static void dismantle(ServerWorld w,BlockPos p,BlockPos removed){
         String key=w.getRegistryKey().getValue()+":"+p.asLong();if(!CHANGING.add(key))return;
@@ -96,6 +100,7 @@ public final class Assembly {
         if(formed(w.getBlockState(p))){
             if(player!=null)for(var offset:((ComponentEntity)w.getBlockEntity(p)).assemblyCells){var q=p.add(offset);if(!w.isChunkLoaded(q)||!w.canPlayerModifyAt(player,q)){player.sendMessage(Text.translatable("plant.electron.permission"),true);return true;}}
         }
+        if(w.getBlockEntity(p) instanceof ComponentEntity core){core.manualAssemblyLock=formed(w.getBlockState(p));core.markDirty();}
         String status=form(w,p,player);player.sendMessage(Text.translatable("message.electron.plant_status",Text.translatable("plant.electron."+status)),true);return true;
     }
     public static String integrity(ServerWorld w,BlockPos p,ComponentEntity e){

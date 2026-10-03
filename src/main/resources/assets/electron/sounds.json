@@ -75,5 +75,140 @@
         "volume": 0.8
       }
     ]
+  },
+  "wire_connect": {
+    "subtitle": "subtitles.electron.wire_connect",
+    "sounds": [
+      {
+        "name": "electron:wire_connect",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "cable_connect": {
+    "subtitle": "subtitles.electron.cable_connect",
+    "sounds": [
+      {
+        "name": "electron:cable_connect",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "wire_cut": {
+    "subtitle": "subtitles.electron.wire_cut",
+    "sounds": [
+      {
+        "name": "electron:wire_cut",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "terminal_attach": {
+    "subtitle": "subtitles.electron.terminal_attach",
+    "sounds": [
+      {
+        "name": "electron:terminal_attach",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "machine_assemble": {
+    "subtitle": "subtitles.electron.machine_assemble",
+    "sounds": [
+      {
+        "name": "electron:machine_assemble",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "machine_form": {
+    "subtitle": "subtitles.electron.machine_form",
+    "sounds": [
+      {
+        "name": "electron:machine_form",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "pump_run": {
+    "subtitle": "subtitles.electron.pump_run",
+    "sounds": [
+      {
+        "name": "electron:pump_run",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "valve_turn": {
+    "subtitle": "subtitles.electron.valve_turn",
+    "sounds": [
+      {
+        "name": "electron:valve_turn",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "water_fill": {
+    "subtitle": "subtitles.electron.water_fill",
+    "sounds": [
+      {
+        "name": "electron:water_fill",
+        "attenuation_distance": 16
+      }
+    ]
+  },
+  "motor_run": {
+    "subtitle": "subtitles.electron.motor_run",
+    "sounds": [
+      {
+        "name": "electron:motor_run",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "wind_rotor": {
+    "subtitle": "subtitles.electron.wind_rotor",
+    "sounds": [
+      {
+        "name": "electron:wind_rotor",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "hydro_run": {
+    "subtitle": "subtitles.electron.hydro_run",
+    "sounds": [
+      {
+        "name": "electron:hydro_run",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "turbine_run": {
+    "subtitle": "subtitles.electron.turbine_run",
+    "sounds": [
+      {
+        "name": "electron:turbine_run",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "plant_alarm": {
+    "subtitle": "subtitles.electron.plant_alarm",
+    "sounds": [
+      {
+        "name": "electron:plant_alarm",
+        "attenuation_distance": 24
+      }
+    ]
+  },
+  "pressure_burst": {
+    "subtitle": "subtitles.electron.pressure_burst",
+    "sounds": [
+      {
+        "name": "electron:pressure_burst",
+        "attenuation_distance": 24
+      }
+    ]
   }
 }

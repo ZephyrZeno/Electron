@@ -22,6 +22,8 @@ public final class ComponentItem extends BlockItem {
         super.appendTooltip(stack,context,lines,type);
         if(getBlock() instanceof ComponentBlock block){
             lines.add(Text.translatable(block.kind.large()?"tooltip.electron.large_component":"tooltip.electron.small_component").formatted(Formatting.AQUA));
+            if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.PUMP){line(lines,"pump");return;}
+            if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.BREAKOUT){line(lines,"breakout");return;}
             switch(block.kind){
                 case CRANK -> {line(lines,"crank_voltage");line(lines,"crank_energy");}
                 case RESISTOR -> {line(lines,"resistor_rating",(int)block.resistance);line(lines,"resistor_voltage",String.format(Locale.ROOT,"%.2f",Math.sqrt(.25*block.resistance)));}

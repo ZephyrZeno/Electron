@@ -30,6 +30,9 @@ public final class ElectronClient implements ClientModInitializer {
     private static PathPreview cachedRoute;private static long nextRouteUpdate;
     @Override public void onInitializeClient() {
         MagnifierZoom.register();
+        net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.SCREEN,IndustrialScreen::new);
+        BlockEntityRendererFactories.register(top.lacrus.zephyrzeno.electron.industrial.Industrial.FLUID_ENTITY,FluidRenderer::new);
+        net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),top.lacrus.zephyrzeno.electron.industrial.Industrial.GLASS_PIPE,top.lacrus.zephyrzeno.electron.industrial.Industrial.THERMAL_TANK,top.lacrus.zephyrzeno.electron.industrial.Industrial.NUCLEAR_TANK);
         Foundry.CREATIVE_READINGS=()->MinecraftClient.getInstance().player!=null&&MinecraftClient.getInstance().player.isCreative();
         BlockEntityRendererFactories.register(Foundry.COMPONENT_ENTITY,ComponentRenderer::new);
         BlockEntityRendererFactories.register(Foundry.MECHANICAL_ENTITY,MechanicalRenderer::new);
@@ -88,13 +91,14 @@ public final class ElectronClient implements ClientModInitializer {
                 if((!same||now-cachedRoute.tick>=10)&&now>=nextRouteUpdate){
                     nextRouteUpdate=now+2;
                     try{var copy=state.wiringCopy();boolean cable=CircuitToolItem.cable(client.player.getMainHandStack());var end=copy.joinAt(client.world,p,cable);var path=start.id().equals(end.id())?List.<SurfacePoint>of():copy.connectionRoute(client.world,start,end,data.getInt("layer")&1,cable);
-                        cachedRoute=new PathPreview(start.id(),p,path,end,path.isEmpty()?Text.translatable("hud.electron.finish"):Text.translatable("hud.electron.preview",OverheadCable.connection(copy,start,end,cable)?OverheadCable.units(copy,path):copy.lengthUnits(path,start,end)),now);
+                        cachedRoute=new PathPreview(start.id(),p,path,end,path.isEmpty()?Text.translatable("hud.electron.finish"):Text.translatable("hud.electron.preview",VerticalWire.connection(copy,start,end)?VerticalWire.units(copy,path):OverheadCable.connection(copy,start,end,cable)?OverheadCable.units(copy,path):copy.lengthUnits(path,start,end)),now);
                     }catch(IllegalArgumentException error){cachedRoute=new PathPreview(start.id(),p,List.of(),null,CircuitError.text(error),now);}
                 }
                 if(cachedRoute!=null&&cachedRoute.start.equals(start.id())&&cachedRoute.target.equals(p)){
                     routeStatus=cachedRoute.status;if(cachedRoute.end!=null){
                         boolean cable=CircuitToolItem.cable(client.player.getMainHandStack());
-                        if(OverheadCable.connection(state,start,cachedRoute.end,cable))suspended(buffer,matrix,camera,OverheadCable.vertices(state,cachedRoute.path),0x7cffe0,170);
+                        if(VerticalWire.connection(state,start,cachedRoute.end))suspended(buffer,matrix,camera,VerticalWire.vertices(state,cachedRoute.path),0x7cffe0,170);
+                        else if(OverheadCable.connection(state,start,cachedRoute.end,cable))suspended(buffer,matrix,camera,OverheadCable.vertices(state,cachedRoute.path),0x7cffe0,170);
                         else wire(buffer,matrix,camera,cachedRoute.path,0x7cffe0,170,start,cachedRoute.end,cable?OverheadCable.RADIUS:.010);
                     }
                     else plate(buffer,matrix,camera,state.position(p),p.face(),.034,.034,.014,0xff6b67);

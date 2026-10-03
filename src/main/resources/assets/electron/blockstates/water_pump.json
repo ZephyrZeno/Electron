@@ -1,0 +1,76 @@
+{
+  "variants": {
+    "facing=up,turn=0": {
+      "model": "electron:block/water_pump_up_0"
+    },
+    "facing=up,turn=1": {
+      "model": "electron:block/water_pump_up_1"
+    },
+    "facing=up,turn=2": {
+      "model": "electron:block/water_pump_up_2"
+    },
+    "facing=up,turn=3": {
+      "model": "electron:block/water_pump_up_3"
+    },
+    "facing=down,turn=0": {
+      "model": "electron:block/water_pump_down_0"
+    },
+    "facing=down,turn=1": {
+      "model": "electron:block/water_pump_down_1"
+    },
+    "facing=down,turn=2": {
+      "model": "electron:block/water_pump_down_2"
+    },
+    "facing=down,turn=3": {
+      "model": "electron:block/water_pump_down_3"
+    },
+    "facing=north,turn=0": {
+      "model": "electron:block/water_pump_north_0"
+    },
+    "facing=north,turn=1": {
+      "model": "electron:block/water_pump_north_1"
+    },
+    "facing=north,turn=2": {
+      "model": "electron:block/water_pump_north_2"
+    },
+    "facing=north,turn=3": {
+      "model": "electron:block/water_pump_north_3"
+    },
+    "facing=south,turn=0": {
+      "model": "electron:block/water_pump_south_0"
+    },
+    "facing=south,turn=1": {
+      "model": "electron:block/water_pump_south_1"
+    },
+    "facing=south,turn=2": {
+      "model": "electron:block/water_pump_south_2"
+    },
+    "facing=south,turn=3": {
+      "model": "electron:block/water_pump_south_3"
+    },
+    "facing=east,turn=0": {
+      "model": "electron:block/water_pump_east_0"
+    },
+    "facing=east,turn=1": {
+      "model": "electron:block/water_pump_east_1"
+    },
+    "facing=east,turn=2": {
+      "model": "electron:block/water_pump_east_2"
+    },
+    "facing=east,turn=3": {
+      "model": "electron:block/water_pump_east_3"
+    },
+    "facing=west,turn=0": {
+      "model": "electron:block/water_pump_west_0"
+    },
+    "facing=west,turn=1": {
+      "model": "electron:block/water_pump_west_1"
+    },
+    "facing=west,turn=2": {
+      "model": "electron:block/water_pump_west_2"
+    },
+    "facing=west,turn=3": {
+      "model": "electron:block/water_pump_west_3"
+    }
+  }
+}

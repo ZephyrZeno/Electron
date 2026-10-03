@@ -76,6 +76,7 @@ public final class Foundry {
             var gate=block(id,new ComponentBlock(AbstractBlock.Settings.create().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK),ComponentBlock.Kind.GATE,10000,function));
             DEVICES.put(id,gate);WIRE_GATES.put(function,gate);
         }
+        top.lacrus.zephyrzeno.electron.industrial.Industrial.registerBlocks();
         COMPONENT_ENTITY=Registry.register(Registries.BLOCK_ENTITY_TYPE,Electron.id("component"),FabricBlockEntityTypeBuilder.create(ComponentEntity::new,DEVICES.values().toArray(Block[]::new)).build());
         TABLE=block("assembly_table",new AssemblyTableBlock(AbstractBlock.Settings.create().strength(2.5f).sounds(BlockSoundGroup.WOOD).nonOpaque()));
         SPOOL=item("wire_spool",new CircuitToolItem(new Item.Settings().maxCount(1),CircuitToolItem.Tool.SPOOL));

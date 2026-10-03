@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "electron:block/reactor_coolant_tank"
+    }
+  }
+}

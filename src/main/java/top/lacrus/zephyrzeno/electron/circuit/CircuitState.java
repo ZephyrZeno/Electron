@@ -34,6 +34,13 @@ public final class CircuitState extends PersistentState {
     private final Map<Wire,List<Vec3d>> overheadCurves=new HashMap<>();
     public List<Vec3d> overheadVertices(Wire wire){return overheadCurves.computeIfAbsent(wire,w->OverheadCable.vertices(this,w.path()));}
     private boolean syncPending=true;
+    private final LinkedHashSet<UUID> capturedLightning=new LinkedHashSet<>();
+    /** A bolt may flash repeatedly or overlap another collector; its energy is captured only once. */
+    public boolean claimLightning(UUID id){
+        if(!capturedLightning.add(id))return false;
+        if(capturedLightning.size()>4096)capturedLightning.removeFirst();
+        markDirty();return true;
+    }
     public static CircuitState get(ServerWorld world){return LIVE.computeIfAbsent(world,w->w.getPersistentStateManager().getOrCreate(TYPE,"electron_circuits"));}
     public static void register(){ServerTickEvents.END_WORLD_TICK.register(world->get(world).tick(world));ServerLifecycleEvents.SERVER_STOPPED.register(server->LIVE.clear());}
     public static boolean attached(World world,BlockPos pos){return world instanceof ServerWorld s&&LIVE.containsKey(s)&&LIVE.get(s).hasAttachment(pos);}
@@ -48,7 +55,8 @@ public final class CircuitState extends PersistentState {
         Map<String,Endpoint> result=new HashMap<>();
         devices.forEach((pos,d)->{
             if(!(Registries.BLOCK.get(net.minecraft.util.Identifier.of(d.block)) instanceof ComponentBlock c))return;
-            for(int pin=0;pin<ComponentPins.count(c.kind);pin++){var e=ComponentPins.endpoint(pos,d.face,d.turn,c.kind,pin);result.put(e.id(),e);}
+            if(c.kind==ComponentBlock.Kind.WIND&&d.formed)return;
+            for(int pin=0;pin<ComponentPins.count(c.kind);pin++){if(c==top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE&&pin<2)continue;var e=ComponentPins.endpoint(pos,d.face,d.turn,c.kind,pin);result.put(e.id(),e);}
         });
         junctions.values().forEach(j->{var e=j.endpoint();result.put(e.id(),e);});
         cores.values().forEach(c->c.endpoints().forEach(e->result.put(e.id(),e)));return result;
@@ -129,6 +137,7 @@ public final class CircuitState extends PersistentState {
         return result;
     }
     public List<SurfacePoint> connectionRoute(World world,Endpoint a,Endpoint b,int layer,boolean cable){
+        if(VerticalWire.connection(this,a,b))return VerticalWire.route(world,this,a,b,layer,cable);
         return OverheadCable.connection(this,a,b,cable)?OverheadCable.route(world,this,a,b,layer):connectionRoute(world,a,b,layer);
     }
     public List<SurfacePoint> route(ServerWorld world,Endpoint a,Endpoint b,int layer) {
@@ -166,6 +175,7 @@ public final class CircuitState extends PersistentState {
                 var curve=overheadVertices(w);
                 if(OverheadCable.loaded(world,curve))invalid=!OverheadCable.tower(world,w.path().getFirst().host())||!OverheadCable.tower(world,w.path().getLast().host())||!OverheadCable.clear(world,curve,w.path().getFirst().host(),w.path().getLast().host());
             }
+            if(!invalid&&w.vertical()&&VerticalWire.cells(this,w.path()).stream().allMatch(world::isChunkLoaded))invalid=!VerticalWire.connection(this,pins.get(w.a()),pins.get(w.b()))||!VerticalWire.clear(world,this,w.path(),w.cable());
             if(!invalid)for(var p:w.path())if(world.isChunkLoaded(p.host())&&world.isChunkLoaded(p.host().offset(p.face()))&&(!supports(world,p.host(),p.face())||!assemblyClear(world,p)||(p.layer()==1&&!hasBridge(p)))){invalid=true;break;}
             if(invalid){it.remove();drop(world,w.path().getFirst().host(),CircuitToolItem.spool(w.units(),w.color(),w.cable()));change=true;}
         }
@@ -180,6 +190,7 @@ public final class CircuitState extends PersistentState {
         var pins=endpoints();List<DcSolver.Branch> branches=new ArrayList<>();Set<String> unavailable=new HashSet<>();
         for(var w:wires.values()) {
             branches.add(DcSolver.Branch.resistor("w:"+w.id(),w.a(),w.b(),w.resistance()));
+            if(w.vertical()&&VerticalWire.cells(this,w.path()).stream().anyMatch(p->!world.isChunkLoaded(p))){unavailable.add(w.a());unavailable.add(w.b());}
             if(w.overhead()&&!OverheadCable.loaded(world,overheadVertices(w))){unavailable.add(w.a());unavailable.add(w.b());}
             for(var p:w.path())if(!world.isChunkLoaded(p.host())||!world.isChunkLoaded(p.host().offset(p.face()))){unavailable.add(w.a());unavailable.add(w.b());break;}
         }
@@ -337,9 +348,10 @@ public final class CircuitState extends PersistentState {
         for(int rail=0;rail<2;rail++)for(int pin=0;pin<3;pin++)branches.add(DcSolver.Branch.resistor("bus:"+pos.asLong()+":"+rail+":"+pin,node(pos,rail*4+pin),node(pos,rail*4+pin+1),resistance));
     }
     private static String find(Map<String,String> p,String n){String x=p.get(n);if(!x.equals(n)){x=find(p,x);p.put(n,x);}return x;}
-    public NbtCompound snapshot(){return writeNbt(new NbtCompound(),null);}
+    public NbtCompound snapshot(){var n=writeNbt(new NbtCompound(),null);n.remove("captured_lightning");return n;}
     @Override public NbtCompound writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup registries) {
-        NbtList ws=new NbtList();for(var w:wires.values()){var t=new NbtCompound();t.putUuid("id",w.id());t.putString("a",w.a());t.putString("b",w.b());t.putInt("color",w.color());t.putInt("units",w.units());t.putBoolean("cable",w.cable());t.putBoolean("overhead",w.overhead());t.putDouble("heat",wireHeat.getOrDefault(w.id(),0d));long[] hosts=new long[w.path().size()];int[] points=new int[hosts.length];for(int i=0;i<hosts.length;i++){var p=w.path().get(i);hosts[i]=p.host().asLong();points[i]=p.face().getId()|p.u()<<3|p.v()<<7|p.layer()<<11;}t.putLongArray("hosts",hosts);t.putIntArray("points",points);ws.add(t);}n.put("wires",ws);
+        NbtList strikes=new NbtList();for(var id:capturedLightning){var t=new NbtCompound();t.putUuid("id",id);strikes.add(t);}n.put("captured_lightning",strikes);
+        NbtList ws=new NbtList();for(var w:wires.values()){var t=new NbtCompound();t.putUuid("id",w.id());t.putString("a",w.a());t.putString("b",w.b());t.putInt("color",w.color());t.putInt("units",w.units());t.putBoolean("cable",w.cable());t.putBoolean("overhead",w.overhead());t.putBoolean("vertical",w.vertical());t.putDouble("heat",wireHeat.getOrDefault(w.id(),0d));long[] hosts=new long[w.path().size()];int[] points=new int[hosts.length];for(int i=0;i<hosts.length;i++){var p=w.path().get(i);hosts[i]=p.host().asLong();points[i]=p.face().getId()|p.u()<<3|p.v()<<7|p.layer()<<11;}t.putLongArray("hosts",hosts);t.putIntArray("points",points);ws.add(t);}n.put("wires",ws);
         NbtList js=new NbtList();junctions.values().forEach(j->{var t=j.point().nbt();t.putUuid("id",j.id());t.putString("block",j.hostBlock());t.putBoolean("wire_node",j.wireNode());t.putBoolean("cable_node",j.cable());js.add(t);});n.put("junctions",js);
         NbtList cs=new NbtList();cores.values().forEach(c->{var t=new NbtCompound();t.putUuid("id",c.id());t.putLong("p",c.host().asLong());t.putInt("f",c.face().getId());t.putInt("slot",c.slot());t.putString("block",c.hostBlock());cs.add(t);});n.put("cores",cs);
         NbtList bs=new NbtList();bridges.values().forEach(b->{var t=new NbtCompound();t.putUuid("id",b.id());t.putLong("p",b.host().asLong());t.putInt("f",b.face().getId());t.putString("block",b.hostBlock());bs.add(t);});n.put("bridges",bs);
@@ -347,7 +359,8 @@ public final class CircuitState extends PersistentState {
     }
     public static CircuitState read(NbtCompound n) {
         CircuitState s=new CircuitState();
-        for(var tag:n.getList("wires",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;long[] hosts=t.getLongArray("hosts");int[] packed=t.getIntArray("points");if(hosts.length!=packed.length||hosts.length<2||hosts.length>513)continue;List<SurfacePoint> path=new ArrayList<>();for(int i=0;i<hosts.length;i++)path.add(new SurfacePoint(BlockPos.fromLong(hosts[i]),Direction.byId(packed[i]&7),(packed[i]>>3)&15,(packed[i]>>7)&15,(packed[i]>>11)&1));var w=new Wire(t.getUuid("id"),t.getString("a"),t.getString("b"),t.getInt("color")&7,path,t.contains("units")?Math.clamp(t.getInt("units"),0,16384):SurfaceRouter.lengthUnits(path),t.getBoolean("cable"),t.getBoolean("overhead")&&t.getBoolean("cable")&&hosts.length==2);s.wires.put(w.id(),w);double heat=t.getDouble("heat");if(Double.isFinite(heat)&&heat>0)s.wireHeat.put(w.id(),Math.min(heat,3));}
+        for(var tag:n.getList("captured_lightning",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;if(t.containsUuid("id"))s.capturedLightning.add(t.getUuid("id"));if(s.capturedLightning.size()>4096)s.capturedLightning.removeFirst();}
+        for(var tag:n.getList("wires",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;long[] hosts=t.getLongArray("hosts");int[] packed=t.getIntArray("points");if(hosts.length!=packed.length||hosts.length<2||hosts.length>513)continue;List<SurfacePoint> path=new ArrayList<>();for(int i=0;i<hosts.length;i++)path.add(new SurfacePoint(BlockPos.fromLong(hosts[i]),Direction.byId(packed[i]&7),(packed[i]>>3)&15,(packed[i]>>7)&15,(packed[i]>>11)&1));var w=new Wire(t.getUuid("id"),t.getString("a"),t.getString("b"),t.getInt("color")&7,path,t.contains("units")?Math.clamp(t.getInt("units"),0,16384):SurfaceRouter.lengthUnits(path),t.getBoolean("cable"),t.getBoolean("overhead")&&t.getBoolean("cable")&&hosts.length==2,t.getBoolean("vertical")&&hosts.length==2);s.wires.put(w.id(),w);double heat=t.getDouble("heat");if(Double.isFinite(heat)&&heat>0)s.wireHeat.put(w.id(),Math.min(heat,3));}
         for(var tag:n.getList("junctions",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var j=new Junction(t.getUuid("id"),SurfacePoint.read(t),t.getString("block"),t.getBoolean("wire_node"),t.getBoolean("cable_node"));s.junctions.put(j.id(),j);}
         for(var tag:n.getList("cores",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var c=new WallCore(t.getUuid("id"),BlockPos.fromLong(t.getLong("p")),Direction.byId(t.getInt("f")),t.getInt("slot")&3,t.getString("block"));s.cores.put(c.id(),c);}
         for(var tag:n.getList("bridges",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var b=new Bridge(t.getUuid("id"),BlockPos.fromLong(t.getLong("p")),Direction.byId(t.getInt("f")),t.getString("block"));s.bridges.put(b.id(),b);}

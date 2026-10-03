@@ -2,7 +2,15 @@
   "required": true,
   "package": "top.lacrus.zephyrzeno.electron.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": ["PistonAttachmentMixin"],
-  "client": ["MagnifierFovMixin", "MagnifierMouseMixin"],
-  "injectors": {"defaultRequire": 1}
+  "mixins": [
+    "PistonAttachmentMixin",
+    "LightningCaptureMixin"
+  ],
+  "client": [
+    "MagnifierFovMixin",
+    "MagnifierMouseMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

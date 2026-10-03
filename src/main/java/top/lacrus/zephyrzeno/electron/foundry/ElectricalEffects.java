@@ -11,6 +11,7 @@ import top.lacrus.zephyrzeno.electron.Electron;
 /** Small electrical failures vent locally; they do not run a terrain-damaging TNT explosion. */
 public final class ElectricalEffects {
     public static final SoundEvent CRANK=sound("hand_crank"),SWITCH=sound("switch_click"),LED=sound("led_on"),ARC=sound("electrical_arc"),FAIL=sound("component_fail"),POP=sound("component_pop"),WRENCH=sound("wrench_turn");
+    public static final SoundEvent WIRE_CONNECT=sound("wire_connect"),CABLE_CONNECT=sound("cable_connect"),WIRE_CUT=sound("wire_cut"),TERMINAL=sound("terminal_attach"),ASSEMBLE=sound("machine_assemble"),FORM=sound("machine_form"),PUMP=sound("pump_run"),VALVE=sound("valve_turn"),WATER_FILL=sound("water_fill"),MOTOR=sound("motor_run"),WIND=sound("wind_rotor"),HYDRO=sound("hydro_run"),TURBINE=sound("turbine_run"),ALARM=sound("plant_alarm"),PRESSURE_BURST=sound("pressure_burst");
     private static SoundEvent sound(String name){var id=Electron.id(name);return Registry.register(Registries.SOUND_EVENT,id,SoundEvent.of(id));}
     public static void register(){}
     public static void play(ServerWorld world,BlockPos pos,SoundEvent sound,float volume,float pitch){world.playSound(null,pos,sound,SoundCategory.BLOCKS,volume,pitch);}

@@ -9,7 +9,7 @@ S=2
 canvas=Image.new('RGB',(1440*S,1050*S),'#101b25');d=ImageDraw.Draw(canvas)
 font=lambda n:ImageFont.truetype('C:/Windows/Fonts/msyh.ttc',n*S)
 d.text((26*S,18*S),'ELECTRON · 多方块模型 / 实际网格离线预览',font=font(27),fill='#a2e2ca')
-names={'DISTRIBUTION':'锥形输电塔 · 三层横担','WIND':'风机 · 塔架 / 机舱 / 叶轮','THERMAL':'火电 · 锅炉 / 排烟管','HYDRO':'水电 · 涡壳 / 发电机','NUCLEAR':'核电 · 容器 / 换热器','LIGHTNING':'引雷 · 瓷套 / 储能组','SUBSTATION':'变电 · 油箱 / 散热片','MAINS':'进线 · 立式配电柜'}
+names={'DISTRIBUTION':'锥形输电塔 · 三层横担','WIND':'风机 · 锥形塔筒 / 底部出线','THERMAL':'火电 · 锅炉 / 排烟管','HYDRO':'水电 · 涡壳 / 发电机','NUCLEAR':'核电 · 30×30 独立设施','LIGHTNING':'引雷 · 瓷套 / 储能组','SUBSTATION':'变电 · 油箱 / 散热片','MAINS':'进线 · 立式配电柜'}
 order=['DISTRIBUTION','WIND','THERMAL','NUCLEAR','LIGHTNING','HYDRO','SUBSTATION','MAINS']
 def add(a,b):return tuple(x+y for x,y in zip(a,b))
 def sub(a,b):return tuple(x-y for x,y in zip(a,b))
@@ -19,7 +19,7 @@ def norm(v):return mul(v,1/math.sqrt(sum(x*x for x in v)))
 def verts(p):
     a,b=p['a'],p['b']
     if p.get('sides',0)>4:
-        n=p['sides'];return [(a[0]+p['r']*math.cos(i*math.tau/n),y,a[2]+p['r']*math.sin(i*math.tau/n)) for y in (a[1],b[1]) for i in range(n)]
+        n=p['sides'];return [(a[0]+r*math.cos(i*math.tau/n),y,a[2]+r*math.sin(i*math.tau/n)) for y,r in ((a[1],p['r']),(b[1],p.get('top_r',p['r']))) for i in range(n)]
     if not p['beam']:
         return [(a[0],a[1],a[2]),(b[0],a[1],a[2]),(b[0],b[1],a[2]),(a[0],b[1],a[2]),(a[0],a[1],b[2]),(b[0],a[1],b[2]),(b[0],b[1],b[2]),(a[0],b[1],b[2])]
     axis=norm(sub(b,a));u=cross(axis,(0,1,0))
@@ -35,8 +35,10 @@ for i,key in enumerate(order):
     if key=='WIND':
         for irot in range(3):
             angle=irot*math.tau/3+.2
-            for a,b in [((-.12,.12,-.09),(.12,.7,.09)),((-.105,.7,-.07),(.07,1.5,.07)),((-.08,1.5,-.045),(.015,2.15,.045))]:
-                p={'a':a,'b':b,'beam':False,'texture':'turbine_white'};vs=verts(p)
+            stations=[(.12,-.12,.12,.11),(1.2,-.43,.18,.10),(3.3,-.23,.06,.055),(4.8,-.08,-.045,.018)]
+            for a,b in zip(stations,stations[1:]):
+                p={'beam':False,'texture':'turbine_white'}
+                vs=[(a[1],a[0],-a[3]),(a[2],a[0],-a[3]),(b[2],b[0],-b[3]),(b[1],b[0],-b[3]),(a[1],a[0],a[3]),(a[2],a[0],a[3]),(b[2],b[0],b[3]),(b[1],b[0],b[3])]
                 meshes.append(([(.5+x*math.cos(angle)-y*math.sin(angle),2.5+x*math.sin(angle)+y*math.cos(angle),-.72+z) for x,y,z in vs],p))
     points=[projection(v) for vs,p in meshes for v in vs];xmin=min(v[0] for v in points);xmax=max(v[0] for v in points);ymin=min(v[1] for v in points);ymax=max(v[1] for v in points)
     scale=min(310/(xmax-xmin),380/(ymax-ymin));cx=x0+171-(xmin+xmax)/2*scale;cy=y0+248-(ymin+ymax)/2*scale

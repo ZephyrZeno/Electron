@@ -7,6 +7,7 @@ from pathlib import Path
 import json
 import itertools
 import math
+import sys
 from functools import lru_cache
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 
@@ -49,7 +50,7 @@ for p in models:
 
 # The full mounted assembly, including the static crank preview, fits the 4/16 envelope.
 for path in (A/'blockstates').glob('*.json'):
-    if 'multipart' not in read(path):continue
+    if 'multipart' not in read(path) or path.stem in ('iron_pipe','glass_pipe','pipe_valve'):continue
     inventory=model('electron:block/'+path.stem+'_inventory')
     large=path.stem.startswith('substation_') or path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal','thermal_generator','hydro_generator','wind_generator','lightning_collector','nuclear_reactor','substation','mains_inlet')
     assert min(e['from'][2] for e in inventory['elements'])>=(0 if large else 12),path
@@ -64,6 +65,12 @@ for path in (A/'blockstates').glob('*.json'):
     obj=read(path)
     if 'variants' in obj:
         for variant in obj['variants'].values():model(variant['model'])
+    elif path.stem in ('iron_pipe','glass_pipe','pipe_valve'):
+        for flags in itertools.product(['true','false'],repeat=6):
+            state=dict(zip(('down','up','north','south','east','west'),flags))
+            matches=[p for p in obj['multipart'] if all(state[k]==v for k,v in p.get('when',{}).items())]
+            assert len(matches)==1+flags.count('true'),(path,state)
+            for part in matches:model(part['apply']['model'])
     else:
         for facing,turn,broken,enabled,power in itertools.product(['up','down','north','south','east','west'],map(str,range(4)),['true','false'],['true','false'],map(str,range(16))):
             state=dict(facing=facing,turn=turn,broken=broken,enabled=enabled,power=power)
@@ -153,6 +160,11 @@ def sheet(filename,title,names):
         d.text((x+10,y+222),zh[key],font=font,fill='#e5edf3')
     canvas.save(OUT/filename)
 
+if '--industrial' in sys.argv:
+    sheet('industrial.png','ELECTRON / 机组部件、供水与接线',[(n,'item/'+n) for n in ['boiler_module','turbine_module','alternator_module','condenser_module','plant_control_module','reactor_vessel_module','control_rod_drive','safety_valve_module','water_pump','wind_mast','wind_base','cable_breakout','iron_pipe','glass_pipe','pipe_valve','boiler_water_tank','reactor_coolant_tank','industrial_assembly_table']])
+    print(OUT/'industrial.png')
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    sys.exit(0)
 gates=['and','or','not','xor','nand','nor','xnor','buffer']
 sheet('gates.png','ELECTRON / 薄板逻辑门 · 红石版与电线版',[(g+'_gate','block/'+g+'_gate_on') for g in gates]+[('wire_'+g+'_gate','block/wire_'+g+'_gate_inventory') for g in gates])
 names=['hand_crank','resistor_100','resistor_220','resistor_1000','indicator_led','circuit_switch','assembly_table','binary_memory','wire_spool','wire_cutters','multimeter','terminal','wall_port_2','wire_bridge','engineering_handbook','burnt_component']

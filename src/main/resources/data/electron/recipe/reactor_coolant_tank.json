@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:boiler_water_tank"
+    },
+    {
+      "item": "electron:reactor_casing"
+    },
+    {
+      "item": "minecraft:iron_block"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:glass"
+    }
+  ],
+  "result": {
+    "id": "electron:reactor_coolant_tank",
+    "count": 1
+  }
+}

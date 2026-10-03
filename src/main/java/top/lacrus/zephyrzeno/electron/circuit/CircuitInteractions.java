@@ -80,16 +80,17 @@ public final class CircuitInteractions {
         }
         if(start.id().equals(end.id())){n.remove("start");n.remove("end");CircuitToolItem.data(stack,n);say(player,"message.electron.wire_end");return;}
         boolean cable=CircuitToolItem.cable(stack),overhead=OverheadCable.connection(copy,start,end,cable);
-        var path=copy.connectionRoute(world,start,end,n.getInt("layer")&1,cable);copy.validateCapacity(path);int units=overhead?OverheadCable.units(copy,path):copy.lengthUnits(path,start,end);
+        var path=copy.connectionRoute(world,start,end,n.getInt("layer")&1,cable);copy.validateCapacity(path);boolean vertical=VerticalWire.connection(copy,start,end);int units=vertical?VerticalWire.units(copy,path):overhead?OverheadCable.units(copy,path):copy.lengthUnits(path,start,end);
+        if(vertical)for(var cell:VerticalWire.cells(copy,path))if(!mayEdit(world,player,cell))throw new CircuitError("error.electron.path_permission");
         for(var point:path)if(!mayEdit(world,player,point.host()))throw new CircuitError("error.electron.path_permission");
         if(overhead)for(var cell:OverheadCable.cells(OverheadCable.vertices(copy,path)))if(!mayEdit(world,player,cell))throw new CircuitError("error.electron.path_permission");
         if(!player.isCreative()&&CircuitToolItem.units(stack)<units+nodeCost)throw new CircuitError("error.electron.material",units+nodeCost);
         // All geometry, permissions and material checks complete before any mutation.
-        var wire=new Wire(UUID.randomUUID(),start.id(),end.id(),CircuitToolItem.color(stack),path,units,cable,overhead);copy.wires.put(wire.id(),wire);s.commitWiring(copy);
+        var wire=new Wire(UUID.randomUUID(),start.id(),end.id(),CircuitToolItem.color(stack),path,units,cable,overhead,vertical);copy.wires.put(wire.id(),wire);s.commitWiring(copy);
         if(!player.isCreative())n.putInt("units",CircuitToolItem.units(stack)-units-nodeCost);
         if(end.id().startsWith("c:"))n.remove("start");else n.putString("start",end.id());
         n.remove("end");CircuitToolItem.data(stack,n);CircuitNetworking.preview(player,List.of());
-        say(player,"message.electron.connected",units,nodeCost);
+        ElectricalEffects.play(world,p.host(),cable?ElectricalEffects.CABLE_CONNECT:ElectricalEffects.WIRE_CONNECT,.45f,1);say(player,"message.electron.connected",units,nodeCost);
     }
     private static void install(ServerWorld world,ServerPlayerEntity player,ItemStack stack,CircuitState s,SurfacePoint point) {
         BlockPos pos=point.host();BlockState host=world.getBlockState(pos);String id=Registries.BLOCK.getId(host.getBlock()).toString();
@@ -111,7 +112,7 @@ public final class CircuitInteractions {
             for(var e:core.endpoints())if(s.endpoints().values().stream().anyMatch(x->x.point().equals(e.point()))||s.wires.values().stream().anyMatch(w->w.path().contains(e.point())))throw new CircuitError("error.electron.port_occupied");
             s.validateCoreCapacity(pos);s.cores.put(core.id(),core);
         }
-        boolean bridge=stack.isOf(Foundry.BRIDGE);if(!player.isCreative())stack.decrement(1);s.changed();say(player,bridge?"message.electron.bridge_installed":"message.electron.installed");
+        boolean bridge=stack.isOf(Foundry.BRIDGE);if(!player.isCreative())stack.decrement(1);s.changed();ElectricalEffects.play(world,pos,ElectricalEffects.TERMINAL,.35f,1);say(player,bridge?"message.electron.bridge_installed":"message.electron.installed");
     }
     private static void cut(ServerWorld world,ServerPlayerEntity player,ItemStack stack,CircuitState s,SurfacePoint p,Vec3d hit,EquipmentSlot slot) {
         if(player.isSneaking()) {
@@ -126,7 +127,8 @@ public final class CircuitInteractions {
         int layer=CircuitToolItem.data(stack).getInt("layer")&1;
         Wire selected=s.wires.values().stream().min(Comparator.comparingDouble(w->distance(s,w,p,hit))).filter(w->distance(s,w,p,hit)<.025).orElseThrow(()->new CircuitError("error.electron.no_wire",layer));
         if(selected.hosts().stream().anyMatch(pos->!mayEdit(world,player,pos))||(selected.overhead()&&OverheadCable.cells(s.overheadVertices(selected)).stream().anyMatch(pos->!mayEdit(world,player,pos))))throw new CircuitError("error.electron.cut_permission");
-        s.wires.remove(selected.id());s.changed();give(player,CircuitToolItem.spool(selected.units(),selected.color(),selected.cable()));stack.damage(1,player,slot);say(player,"message.electron.recovered",selected.units());
+        if(selected.vertical()&&VerticalWire.cells(s,selected.path()).stream().anyMatch(pos->!mayEdit(world,player,pos)))throw new CircuitError("error.electron.cut_permission");
+        ElectricalEffects.play(world,p.host(),ElectricalEffects.WIRE_CUT,.4f,1);s.wires.remove(selected.id());s.changed();give(player,CircuitToolItem.spool(selected.units(),selected.color(),selected.cable()));stack.damage(1,player,slot);say(player,"message.electron.recovered",selected.units());
     }
     private static double distance(CircuitState state,Wire wire,SurfacePoint target,Vec3d hit){return wire.path().stream().filter(p->p.host().equals(target.host())&&p.face()==target.face()&&p.layer()==target.layer()).mapToDouble(p->state.position(p).squaredDistanceTo(state.position(target))).min().orElse(100);}
     private static void give(ServerPlayerEntity player,ItemStack stack){if(!player.getInventory().insertStack(stack))player.dropItem(stack,false);}

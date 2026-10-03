@@ -23,7 +23,8 @@ public final class CircuitParts {
             return new Box(a,b).expand(.0624);
         }
     }
-    public record Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units,boolean cable,boolean overhead) {
+    public record Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units,boolean cable,boolean overhead,boolean vertical) {
+        public Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units,boolean cable,boolean overhead){this(id,a,b,color,path,units,cable,overhead,false);}
         public Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units,boolean cable){this(id,a,b,color,path,units,cable,false);}
         public Wire(UUID id,String a,String b,int color,List<SurfacePoint> path,int units){this(id,a,b,color,path,units,false);}
         public Wire { path=List.copyOf(path); }

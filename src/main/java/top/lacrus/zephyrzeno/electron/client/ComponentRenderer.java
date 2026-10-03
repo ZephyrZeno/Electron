@@ -27,7 +27,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         Matrix4f matrix=matrices.peek().getPositionMatrix();
         if(top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state)){
             AssemblyRenderer.draw(entity,block,consumers,matrix,dt,light,overlay);
-            for(int i=0;i<ComponentPins.count(block.kind);i++)label(consumers,matrix,Direction.UP,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.4,.82,ComponentPins.label(block.kind,i),.007f,0xe4eeee,light);
+            for(int i=0;i<(block.kind==ComponentBlock.Kind.WIND?0:ComponentPins.count(block.kind));i++)label(consumers,matrix,Direction.UP,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.4,.82,ComponentPins.label(block.kind,i),.007f,0xe4eeee,light);
             return;
         }
         if(block.kind==ComponentBlock.Kind.CRANK||block.kind==ComponentBlock.Kind.GENERATOR){
@@ -76,7 +76,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
             label(consumers,matrix,face,turn,10,15,inset-.13,"RS OUT",.007f,0xf7b498,light);
         }
         if(block.kind!=ComponentBlock.Kind.GATE&&ComponentPins.count(block.kind)>2){
-            for(int i=0;i<ComponentPins.count(block.kind);i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.55,inset-.13,ComponentPins.label(block.kind,i),.0062f,0xe4eeee,light);
+            for(int i=block==top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE?2:0;i<ComponentPins.count(block.kind);i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.55,inset-.13,ComponentPins.label(block.kind,i),.0062f,0xe4eeee,light);
         }
     }
     private void label(VertexConsumerProvider out,Matrix4f parent,Direction face,int turn,double u,double v,double d,String value,float scale,int color,int light){

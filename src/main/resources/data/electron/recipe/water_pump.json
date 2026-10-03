@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:dc_motor"
+    },
+    {
+      "item": "minecraft:bucket"
+    },
+    {
+      "item": "electron:iron_pipe"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    }
+  ],
+  "result": {
+    "id": "electron:water_pump",
+    "count": 1
+  }
+}

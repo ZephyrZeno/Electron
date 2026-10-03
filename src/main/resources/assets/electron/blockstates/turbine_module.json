@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "electron:block/turbine_module"
+    }
+  }
+}

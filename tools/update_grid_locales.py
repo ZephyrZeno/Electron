@@ -83,3 +83,5 @@ for i,locale in enumerate(('zh_cn','en_us')):
 # Apply the current assembly chapter after the earlier grid translations.
 import runpy
 runpy.run_path(str(Path(__file__).with_name("generate_assembly_assets.py")))
+runpy.run_path(str(Path(__file__).with_name("generate_industrial_assets.py")))
+runpy.run_path(str(Path(__file__).with_name("generate_industrial_guide.py")))

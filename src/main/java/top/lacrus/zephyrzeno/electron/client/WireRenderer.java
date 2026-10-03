@@ -13,9 +13,11 @@ import top.lacrus.zephyrzeno.electron.circuit.CircuitParts.*;
 final class WireRenderer {
     static void draw(VertexConsumerProvider consumers,Matrix4f matrix,Vec3d camera,CircuitState circuit,Wire w){
         var out=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/"+(w.cable()?"cable_":"wire_")+w.color()+".png")));
-        var points=w.overhead()?circuit.overheadVertices(w):WireGeometry.vertices(w.path(),circuit::inset);
+        var points=w.vertical()?VerticalWire.vertices(circuit,w.path()):w.overhead()?circuit.overheadVertices(w):WireGeometry.vertices(w.path(),circuit::inset);
         double radius=w.cable()?OverheadCable.RADIUS:.010,offset=0;
-        for(int i=1;i<points.size();i++){var a=points.get(i-1);var b=points.get(i);segment(out,matrix,camera,a,b,radius,offset);offset+=a.distanceTo(b)*4;}
+        for(int i=1;i<points.size();i++){var a=points.get(i-1);var b=points.get(i);int steps=w.cable()&&!w.overhead()?Math.max(1,(int)Math.ceil(a.distanceTo(b)*4)):1;
+            for(int j=0;j<steps;j++){var aa=a.lerp(b,j/(double)steps);var bb=a.lerp(b,(j+1d)/steps);double near=Math.min(aa.distanceTo(points.getFirst()),bb.distanceTo(points.getLast()));double local=w.cable()&&!w.overhead()?radius*Math.clamp(.36+near*1.28,.36,1):radius;segment(out,matrix,camera,aa,bb,local,offset);offset+=aa.distanceTo(bb)*4;}
+        }
         if(!w.overhead())for(int i=0;i<2;i++){
             var p=i==0?w.path().getFirst():w.path().getLast();var contact=circuit.endpoints().get(i==0?w.a():w.b());
             if(contact!=null&&contact.point().layer()!=p.layer())segment(out,matrix,camera,circuit.position(contact.point()),circuit.position(p),radius,offset);

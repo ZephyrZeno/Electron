@@ -1,9 +1,27 @@
 {
   "replace": false,
   "values": [
+    "electron:alternator_module",
+    "electron:boiler_module",
+    "electron:boiler_water_tank",
+    "electron:cable_breakout",
+    "electron:condenser_module",
+    "electron:control_rod_drive",
+    "electron:glass_pipe",
+    "electron:industrial_assembly_table",
+    "electron:iron_pipe",
+    "electron:pipe_valve",
+    "electron:plant_control_module",
+    "electron:reactor_coolant_tank",
+    "electron:reactor_vessel_module",
+    "electron:safety_valve_module",
     "electron:substation_11k",
     "electron:substation_24k",
     "electron:substation_6k6",
-    "electron:uranium_ore"
+    "electron:turbine_module",
+    "electron:uranium_ore",
+    "electron:water_pump",
+    "electron:wind_base",
+    "electron:wind_mast"
   ]
 }

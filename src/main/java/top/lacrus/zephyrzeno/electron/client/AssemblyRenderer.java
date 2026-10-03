@@ -19,19 +19,37 @@ final class AssemblyRenderer {
         if(b.kind==ComponentBlock.Kind.WIND){
             e.rotorAngle+=dt*.045*e.displayedLight;
             for(int i=0;i<3;i++){
-                var rotor=new Matrix4f(m).translate(.5f,2.5f,-.72f).rotateZ((float)(e.rotorAngle+i*Math.PI*2/3));
+                var rotor=new Matrix4f(m).translate(.5f,0,.5f).rotateY((float)(-Math.PI/2*e.getCachedState().get(ComponentBlock.TURN))).translate(-.5f,0,-.5f).translate(.5f,2.5f,-.72f).rotateZ((float)(e.rotorAngle+i*Math.PI*2/3));
                 var out=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/assembled/turbine_white.png")));
-                ComponentRenderer.centeredBox(out,rotor,-.12,.12,-.09,.12,.7,.09,light,overlay);
-                ComponentRenderer.centeredBox(out,rotor,-.105,.7,-.07,.07,1.5,.07,light,overlay);
-                ComponentRenderer.centeredBox(out,rotor,-.08,1.5,-.045,.015,2.15,.045,light,overlay);
+                blade(out,rotor,light,overlay);
+            }
+        }
+        if(b.kind==ComponentBlock.Kind.NUCLEAR&&e.getWorld()!=null){
+            var tankPos=top.lacrus.zephyrzeno.electron.industrial.PlantStructures.tankPos(e.getPos(),e.getCachedState());
+            if(e.getWorld().getBlockEntity(tankPos) instanceof top.lacrus.zephyrzeno.electron.industrial.FluidEntity tank&&tank.amount>0){
+                var water=consumers.getBuffer(RenderLayer.getEntityTranslucent(Electron.id("textures/block/industrial/water.png")));
+                var basin=new Matrix4f(m).translate(.5f,0,.5f).rotateY((float)(-Math.PI/2*e.getCachedState().get(ComponentBlock.TURN))).translate(-.5f,0,-.5f);
+                ComponentRenderer.centeredBox(water,basin,-13.69,.22,-11.69,-9.01,.23+2.05*tank.amount/tank.capacity(),-5.41,light,overlay);
             }
         }
         // Crossarms provide additional taps bonded to the central service terminals.
-        var s=e.getCachedState();int count=ComponentPins.count(b.kind);
+        var s=e.getCachedState();int count=b.kind==ComponentBlock.Kind.WIND?0:ComponentPins.count(b.kind);
         var pin=consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/copper.png")));
         for(int i=0;i<count;i++){
             var at=ComponentGeometry.local(Direction.UP,s.get(ComponentBlock.TURN),ComponentPins.u(b.kind,i),ComponentPins.v(b.kind,i),1);
             ComponentRenderer.centeredBox(pin,m,at.x-.035,.93,at.z-.035,at.x+.035,.965,at.z+.035,light,overlay);
+        }
+    }
+    private static void blade(VertexConsumer out,Matrix4f m,int light,int overlay){
+        // Swept, tapered airfoil outline; its envelope stays inside the physical rotor disk.
+        double[][] stations={{.12,-.12,.12,.11},{1.2,-.43,.18,.10},{3.3,-.23,.06,.055},{4.8,-.08,-.045,.018}};
+        for(int s=1;s<stations.length;s++){
+            var a=stations[s-1];var b=stations[s];
+            Vec3d[] v={new Vec3d(a[1],a[0],-a[3]),new Vec3d(a[2],a[0],-a[3]),new Vec3d(b[2],b[0],-b[3]),new Vec3d(b[1],b[0],-b[3]),new Vec3d(a[1],a[0],a[3]),new Vec3d(a[2],a[0],a[3]),new Vec3d(b[2],b[0],b[3]),new Vec3d(b[1],b[0],b[3])};
+            for(int[] face:new int[][]{{0,3,2,1},{4,5,6,7},{0,4,7,3},{1,2,6,5},{3,7,6,2},{0,1,5,4}}){
+                var normal=v[face[1]].subtract(v[face[0]]).crossProduct(v[face[2]].subtract(v[face[0]])).normalize();
+                for(int i=0;i<4;i++){var q=v[face[i]];out.vertex(m,(float)q.x,(float)q.y,(float)q.z).color(255,255,255,255).texture(i==0||i==3?0:1,i<2?0:1).overlay(overlay).light(light).normal((float)normal.x,(float)normal.y,(float)normal.z);}
+            }
         }
     }
     private static void cylinder(VertexConsumer out,Matrix4f m,AssemblyGeometry.Piece p,int light,int overlay){
@@ -39,8 +57,9 @@ final class AssemblyRenderer {
             double a=i*Math.PI*2/p.sides(),b=(i+1d)*Math.PI*2/p.sides();
             var aa=new Vec3d(p.a().x+Math.cos(a)*p.radius(),p.a().y,p.a().z+Math.sin(a)*p.radius());
             var bb=new Vec3d(p.a().x+Math.cos(b)*p.radius(),p.a().y,p.a().z+Math.sin(b)*p.radius());
-            var up=new Vec3d(0,p.b().y-p.a().y,0);
-            Vec3d[][] faces={{aa,aa.add(up),bb.add(up),bb},{p.b(),bb.add(up),aa.add(up),p.b()},{p.a(),aa,bb,p.a()}};
+            var aaTop=new Vec3d(p.b().x+Math.cos(a)*p.topRadius(),p.b().y,p.b().z+Math.sin(a)*p.topRadius());
+            var bbTop=new Vec3d(p.b().x+Math.cos(b)*p.topRadius(),p.b().y,p.b().z+Math.sin(b)*p.topRadius());
+            Vec3d[][] faces={{aa,aaTop,bbTop,bb},{p.b(),bbTop,aaTop,p.b()},{p.a(),aa,bb,p.a()}};
             for(var face:faces){
                 var normal=face[1].subtract(face[0]).crossProduct(face[2].subtract(face[0])).normalize();
                 for(int j=0;j<4;j++){var q=face[j];out.vertex(m,(float)q.x,(float)q.y,(float)q.z).color(255,255,255,255).texture(j==0||j==3?0:1,j<2?0:1).overlay(overlay).light(light).normal((float)normal.x,(float)normal.y,(float)normal.z);}
