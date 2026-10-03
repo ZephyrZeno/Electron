@@ -25,6 +25,11 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         double switchTarget=state.get(ComponentBlock.ENABLED)?1:0;
         entity.displayedSwitch+=(switchTarget-entity.displayedSwitch)*(1-Math.exp(-dt*.9));
         Matrix4f matrix=matrices.peek().getPositionMatrix();
+        if(top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state)){
+            AssemblyRenderer.draw(entity,block,consumers,matrix,dt,light,overlay);
+            for(int i=0;i<ComponentPins.count(block.kind);i++)label(consumers,matrix,Direction.UP,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.4,.82,ComponentPins.label(block.kind,i),.007f,0xe4eeee,light);
+            return;
+        }
         if(block.kind==ComponentBlock.Kind.CRANK||block.kind==ComponentBlock.Kind.GENERATOR){
             double phase=Math.clamp((now-entity.animationStart)/18,0,1),angle=2*Math.PI*(phase*phase*(3-2*phase));
             cuboid(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),matrix,face,turn,inset,6.5,11,-.7,9.5,12,-.4,angle,light,overlay);
@@ -44,14 +49,6 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
             var rotor=new Matrix4f(matrix);var center=ComponentGeometry.local(face,turn,8,8,0);
             rotor.translate((float)center.x,(float)center.y,(float)center.z).rotate((float)entity.rotorAngle,face.getOffsetX(),face.getOffsetY(),face.getOffsetZ()).translate((float)-center.x,(float)-center.y,(float)-center.z);
             cuboid(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),rotor,face,turn,inset,6,7.5,-1,10,8.5,1,0,light,overlay);
-        }else if(block.kind==ComponentBlock.Kind.WIND){
-            entity.rotorAngle+=dt*.07*entity.displayedLight;
-            var hub=new Matrix4f(matrix).translate(.5f,1.8f,.5f);
-            centeredBox(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),hub,-.13,-1,-.13,.13,0,.13,light,overlay);
-            for(int i=0;i<3;i++){
-                var blade=new Matrix4f(hub).rotateZ((float)(entity.rotorAngle+i*Math.PI*2/3));
-                centeredBox(consumers.getBuffer(RenderLayer.getEntityCutoutNoCull(METAL)),blade,-.09,.08,-.2,.09,1.55,-.12,light,overlay);
-            }
         }
         if(block.kind==ComponentBlock.Kind.LED&&entity.displayedLight>.002)glow(consumers,matrix,face,turn,7,11,inset-1.05,4.7,(float)entity.displayedLight,.9f,.22f,.1f);
         if(block.kind==ComponentBlock.Kind.LAMP&&entity.displayedLight>.002)glow(consumers,matrix,face,turn,7,11,inset-1.02,5,(float)entity.displayedLight,1,.9f,.65f);
@@ -104,7 +101,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         var out=consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(GLOW));double h=width/2;double[][] coords={{u-h,v+h,0,0},{u-h,v-h,0,1},{u+h,v-h,1,1},{u+h,v+h,1,0}};
         for(var c:coords){var p=ComponentGeometry.local(face,turn,c[0],c[1],depth);out.vertex(matrix,(float)p.x,(float)p.y,(float)p.z).color(r,g,b,alpha*.75f).texture((float)c[2],(float)c[3]).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(face.getOffsetX(),face.getOffsetY(),face.getOffsetZ());}
     }
-    @Override public boolean rendersOutsideBoundingBox(ComponentEntity entity){return entity.getCachedState().isOf(Foundry.WIND);}
+    @Override public boolean rendersOutsideBoundingBox(ComponentEntity entity){return top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(entity.getCachedState())||entity.getCachedState().isOf(Foundry.WIND);}
     static void centeredBox(VertexConsumer out,Matrix4f m,double x0,double y0,double z0,double x1,double y1,double z1,int light,int overlay){
         cuboid(out,m,Direction.NORTH,0,0,x0*16,y0*16,z0*16,x1*16,y1*16,z1*16,0,light,overlay);
     }

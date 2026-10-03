@@ -1,10 +1,10 @@
 # Electron: Circuit Foundry
 
-Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.4.0-alpha.1**。Mod ID：`electron`；Java 包：`top.lacrus.zephyrzeno.electron`。
+Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.4.1-alpha.1**。Mod ID：`electron`；Java 包：`top.lacrus.zephyrzeno.electron`。
 
-0.4.0-alpha.1 修正工程灯亮度与电机中心轴，物品实现统一迁入 `item` 包。新增独立颜色导线/电缆、绝缘外皮纹理、连续斜撑塔架、低空高压架线漏电、传动轴与旋转夹持台，并加入火电、水电、风电、引雷、核电、市电进线和变电设施。
+0.4.1-alpha.1 加入多方块成型：锥形电塔、三层横担和绝缘子、独立机组整体模型与分格碰撞，支持拆解恢复原材料。新增三种固定高压变电站；工程手册改为章节目录、步骤卡片与图片放大。安装步骤和高度要求移入手册。
 
-大型供电玩法与建造图式见 [大型供电与传动 v4](docs/design/GRID_AND_MECHANICS_V4.md)。本版大型网络为 **240 V 整流直流母线**，固定变电柜输出 24 V；它是有实际燃料和电能支出的游戏模型，不模拟三相交流。市电柜必须接发电站，不是无限电源。小型电路和 PCB 仍按三层设计分开。
+本版玩法与结构见 [多方块与高压 v5](docs/design/MULTIBLOCKS_V5.md)。成型火电 11 kV、水电 6.6 kV、核电机组 24 kV，经对应固定变电站降到 240 V，再降至 24 V。风机与引雷装置内置 240 V 输出级；雷击记录 300 MV / 30 kA 短时峰值并回收有限能量。使用直流等效求解，没有免费调压或无限市电。旧未成型设施保留 240 V 兼容行为。
 
 新版地图主要灯和电机改由搭建好的风机及变电柜供电，入口两座塔也接入实际负载。手摇课程仍需手动补电，电容课程需按按钮，故障区需手摇启动。所有器件放在平滑石台上；新增大型设施展示、传动台和材料箱。发行包不覆盖已经游玩的旧存档。
 
@@ -14,7 +14,7 @@ Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.4.0-alpha.1**。Mod I
 
 ## 安装
 
-将 `build/libs/electron-0.4.0-alpha.1.jar` 放进 mods，同时安装适用于 Minecraft 1.21.1 的 Fabric Loader 和 Fabric API，使用 Java 21。替换已有的旧 Electron JAR，同一个 Mod ID 不可装两份。旧逻辑门、器件和存储器保留注册 ID，旧线路保留已付费长度。
+将 `build/libs/electron-0.4.1-alpha.1.jar` 放进 mods，同时安装适用于 Minecraft 1.21.1 的 Fabric Loader 和 Fabric API，使用 Java 21。替换已有的旧 Electron JAR，同一个 Mod ID 不可装两份。旧逻辑门、器件和存储器保留注册 ID，旧线路保留已付费长度。
 
 若要继续使用生成器，另装 `calculator/build/libs/electron-calculator-0.2.0-alpha.4.jar`。已经生成的计算器由原版方块组成；正常运算不调用主线电学系统。
 
@@ -179,6 +179,8 @@ alpha.5 新增 **自复位按钮、100 mF / 10 V 极性电容、10 kΩ 电阻**�
 硅二极管 A→K 导通，银环为 K，正向压降约 0.7–0.8 V，额定电流 50 mA。25 mA 保险丝导通电阻 0.2 Ω，持续过流会先熔断保护负载，不能替代正常限流电阻。
 
 当前采用直流电阻网络、分段半导体、电容伴随模型、限流电池、带功率约束的转换器和电机反电动势模型。交流、PCB 制造、E32 开发板、外部机械传动与完整 CPU 尚未实现。E32 将模拟游戏内开发板能力，不兼容真实 STM32。下一步为 PCB 最小制作闭环；分类、跨尺度接口、玩家建造大型工程和后续实施顺序见 [设计 v3](docs/design/ELECTRON_THREE_SCALES_V3.md)。
+
+不添加或安装光影包；此前 Electron Lights 副本已撤回，原光影包保持不变。教学地图始终新建，不覆盖玩家旧存档。
 
 ## 构建和验证
 

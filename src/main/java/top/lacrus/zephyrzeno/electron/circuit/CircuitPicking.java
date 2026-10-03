@@ -9,6 +9,13 @@ import top.lacrus.zephyrzeno.electron.foundry.ComponentBlock;
 public final class CircuitPicking {
     public static SurfacePoint pick(World world,CircuitState state,BlockHitResult hit,int layer){
         var block=world.getBlockState(hit.getBlockPos());
+        var origin=hit.getBlockPos();
+        if(world.getBlockEntity(origin) instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyPartEntity part)origin=part.origin;
+        if(world.getBlockState(origin).isOf(top.lacrus.zephyrzeno.electron.foundry.Foundry.TOWER_TERMINAL)){
+            var core=origin;
+            var contact=state.endpoints().values().stream().filter(e->e.point().host().equals(core)).min(java.util.Comparator.comparingDouble(e->OverheadCable.attachment(state,e.point()).squaredDistanceTo(hit.getPos())));
+            if(contact.isPresent()&&OverheadCable.attachment(state,contact.get().point()).squaredDistanceTo(hit.getPos())<.22)return contact.get().point().layer(layer);
+        }
         Direction face=hit.getSide();
         if(block.getBlock() instanceof ComponentBlock component){
             var front=block.get(ComponentBlock.FACING);var projected=SurfacePoint.hit(hit.getBlockPos(),front,hit.getPos(),layer);

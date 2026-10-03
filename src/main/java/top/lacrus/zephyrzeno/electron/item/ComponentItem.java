@@ -25,31 +25,31 @@ public final class ComponentItem extends BlockItem {
             switch(block.kind){
                 case CRANK -> {line(lines,"crank_voltage");line(lines,"crank_energy");}
                 case RESISTOR -> {line(lines,"resistor_rating",(int)block.resistance);line(lines,"resistor_voltage",String.format(Locale.ROOT,"%.2f",Math.sqrt(.25*block.resistance)));}
-                case LED -> {line(lines,"led_voltage");line(lines,"led_current");line(lines,"led_series");}
+                case LED -> {line(lines,"led_voltage");line(lines,"led_current");}
                 case SWITCH -> line(lines,"switch_rating");
                 case BUTTON -> {line(lines,"button_pulse");line(lines,"switch_rating");}
                 case CAPACITOR -> {line(lines,"capacitor_rating");line(lines,"capacitor_polarity");line(lines,"capacitor_storage");}
-                case BATTERY -> {if(Foundry.CREATIVE_READINGS.getAsBoolean())line(lines,"battery_energy",String.format(Locale.ROOT,"%.2f",stack.getOrDefault(Foundry.BATTERY_ENERGY,0d)));else line(lines,"battery_capacity");line(lines,"battery_input");line(lines,"battery_output");line(lines,"battery_controls");}
+                case BATTERY -> {if(Foundry.CREATIVE_READINGS.getAsBoolean())line(lines,"battery_energy",String.format(Locale.ROOT,"%.2f",stack.getOrDefault(Foundry.BATTERY_ENERGY,0d)));else line(lines,"battery_capacity");line(lines,"battery_input");line(lines,"battery_output");}
                 case TERMINAL_STRIP -> {line(lines,"terminal_strip_buses");line(lines,"terminal_strip_resistance");}
-                case REDSTONE_SWITCH -> {line(lines,"redstone_switch_coil");line(lines,"redstone_switch_contacts");line(lines,"redstone_switch_direction");}
+                case REDSTONE_SWITCH -> {line(lines,"redstone_switch_coil");line(lines,"redstone_switch_contacts");}
                 case GATE -> {line(lines,"gate_voltage");line(lines,"gate_current");line(lines,"gate_threshold");}
                 case DIODE -> {line(lines,"diode_voltage");line(lines,"diode_current");}
-                case FUSE -> {line(lines,"fuse_rating");line(lines,"fuse_replace");}
-                case MOSFET -> {line(lines,"mosfet_rating");line(lines,"mosfet_pins");}
+                case FUSE -> {line(lines,"fuse_rating");}
+                case MOSFET -> {line(lines,"mosfet_rating");}
                 case RELAY -> {line(lines,"relay_rating");line(lines,"relay_isolation");}
-                case BOOST,BUCK -> {var spec=top.lacrus.zephyrzeno.electron.circuit.ConverterSpec.of(block.kind==ComponentBlock.Kind.BOOST,block.resistance);lines.add(Text.translatable("tooltip.electron.fixed_converter_rating",spec.minInput,spec.maxInput,spec.output,(int)(spec.maxCurrent*1000)).formatted(Formatting.GRAY));line(lines,"converter_power");line(lines,"converter_fixed");}
+                case BOOST,BUCK -> {var spec=top.lacrus.zephyrzeno.electron.circuit.ConverterSpec.of(block.kind==ComponentBlock.Kind.BOOST,block.resistance);lines.add(Text.translatable("tooltip.electron.fixed_converter_rating",spec.minInput,spec.maxInput,spec.output,(int)(spec.maxCurrent*1000)).formatted(Formatting.GRAY));line(lines,"converter_power");}
                 case GENERATOR -> line(lines,"generator_rating");
-                case DISTRIBUTION -> {line(lines,"terminal_strip_buses");line(lines,"distribution_rating");if(block==Foundry.TOWER_TERMINAL)line(lines,"tower_build");}
+                case DISTRIBUTION -> {line(lines,"terminal_strip_buses");line(lines,"distribution_rating");}
                 case BREAKER -> line(lines,"breaker_rating");
                 case LAMP -> line(lines,"lamp_rating");
-                case THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR -> {line(lines,"grid_source");line(lines,"plant_"+block.kind.name().toLowerCase(Locale.ROOT));}
-                case SUBSTATION -> {line(lines,"substation");line(lines,"plant_substation");}
+                case THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR -> {line(lines,"source_"+block.kind.name().toLowerCase(Locale.ROOT));}
+                case SUBSTATION -> {var spec=top.lacrus.zephyrzeno.electron.power.StationSpec.of(block.resistance);line(lines,"station_rating",(int)spec.min(),(int)spec.max(),(int)spec.output());}
                 case MAINS -> line(lines,"mains_inlet");
-                case MOTOR -> {line(lines,"motor_rating");line(lines,"motor_load");}
+                case MOTOR -> {line(lines,"motor_rating");}
             }
-            if(!block.kind.large())line(lines,"panel_height");
+
         }else if(getBlock() instanceof LogicGateBlock){
-            lines.add(Text.translatable("tooltip.electron.redstone_component").formatted(Formatting.RED));line(lines,"redstone_rating");line(lines,"panel_height");
+            lines.add(Text.translatable("tooltip.electron.redstone_component").formatted(Formatting.RED));line(lines,"redstone_rating");
         }
     }
     private static void line(List<Text> lines,String key,Object... args){lines.add(Text.translatable("tooltip.electron."+key,args).formatted(Formatting.GRAY));}

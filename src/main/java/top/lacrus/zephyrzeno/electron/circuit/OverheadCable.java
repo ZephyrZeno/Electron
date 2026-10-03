@@ -21,7 +21,7 @@ public final class OverheadCable {
     public static boolean tower(World world,BlockPos head){
         if(!world.getBlockState(head).isOf(Foundry.TOWER_TERMINAL)||world.getBlockState(head).get(ComponentBlock.FACING)!=Direction.UP)return false;
         var pos=head.down();int height=0;
-        while(height<64&&world.getBlockState(pos).isOf(Foundry.TOWER_SECTION)){height++;pos=pos.down();}
+        while(height<64&&top.lacrus.zephyrzeno.electron.multiblock.Assembly.original(world,pos).isOf(Foundry.TOWER_SECTION)){height++;pos=pos.down();}
         return height>=3&&height<64&&Block.isShapeFullCube(world.getBlockState(pos).getCollisionShape(world,pos));
     }
     public static List<Vec3d> curve(Vec3d a,Vec3d b){
@@ -30,7 +30,8 @@ public final class OverheadCable {
         for(int i=0;i<=count;i++){double t=i/(double)count;points.add(a.lerp(b,t).add(0,-4*sag*t*(1-t),0));}
         return List.copyOf(points);
     }
-    public static List<Vec3d> vertices(CircuitState state,List<SurfacePoint> path){return curve(state.position(path.getFirst()),state.position(path.getLast()));}
+    public static List<Vec3d> vertices(CircuitState state,List<SurfacePoint> path){return curve(attachment(state,path.getFirst()),attachment(state,path.getLast()));}
+    public static Vec3d attachment(CircuitState state,SurfacePoint point){var e=state.contactAt(point);if(e.isPresent()&&anchor(state,e.get())&&state.devices.get(point.host()).formed()){int pin=0;var pins=state.endpoints();for(int i=0;i<8;i++){var candidate=pins.get(CircuitParts.node(point.host(),i));if(candidate!=null&&candidate.point().equals(point)){pin=i;break;}}return Vec3d.of(point.host()).add(top.lacrus.zephyrzeno.electron.multiblock.AssemblyGeometry.rotate(top.lacrus.zephyrzeno.electron.multiblock.AssemblyGeometry.terminal(pin),state.devices.get(point.host()).turn()));}return state.position(point);}
     public static int units(CircuitState state,List<SurfacePoint> path){return units(vertices(state,path));}
     public static int units(List<Vec3d> points){double length=0;for(int i=1;i<points.size();i++)length+=points.get(i).distanceTo(points.get(i-1));return (int)Math.ceil(length*16-1e-8);}
     public static Set<BlockPos> cells(List<Vec3d> points){
@@ -41,7 +42,7 @@ public final class OverheadCable {
         for(int i=1;i<points.size();i++){
             Vec3d start=points.get(i-1),end=points.get(i);
             for(var pos:BlockPos.iterate(BlockPos.ofFloored(new Vec3d(Math.min(start.x,end.x)-(RADIUS+.01),Math.min(start.y,end.y)-(RADIUS+.01),Math.min(start.z,end.z)-(RADIUS+.01))),BlockPos.ofFloored(new Vec3d(Math.max(start.x,end.x)+(RADIUS+.01),Math.max(start.y,end.y)+(RADIUS+.01),Math.max(start.z,end.z)+(RADIUS+.01))))){
-                if(pos.equals(a)||pos.equals(b))continue;
+                if(pos.equals(a)||pos.equals(b)||world.getBlockEntity(pos) instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyPartEntity part&&(part.origin.equals(a)||part.origin.equals(b)))continue;
                 if(!world.isChunkLoaded(pos))return false;
                 for(var box:world.getBlockState(pos).getCollisionShape(world,pos).getBoundingBoxes()){
                     var bounds=box.offset(pos).expand(RADIUS);

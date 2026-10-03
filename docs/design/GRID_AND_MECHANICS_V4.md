@@ -63,9 +63,7 @@
 
 工程灯按电压产生原版 0–15 级方块光照，在额定供电时达到 15；断电和烧毁时为 0。灯罩换成暖白阵列材质。LED、工程灯及状态灯加入 labPBR `_s` 发光通道与独立 `_e` 贴图，明暗材质分开。
 
-本地工具 `tools/patch_shader_compat.py` 读取已安装光影的 `block.properties`，在海晶灯对应的光源分类中加入 Electron 的工程灯、LED，以及原版红石逻辑门/存储器的通电状态，共 11 个发光方块 ID。只匹配非零功率、未烧毁或 `powered=true` 的状态。
-
-它制作带 `Electron Lights` 后缀的副本，保留原光影，校验 ZIP 与条目，原设置复制到新包；`--activate` 只在当前选中的光影有兼容副本时切换，并备份 Iris 配置。第三方光影不会进入本项目或发行包。没有可识别光源映射的包明确跳过，不宣称通用适配。
+后续 v5 已按用户要求撤回 Electron Lights 副本及其创建工具。不添加光影包，原版方块光照和模组内部材质继续保留。新结构和电压以 [v5 文档](MULTIBLOCKS_V5.md) 为准。
 
 参考：[Iris 状态映射格式](https://shaders.properties/current/reference/miscellaneous/block_properties/)、[labPBR 发光通道](https://shaderlabs.org/wiki/LabPBR_Material_Standard)、[National Grid 塔架与架空线路资料](https://www.nationalgrid.com/electricity-transmission/who-we-are/running-our-network/substations-pylons-and-overhead-lines)。外形参考不意味着游戏数值等同现实工程参数。
 

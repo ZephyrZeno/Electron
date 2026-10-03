@@ -95,3 +95,6 @@ write(RES/'data/electron/worldgen/placed_feature/uranium_ore.json',{'feature':'e
 for p in (RES/'data/electron/recipe').glob('*.json'):
     write(RES/'data/electron/advancement/recipes'/p.name,{'parent':'minecraft:recipes/root','criteria':{'copper':{'trigger':'minecraft:inventory_changed','conditions':{'items':[{'items':['minecraft:copper_ingot']}]}}},'requirements':[['copper']],'rewards':{'recipes':['electron:'+p.stem]}})
 print('Grid, independent colors, mechanical models, ores and emissive materials generated.')
+
+# Current multiblock assets are applied after the earlier grid catalog.
+runpy.run_path(str(Path(__file__).with_name("generate_assembly_assets.py")))

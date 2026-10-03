@@ -31,6 +31,7 @@ public final class Foundry {
     public static Block SHAFT,TURNTABLE;
     public static Block PLANT_CASING,REACTOR_CASING,URANIUM_ORE;
     public static ComponentBlock THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS;
+    public static ComponentBlock STATION_6K6,STATION_11K,STATION_24K;
     public static Item RAW_URANIUM,URANIUM_PELLET,FUEL_ROD,SPENT_ROD;
     public static BlockEntityType<top.lacrus.zephyrzeno.electron.mechanical.MechanicalEntity> MECHANICAL_ENTITY;
     public static java.util.function.BooleanSupplier CREATIVE_READINGS=()->false;
@@ -38,8 +39,10 @@ public final class Foundry {
     public static Item SPOOL,CUTTER,METER,WRENCH,MAGNIFIER,TERMINAL,WALL_PORT,BRIDGE,HANDBOOK,SCRAP;
     private static Item item(String id,Item value){Registry.register(Registries.ITEM,Electron.id(id),value);ITEMS.put(id,value);return value;}
     private static <T extends Block> T block(String id,T block){Registry.register(Registries.BLOCK,Electron.id(id),block);item(id,block instanceof ComponentBlock component?new ComponentItem(block,new Item.Settings().maxCount(component.kind==ComponentBlock.Kind.BATTERY?1:64)):new BlockItem(block,new Item.Settings()));return block;}
-    private static ComponentBlock device(String id,ComponentBlock.Kind kind,double r){var block=block(id,new ComponentBlock(AbstractBlock.Settings.create().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK).luminance(s->kind==ComponentBlock.Kind.LED||kind==ComponentBlock.Kind.LAMP?s.get(ComponentBlock.LEVEL):0),kind,r));DEVICES.put(id,block);return block;}
+    private static ComponentBlock device(String id,ComponentBlock.Kind kind,double r){var block=block(id,createDevice(id,kind,r));DEVICES.put(id,block);return block;}
+    private static ComponentBlock createDevice(String id,ComponentBlock.Kind kind,double r){var settings=AbstractBlock.Settings.create().dynamicBounds().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK).luminance(s->kind==ComponentBlock.Kind.LED||kind==ComponentBlock.Kind.LAMP?s.get(ComponentBlock.LEVEL):0);return top.lacrus.zephyrzeno.electron.power.GridDevices.handles(kind)||id.equals("tower_terminal")?new top.lacrus.zephyrzeno.electron.multiblock.AssemblyControllerBlock(settings,kind,r):new ComponentBlock(settings,kind,r);}
     public static void register() {
+        top.lacrus.zephyrzeno.electron.multiblock.Assembly.register();
         ElectricalEffects.register();
         BATTERY_ENERGY=Registry.register(Registries.DATA_COMPONENT_TYPE,Electron.id("battery_energy"),net.minecraft.component.ComponentType.<Double>builder().codec(com.mojang.serialization.Codec.doubleRange(0,BatteryModel.CAPACITY)).packetCodec(net.minecraft.network.codec.PacketCodecs.DOUBLE).build());
         CRANK=device("hand_crank",ComponentBlock.Kind.CRANK,5);
@@ -67,6 +70,7 @@ public final class Foundry {
         URANIUM_ORE=block("uranium_ore",new Block(AbstractBlock.Settings.create().strength(4).sounds(BlockSoundGroup.STONE).requiresTool()));
         RAW_URANIUM=item("raw_uranium",new Item(new Item.Settings()));URANIUM_PELLET=item("uranium_pellet",new Item(new Item.Settings()));FUEL_ROD=item("fuel_rod",new Item(new Item.Settings().maxCount(16)));SPENT_ROD=item("spent_fuel_rod",new Item(new Item.Settings().maxCount(16)));
         THERMAL=device("thermal_generator",ComponentBlock.Kind.THERMAL,2);HYDRO=device("hydro_generator",ComponentBlock.Kind.HYDRO,2);WIND=device("wind_generator",ComponentBlock.Kind.WIND,2);LIGHTNING=device("lightning_collector",ComponentBlock.Kind.LIGHTNING,2);NUCLEAR=device("nuclear_reactor",ComponentBlock.Kind.NUCLEAR,2);SUBSTATION=device("substation",ComponentBlock.Kind.SUBSTATION,.1);MAINS=device("mains_inlet",ComponentBlock.Kind.MAINS,.02);
+        STATION_6K6=device("substation_6k6",ComponentBlock.Kind.SUBSTATION,6600);STATION_11K=device("substation_11k",ComponentBlock.Kind.SUBSTATION,11000);STATION_24K=device("substation_24k",ComponentBlock.Kind.SUBSTATION,24000);
         for(var function:LogicFunction.values()) {
             String id="wire_"+function.name().toLowerCase(Locale.ROOT)+"_gate";
             var gate=block(id,new ComponentBlock(AbstractBlock.Settings.create().strength(2).sounds(BlockSoundGroup.METAL).nonOpaque().pistonBehavior(PistonBehavior.BLOCK),ComponentBlock.Kind.GATE,10000,function));

@@ -20,7 +20,7 @@ public final class CircuitState extends PersistentState {
     public static final int MAX_CORES=128,MAX_JUNCTIONS=256,MAX_BRIDGES=256;
     private static final Map<ServerWorld,CircuitState> LIVE=new WeakHashMap<>();
     private static final Type<CircuitState> TYPE=new Type<>(CircuitState::new,(n,r)->read(n),null);
-    public record Device(String block,Direction face,int turn) {}
+    public record Device(String block,Direction face,int turn,boolean formed) {public Device(String block,Direction face,int turn){this(block,face,turn,false);}}
     public final Map<UUID,Wire> wires=new LinkedHashMap<>();
     public final Map<UUID,Junction> junctions=new LinkedHashMap<>();
     public final Map<UUID,WallCore> cores=new LinkedHashMap<>();
@@ -41,8 +41,8 @@ public final class CircuitState extends PersistentState {
     public void changed(){overheadCurves.keySet().retainAll(new HashSet<>(wires.values()));markDirty();syncPending=true;}
     public void track(BlockPos pos,BlockState state) {
         if(!(state.getBlock() instanceof ComponentBlock))return;
-        Device d=new Device(Registries.BLOCK.getId(state.getBlock()).toString(),state.get(ComponentBlock.FACING),state.get(ComponentBlock.TURN));
-        if(!d.equals(devices.put(pos.toImmutable(),d)))changed();
+        Device d=new Device(Registries.BLOCK.getId(state.getBlock()).toString(),state.get(ComponentBlock.FACING),state.get(ComponentBlock.TURN),top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state));
+        if(!d.equals(devices.put(pos.toImmutable(),d))){overheadCurves.clear();changed();}
     }
     public Map<String,Endpoint> endpoints() {
         Map<String,Endpoint> result=new HashMap<>();
@@ -64,10 +64,18 @@ public final class CircuitState extends PersistentState {
     public static boolean supports(World world,BlockPos pos,Direction face) {
         if(!world.isChunkLoaded(pos)||!world.isChunkLoaded(pos.offset(face)))return false;
         BlockState state=world.getBlockState(pos);
-        boolean support=state.getBlock() instanceof ComponentBlock component?(component.kind.large()||state.get(ComponentBlock.FACING)==face):Block.isShapeFullCube(state.getCollisionShape(world,pos));
+        boolean support=top.lacrus.zephyrzeno.electron.multiblock.Assembly.serviceSupport(world,pos)||(state.getBlock() instanceof ComponentBlock component?(component.kind.large()||state.get(ComponentBlock.FACING)==face):Block.isShapeFullCube(state.getCollisionShape(world,pos)));
         var neighbor=world.getBlockState(pos.offset(face));
         boolean shaft=state.isOf(Foundry.MOTOR)&&state.get(ComponentBlock.FACING)==face&&neighbor.getBlock() instanceof top.lacrus.zephyrzeno.electron.mechanical.MechanicalBlock&&neighbor.get(top.lacrus.zephyrzeno.electron.mechanical.MechanicalBlock.FACING).getAxis()==face.getAxis();
-        return support&&!state.isOf(Blocks.BEDROCK)&&(shaft||neighbor.getCollisionShape(world,pos.offset(face)).isEmpty());
+        boolean partialAssembly=world.getBlockEntity(pos.offset(face)) instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyPartEntity&&!Block.isShapeFullCube(neighbor.getCollisionShape(world,pos.offset(face)));
+        return support&&!state.isOf(Blocks.BEDROCK)&&(shaft||partialAssembly||top.lacrus.zephyrzeno.electron.multiblock.Assembly.internalNeighbor(world,pos,face)||neighbor.getCollisionShape(world,pos.offset(face)).isEmpty());
+    }
+    /** A thin tower brace must not block every point of the foundation face below it. */
+    public boolean assemblyClear(World world,SurfacePoint p){
+        var neighbor=p.host().offset(p.face());
+        if(!(world.getBlockEntity(neighbor) instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyPartEntity)||top.lacrus.zephyrzeno.electron.multiblock.Assembly.internalNeighbor(world,p.host(),p.face()))return true;
+        var at=position(p);
+        return world.getBlockState(neighbor).getCollisionShape(world,neighbor).getBoundingBoxes().stream().noneMatch(box->box.offset(neighbor).expand(.011).contains(at));
     }
     public boolean hasBridge(SurfacePoint p){return bridges.values().stream().anyMatch(b->b.host().equals(p.host())&&b.face()==p.face());}
     public void validateBridgeSpace(SurfacePoint point){
@@ -91,7 +99,7 @@ public final class CircuitState extends PersistentState {
     public Endpoint joinAt(World world,SurfacePoint p){return joinAt(world,p,false);}
     public Endpoint joinAt(World world,SurfacePoint p,boolean cable){
         var existing=contactAt(p);if(existing.isPresent())return existing.get();
-        if(!supports(world,p.host(),p.face())||!traceClear(p)||(p.layer()==1&&!hasBridge(p)))throw new CircuitError("error.electron.node_surface");
+        if(!supports(world,p.host(),p.face())||!traceClear(p)||!assemblyClear(world,p)||(p.layer()==1&&!hasBridge(p)))throw new CircuitError("error.electron.node_surface");
         if(junctions.size()>=MAX_JUNCTIONS)throw new CircuitError("error.electron.node_budget");
         var j=new Junction(UUID.randomUUID(),p,Registries.BLOCK.getId(world.getBlockState(p.host()).getBlock()).toString(),true,cable);
         for(var old:new ArrayList<>(wires.values())){
@@ -112,7 +120,7 @@ public final class CircuitState extends PersistentState {
         Set<SurfacePoint> pins=new HashSet<>();endpoints().values().forEach(e->{if(!e.id().equals(a.id())&&!e.id().equals(b.id()))pins.add(e.point());});
         java.util.function.Function<SurfacePoint,SurfacePoint> height=p->layer==0&&!p.equals(start)&&!p.equals(end)&&(used.contains(p)||pins.contains(p))&&hasBridge(p)?p.layer(1):p;
         java.util.function.Predicate<SurfacePoint> available=point->{var p=height.apply(point);boolean endpoint=point.equals(start)||point.equals(end);
-            return supports(world,p.host(),p.face())&&(p.layer()==0||hasBridge(p))&&traceClear(p)&&(endpoint||(!used.contains(p)&&!pins.contains(p)));};
+            return supports(world,p.host(),p.face())&&(p.layer()==0||hasBridge(p))&&traceClear(p)&&assemblyClear(world,p)&&(endpoint||(!used.contains(p)&&!pins.contains(p)));};
         if(!available.test(start)||!available.test(end))throw new CircuitError("error.electron.endpoint_blocked");
         List<SurfacePoint> base;
         try{base=SurfaceRouter.straight(start,end,available);}catch(IllegalArgumentException blocked){base=SurfaceRouter.route(start,end,available,this::inset);}
@@ -128,7 +136,7 @@ public final class CircuitState extends PersistentState {
         if(!supports(world,start.host(),start.face())||!supports(world,end.host(),end.face()))throw new CircuitError("error.electron.port_blocked");
         Set<SurfacePoint> used=new HashSet<>();wires.values().forEach(w->used.addAll(w.path()));
         Set<SurfacePoint> otherPins=new HashSet<>();endpoints().values().forEach(e->{if(!e.id().equals(a.id())&&!e.id().equals(b.id())){otherPins.add(e.point().layer(0));otherPins.add(e.point().layer(1));}});
-        return SurfaceRouter.route(start,end,p->supports(world,p.host(),p.face())&&(p.layer()==0||hasBridge(p))&&traceClear(p)&&!otherPins.contains(p)&&(!used.contains(p)||p.equals(start)||p.equals(end)),this::inset);
+        return SurfaceRouter.route(start,end,p->supports(world,p.host(),p.face())&&(p.layer()==0||hasBridge(p))&&traceClear(p)&&assemblyClear(world,p)&&!otherPins.contains(p)&&(!used.contains(p)||p.equals(start)||p.equals(end)),this::inset);
     }
     public void validateCoreCapacity(BlockPos host) {
         long count=wires.values().stream().filter(w->w.hosts().contains(host)).count()+cores.values().stream().filter(c->c.host().equals(host)).count()*2;
@@ -149,7 +157,7 @@ public final class CircuitState extends PersistentState {
         boolean change=false;
         for(var it=devices.entrySet().iterator();it.hasNext();) {var e=it.next();if(world.isChunkLoaded(e.getKey())&&(!(world.getBlockState(e.getKey()).getBlock() instanceof ComponentBlock)||!Registries.BLOCK.getId(world.getBlockState(e.getKey()).getBlock()).toString().equals(e.getValue().block))){it.remove();change=true;}}
         for(var it=cores.values().iterator();it.hasNext();){var c=it.next();if(world.isChunkLoaded(c.host())&&!hostValid(world,c.host(),c.hostBlock())){it.remove();drop(world,c.host(),new ItemStack(Foundry.WALL_PORT));change=true;}}
-        for(var it=junctions.values().iterator();it.hasNext();){var j=it.next();if(world.isChunkLoaded(j.point().host())&&world.isChunkLoaded(j.point().host().offset(j.point().face()))&&(!supports(world,j.point().host(),j.point().face())||(j.point().layer()==1&&!hasBridge(j.point())))){it.remove();drop(world,j.point().host(),j.wireNode()?CircuitToolItem.spool(1,0,j.cable()):new ItemStack(Foundry.TERMINAL));change=true;}}
+        for(var it=junctions.values().iterator();it.hasNext();){var j=it.next();if(world.isChunkLoaded(j.point().host())&&world.isChunkLoaded(j.point().host().offset(j.point().face()))&&(!supports(world,j.point().host(),j.point().face())||!assemblyClear(world,j.point())||(j.point().layer()==1&&!hasBridge(j.point())))){it.remove();drop(world,j.point().host(),j.wireNode()?CircuitToolItem.spool(1,0,j.cable()):new ItemStack(Foundry.TERMINAL));change=true;}}
         for(var it=bridges.values().iterator();it.hasNext();){var b=it.next();if(world.isChunkLoaded(b.host())&&world.isChunkLoaded(b.host().offset(b.face()))&&!supports(world,b.host(),b.face())){it.remove();drop(world,b.host(),new ItemStack(Foundry.BRIDGE));change=true;}}
         var pins=endpoints();
         for(var it=wires.values().iterator();it.hasNext();) {
@@ -158,7 +166,7 @@ public final class CircuitState extends PersistentState {
                 var curve=overheadVertices(w);
                 if(OverheadCable.loaded(world,curve))invalid=!OverheadCable.tower(world,w.path().getFirst().host())||!OverheadCable.tower(world,w.path().getLast().host())||!OverheadCable.clear(world,curve,w.path().getFirst().host(),w.path().getLast().host());
             }
-            if(!invalid)for(var p:w.path())if(world.isChunkLoaded(p.host())&&world.isChunkLoaded(p.host().offset(p.face()))&&(!supports(world,p.host(),p.face())||(p.layer()==1&&!hasBridge(p)))){invalid=true;break;}
+            if(!invalid)for(var p:w.path())if(world.isChunkLoaded(p.host())&&world.isChunkLoaded(p.host().offset(p.face()))&&(!supports(world,p.host(),p.face())||!assemblyClear(world,p)||(p.layer()==1&&!hasBridge(p)))){invalid=true;break;}
             if(invalid){it.remove();drop(world,w.path().getFirst().host(),CircuitToolItem.spool(w.units(),w.color(),w.cable()));change=true;}
         }
         if(change)changed();
@@ -335,7 +343,7 @@ public final class CircuitState extends PersistentState {
         NbtList js=new NbtList();junctions.values().forEach(j->{var t=j.point().nbt();t.putUuid("id",j.id());t.putString("block",j.hostBlock());t.putBoolean("wire_node",j.wireNode());t.putBoolean("cable_node",j.cable());js.add(t);});n.put("junctions",js);
         NbtList cs=new NbtList();cores.values().forEach(c->{var t=new NbtCompound();t.putUuid("id",c.id());t.putLong("p",c.host().asLong());t.putInt("f",c.face().getId());t.putInt("slot",c.slot());t.putString("block",c.hostBlock());cs.add(t);});n.put("cores",cs);
         NbtList bs=new NbtList();bridges.values().forEach(b->{var t=new NbtCompound();t.putUuid("id",b.id());t.putLong("p",b.host().asLong());t.putInt("f",b.face().getId());t.putString("block",b.hostBlock());bs.add(t);});n.put("bridges",bs);
-        NbtList ds=new NbtList();devices.forEach((p,d)->{var t=new NbtCompound();t.putLong("p",p.asLong());t.putString("block",d.block);t.putInt("f",d.face.getId());t.putInt("turn",d.turn);ds.add(t);});n.put("devices",ds);return n;
+        NbtList ds=new NbtList();devices.forEach((p,d)->{var t=new NbtCompound();t.putLong("p",p.asLong());t.putString("block",d.block);t.putInt("f",d.face.getId());t.putInt("turn",d.turn);t.putBoolean("formed",d.formed);ds.add(t);});n.put("devices",ds);return n;
     }
     public static CircuitState read(NbtCompound n) {
         CircuitState s=new CircuitState();
@@ -343,6 +351,6 @@ public final class CircuitState extends PersistentState {
         for(var tag:n.getList("junctions",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var j=new Junction(t.getUuid("id"),SurfacePoint.read(t),t.getString("block"),t.getBoolean("wire_node"),t.getBoolean("cable_node"));s.junctions.put(j.id(),j);}
         for(var tag:n.getList("cores",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var c=new WallCore(t.getUuid("id"),BlockPos.fromLong(t.getLong("p")),Direction.byId(t.getInt("f")),t.getInt("slot")&3,t.getString("block"));s.cores.put(c.id(),c);}
         for(var tag:n.getList("bridges",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;var b=new Bridge(t.getUuid("id"),BlockPos.fromLong(t.getLong("p")),Direction.byId(t.getInt("f")),t.getString("block"));s.bridges.put(b.id(),b);}
-        for(var tag:n.getList("devices",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;s.devices.put(BlockPos.fromLong(t.getLong("p")),new Device(t.getString("block"),Direction.byId(t.getInt("f")),t.getInt("turn")&3));}return s;
+        for(var tag:n.getList("devices",NbtElement.COMPOUND_TYPE)){var t=(NbtCompound)tag;s.devices.put(BlockPos.fromLong(t.getLong("p")),new Device(t.getString("block"),Direction.byId(t.getInt("f")),t.getInt("turn")&3,t.getBoolean("formed")));}return s;
     }
 }

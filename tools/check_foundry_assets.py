@@ -51,7 +51,7 @@ for p in models:
 for path in (A/'blockstates').glob('*.json'):
     if 'multipart' not in read(path):continue
     inventory=model('electron:block/'+path.stem+'_inventory')
-    large=path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal','thermal_generator','hydro_generator','wind_generator','lightning_collector','nuclear_reactor','substation','mains_inlet')
+    large=path.stem.startswith('substation_') or path.stem in ('dc_generator','distribution_box','dc_breaker','engineering_lamp','dc_motor','tower_terminal','thermal_generator','hydro_generator','wind_generator','lightning_collector','nuclear_reactor','substation','mains_inlet')
     assert min(e['from'][2] for e in inventory['elements'])>=(0 if large else 12),path
     up=model('electron:block/'+path.stem+'_off_up')
     assert max(e['to'][1] for e in up['elements'])<=(16 if large else 4),path

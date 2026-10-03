@@ -28,4 +28,20 @@ final class GridModelTest {
         assertEquals(24,GridModel.stationOutput("s","a","b",.001,true).emf());
     }
     @Test void windAlwaysRespectsNameplate(){for(long t=0;t<200000;t+=100)assertTrue(GridModel.wind(t,300,true)>0&&GridModel.wind(t,300,true)<=1);}
+    @Test void allHighVoltageSourcesHaveFinitePowerAndEnergy(){
+        for(double volts:new double[]{6600,11000,24000}){
+            var r=DcSolver.solve(List.of(GridModel.source("s","a","b",.15,true,volts),DcSolver.Branch.resistor("load","a","b",1)));
+            assertTrue(-r.current("s")*volts*.05<=.150001);assertEquals(0,GridModel.consume(.15,r.current("s"),volts),1e-7);
+        }
+    }
+    @Test void fixedHighVoltageWindingsRejectWrongInputAndLoseEnergy(){
+        for(double nominal:new double[]{6600,11000,24000}){
+            var spec=top.lacrus.zephyrzeno.electron.power.StationSpec.of(nominal);
+            assertEquals(1e12,GridModel.stationInput("i","a","b",0,240,spec).resistance());
+            double energy=GridModel.stationEnergy(0,nominal,100/nominal,0,spec);
+            assertEquals(4.6,energy,1e-10);
+            var r=DcSolver.solve(List.of(GridModel.stationOutput("s","a","b",energy,true,spec),DcSolver.Branch.resistor("load","a","b",10)));
+            assertTrue(-r.current("s")*240*.05<=energy+1e-7);
+        }
+    }
 }

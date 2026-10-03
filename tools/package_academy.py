@@ -15,7 +15,7 @@ assert_no_dropped_items(WORLD)
 level=read_gzip(WORLD/'level.dat')['Data'];assert level['GameType']==0 and level['Difficulty']==0
 assert (level['SpawnX'],level['SpawnY'],level['SpawnZ'])==(8,65,-4)
 circuit=read_gzip(WORLD/'data/electron_circuits.dat')['data']
-assert len(circuit['devices'])==54 and len(circuit['wires'])==70
+assert len(circuit['devices'])==63 and len(circuit['wires'])==88
 assert any(w.get('cable') for w in circuit['wires']) and any(not w.get('cable') for w in circuit['wires'])
 blocks=[];saved_chunks={}
 for file in (WORLD/'region').glob('*.mca'):
@@ -23,26 +23,39 @@ for file in (WORLD/'region').glob('*.mca'):
         saved_chunks[(data['xPos'],data['zPos'])]=data
         blocks.extend(data.get('block_entities',[]))
 components=[b for b in blocks if b['id']=='electron:component'];signs=[b for b in blocks if b['id']=='minecraft:sign'];chests=[b for b in blocks if b['id']=='minecraft:chest']
-assert len(components)==54 and len(signs)==12 and len(chests)==13
+assert len(components)==63 and len(signs)==12 and len(chests)==13
 chest_stacks=sum(len(b.get('Items',[])) for b in chests)
-assert chest_stacks==260, f'Missing toolbox contents: {chest_stacks}/260 stacks'
+assert chest_stacks==263, f'Missing toolbox contents: {chest_stacks}/263 stacks'
 assert all('map.electron.' in message and 'translate' in message for sign in signs for message in sign['front_text']['messages']),'Sign instructions must remain client-translated'
-assert len({(b['x'],b['y'],b['z']) for b in components})==54
+assert len({(b['x'],b['y'],b['z']) for b in components})==63
 assert {(b['x'],b['y'],b['z']) for b in components}=={position(d['p']) for d in circuit['devices']}
 assert all(not b.get('converter_target') for b in components),'Fixed modules must have no free setting'
 
 assert report.count('components_above_bench=true')==2
+parts={(b['x'],b['y'],b['z']):b for b in blocks if b['id']=='electron:assembly_part'}
 for device in circuit['devices']:
     x,y,z=position(device['p']);below=block_state(saved_chunks[(x//16,z//16)],x,y-1,z)['Name']
+    if below=='electron:assembly_part':below=parts[(x,y-1,z)]['original']['Name']
     assert below==('electron:tower_section' if device['block'] in ('electron:tower_terminal','electron:wind_generator','electron:lightning_collector') else 'minecraft:smooth_stone'), (device,below)
 assert sum(bool(w.get('overhead')) for w in circuit['wires'])==2
 for entity in components:
     x,y,z=entity['x'],entity['y'],entity['z']
     state=block_state(saved_chunks[(x//16,z//16)],x,y,z)
-    if state['Name']=='electron:substation':
+    if state['Name'].startswith('electron:substation'):
         assert state['Properties']['power']=='15' and entity['converter_energy']>.001,('Unpowered station',x,y,z)
     if state['Name'] in ('electron:thermal_generator','electron:hydro_generator','electron:wind_generator','electron:nuclear_reactor'):
         assert state['Properties']['power']=='15' and entity['energy']>0,('Inactive plant',x,y,z)
+
+assert report.count('all_multiblocks_formed=true')==2
+owners={(b['x'],b['y'],b['z']):b for b in components}
+for xyz,part in parts.items():
+    owner=position(part['origin'])
+    assert owner in owners,(xyz,'orphan part')
+    assert block_state(saved_chunks[(owner[0]//16,owner[2]//16)],*owner)['Properties']['formed']=='true'
+for xyz,owner in owners.items():
+    for packed in owner.get('assembly_cells',[]):
+        offset=position(packed);part=tuple(a+b for a,b in zip(xyz,offset))
+        assert part in parts and position(parts[part]['origin'])==xyz,('missing assembly cell',xyz,part)
 
 out=ROOT/f'dist/circuit-academy-{VERSION}';out.mkdir(parents=True,exist_ok=True)
 font=lambda n:ImageFont.truetype('C:/Windows/Fonts/msyh.ttc',n)
@@ -76,7 +89,7 @@ d.text((40,1345),'风机 → 两座输电塔 → 市电进线 → 24 V 变电 �
 d.text((40,1380),'夹持台 (50, 68, 6)    材料箱 (60, 65, 3)    火电 (66, 66, 10)',font=font(19),fill='#c5d6df')
 d.text((40,1413),'水电 (66, 69, 26)    核电 (66, 66, 42)    引雷 (66, 72, 60)',font=font(19),fill='#c5d6df')
 d.text((40,1444),'火电与核电按需补充燃料；引雷需雷暴中的真实雷击。建造要求见工程手册。',font=font(17),fill='#92a9b9')
-d.text((30,1496),f"54 个器件 / 70 段导线与电缆 / {len(circuit['bridges'])} 座跨线桥 / 台面安装 / 5 组变电验证",font=font(18),fill='#a3bbca')
+d.text((30,1496),f"63 个器件 / 88 段导线与电缆 / {len(circuit['bridges'])} 座跨线桥 / 台面安装 / 11 组变电验证",font=font(18),fill='#a3bbca')
 im.save(out/'地图导览.png')
 instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 
@@ -96,21 +109,21 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 08 故障 (18..29, z=51..68)：电机预设锁轴、电源初始为空；摇动电源后观察断路器跳闸。把电机切回空载，再复位断路器。
 09 实验 (36..47, z=51..68)：拿材料和工具，自行搭线、合成器件，使用工程手册查看接法。
 
-入口外 (14,74,-4)、(48,74,-4) 两座玩家可拆改的电线塔，A/B 各一条架空电缆，由风机供电，经市电进线柜和变电柜带动灯和旋转夹持台。旁边箱子有塔架、塔顶座与长电缆卷。
+入口外 (14,74,-4)、(46,74,-4) 两座玩家可拆改的电线塔，A/B 各一条架空电缆，由风机供电，经市电进线柜和变电柜带动灯和旋转夹持台。旁边箱子有塔架、塔顶座与长电缆卷。
 所有台面器件放在平滑石上方，导线沿台面跨高差连接；不再把器件嵌进台面。
 
-主要 24 V 负载改由风机、变电柜持续供电；5 V 控制/储能课程仍使用手摇源，耗尽后空手右键补能，每秒一次。东侧 x=66 有火电、水电、核电、引雷结构展示，材料箱在 (60,65,3)。
+主要 24 V 负载改由风机、变电柜持续供电；5 V 控制/储能课程仍使用手摇源，耗尽后空手右键补能，每秒一次。东侧 x=66 有火电、水电、核电、引雷整体模型；三组发电机均经固定高压变电站、24 V 变电站实际驱动一盏灯，材料箱在 (60,65,3)。
 生存模式准确读数只显示在万用表 HUD；铭牌上的电压/电流是额定值。
 固定转换模块没有调压界面，换规格须合成并更换器件；PCB 电源芯片及焊接仍是后续设计。
 选 COM 再选探针测压；潜行点设备/导线测流；潜行对空切换 V/Ω；对空右键清除测点。
 未加载区块中的网络会暂停，走近实验区会恢复；没有免费持续发电或远程逻辑控制器。
 地图导览是从实际保存的线路数据绘制的平面示意，不是游戏截图。
-验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 6 个指示负载与 2 个旋转电机。
-生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、13 个工具箱中的 260 组物品完整。
-全部 54 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
+验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 9 个指示负载与 2 个旋转电机。
+生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、13 个工具箱中的 263 组物品完整。
+全部 63 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
 '''
 (out/'地图说明.txt').write_text(instructions,encoding='utf-8')
-audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'components_above_bench':True,'overhead_spans':2,'reopened_and_powered':True,'all_plants_and_substations_powered':True,'generator_required':False}
+audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'components_above_bench':True,'overhead_spans':2,'reopened_and_powered':True,'all_plants_and_substations_powered':True,'generator_required':False,'formed_parts':len(parts),'all_multiblocks_formed':True}
 (out/'map-verification.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
 archive=ROOT/f'dist/circuit-academy-{VERSION}.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:

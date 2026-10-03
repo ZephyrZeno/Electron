@@ -33,8 +33,14 @@ public final class CircuitInteractions {
                 if(item instanceof CircuitToolItem tool)switch(tool.tool) {
                     case SPOOL -> {if(player.isSneaking()){var n=CircuitToolItem.data(stack);n.putInt("layer",layer^1);CircuitToolItem.data(stack,n);say(player,"message.electron.layer",layer^1);}else wire(server,user,stack,data,point,hit.getPos());}
                     case CUTTER -> cut(server,user,stack,data,point,hit.getPos(),hand==net.minecraft.util.Hand.MAIN_HAND?EquipmentSlot.MAINHAND:EquipmentSlot.OFFHAND);
-                    case METER -> meter(server,user,stack,data,point,hit.getPos());
-                    case WRENCH -> {rotate(server,hit.getBlockPos(),player.isSneaking());say(player,"message.electron.rotated");}
+                    case METER -> {
+                        var measured=point;
+                        if(player.isSneaking()&&world.getBlockEntity(hit.getBlockPos()) instanceof top.lacrus.zephyrzeno.electron.multiblock.AssemblyPartEntity part){
+                            var contact=data.endpoints().get(node(part.origin,0));if(contact!=null)measured=contact.point();
+                        }
+                        meter(server,user,stack,data,measured,hit.getPos());
+                    }
+                    case WRENCH -> {if(!top.lacrus.zephyrzeno.electron.multiblock.Assembly.interact(server,hit.getBlockPos(),player)){rotate(server,hit.getBlockPos(),player.isSneaking());say(player,"message.electron.rotated");}}
                 }
                 else install(server,user,stack,data,point);
                 return ActionResult.CONSUME;
@@ -90,7 +96,7 @@ public final class CircuitInteractions {
         if(!CircuitState.supports(world,pos,point.face()))throw new CircuitError("error.electron.support");
         if(stack.isOf(Foundry.TERMINAL)) {
             if(s.junctions.size()>=CircuitState.MAX_JUNCTIONS)throw new CircuitError("error.electron.terminal_budget");
-            if(!s.traceClear(point))throw new CircuitError("error.electron.component_body");
+            if(!s.traceClear(point)||!s.assemblyClear(world,point))throw new CircuitError("error.electron.component_body");
             if(s.endpoints().values().stream().anyMatch(e->e.point().equals(point))||s.wires.values().stream().anyMatch(w->w.path().contains(point)))throw new CircuitError("error.electron.occupied");
             var j=new Junction(UUID.randomUUID(),point,id);s.junctions.put(j.id(),j);
         } else if(stack.isOf(Foundry.BRIDGE)) {

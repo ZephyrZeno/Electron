@@ -13,37 +13,41 @@ import top.lacrus.zephyrzeno.electron.foundry.*;
 
 /** Player-built structures and finite fuel. No energy is provided by redstone or a UI setting. */
 public final class PowerPlant {
+    private static BlockState original(ServerWorld w,BlockPos p){return top.lacrus.zephyrzeno.electron.multiblock.Assembly.original(w,p);}
+    private static boolean air(ServerWorld w,BlockPos p){return top.lacrus.zephyrzeno.electron.multiblock.Assembly.air(w,p);}
     public static boolean source(ComponentBlock.Kind k){return switch(k){case THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR->true;default->false;};}
     public static String requirement(ServerWorld w,BlockPos p,ComponentBlock.Kind k){
+        if(w.getBlockEntity(p) instanceof ComponentEntity e){String integrity=top.lacrus.zephyrzeno.electron.multiblock.Assembly.integrity(w,p,e);if(!integrity.equals("ready"))return integrity;}
         for(var q:BlockPos.iterate(p.add(-2,0,-2),p.add(2,0,2)))if(!w.isChunkLoaded(q))return "unloaded";
         if(w.getBlockState(p).get(ComponentBlock.FACING)!=Direction.UP)return "upright";
         if(k==ComponentBlock.Kind.WIND||k==ComponentBlock.Kind.LIGHTNING){
-            var q=p.down();int height=0;while(height<64&&w.getBlockState(q).isOf(Foundry.TOWER_SECTION)){height++;q=q.down();}
+            var q=p.down();int height=0;while(height<64&&original(w,q).isOf(Foundry.TOWER_SECTION)){height++;q=q.down();}
             if(height<3||height>=64||!Block.isShapeFullCube(w.getBlockState(q).getCollisionShape(w,q)))return "tower";
             if(k==ComponentBlock.Kind.LIGHTNING)return w.getBlockState(p.up()).isOf(Blocks.LIGHTNING_ROD)?"ready":"rod";
-            for(var check:BlockPos.iterate(p.add(-2,0,-2),p.add(2,4,2)))if(!check.equals(p)&&!w.isAir(check))return "wind_clearance";
+            for(var check:BlockPos.iterate(p.add(-2,0,-2),p.add(2,4,2)))if(!check.equals(p)&&!air(w,check))return "wind_clearance";
             return w.isSkyVisible(p.up(5))?"ready":"sky";
         }
         for(int x=-1;x<=1;x++)for(int z=-1;z<=1;z++)if(!w.getBlockState(p.add(x,-1,z)).isOf(Blocks.SMOOTH_STONE))return "foundation";
         if(k==ComponentBlock.Kind.SUBSTATION){
-            for(var d:Direction.Type.HORIZONTAL)if(!w.getBlockState(p.offset(d)).isOf(Foundry.PLANT_CASING))return "casing";
+            for(var d:Direction.Type.HORIZONTAL)if(!original(w,p.offset(d)).isOf(Foundry.PLANT_CASING))return "casing";
             return "ready";
         }
         if(k==ComponentBlock.Kind.THERMAL){
             if(!w.getBlockState(p.east()).isOf(Blocks.FURNACE))return "furnace";
-            for(var q:List.of(p.north(),p.south(),p.west()))if(!w.getBlockState(q).isOf(Foundry.PLANT_CASING))return "casing";
-            return w.isAir(p.up())?"ready":"vent";
+            for(var q:List.of(p.north(),p.south(),p.west()))if(!original(w,q).isOf(Foundry.PLANT_CASING))return "casing";
+            return air(w,p.up())?"ready":"vent";
         }
         if(k==ComponentBlock.Kind.HYDRO){
-            for(var q:List.of(p.north(),p.south()))if(!w.getBlockState(q).isOf(Foundry.PLANT_CASING))return "casing";
+            for(var q:List.of(p.north(),p.south()))if(!original(w,q).isOf(Foundry.PLANT_CASING))return "casing";
             return water(w,p.east())&&water(w,p.west(2).down(2))&&w.isAir(p.west(2))&&w.isAir(p.west(2).down())?"ready":"water_head";
         }
         if(k==ComponentBlock.Kind.NUCLEAR){
-            for(var d:Direction.Type.HORIZONTAL)if(!w.getBlockState(p.offset(d)).isOf(Foundry.REACTOR_CASING))return "shielding";
+            for(var d:Direction.Type.HORIZONTAL)if(!original(w,p.offset(d)).isOf(Foundry.REACTOR_CASING))return "shielding";
             return water(w,p.east(2))&&water(w,p.west(2))?"ready":"coolant";
         }
         return "ready";
     }
+    public static double voltage(BlockState state){if(!top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state))return 240;return switch(((ComponentBlock)state.getBlock()).kind){case THERMAL->11000;case HYDRO->6600;case NUCLEAR->24000;default->240;};}
     private static boolean safetyHot(double temperature){return temperature>30;}
     private static boolean water(ServerWorld w,BlockPos p){return w.isChunkLoaded(p)&&w.getFluidState(p).isIn(FluidTags.WATER);}
     public static void prepare(ServerWorld w,BlockPos p,BlockState state,ComponentEntity e){
@@ -58,10 +62,10 @@ public final class PowerPlant {
         }
         if(!enabled)return;
         if(!e.plantReady){if(!e.plantStatus.equals("unloaded"))e.energy=0;return;}
-        double watts=switch(kind){case THERMAL->120;case HYDRO->160;case WIND->100*GridModel.wind(w.getTime(),p.getY(),w.isRaining());case NUCLEAR->400;default->0;};
+        double watts=switch(kind){case THERMAL->120;case HYDRO->160;case WIND->92*GridModel.wind(w.getTime(),p.getY(),w.isRaining());case NUCLEAR->400;default->0;};
         if(kind==ComponentBlock.Kind.LIGHTNING){
             for(var bolt:w.getEntitiesByClass(LightningEntity.class,new Box(p.up()).expand(1.5),b->true)){
-                if(!bolt.getUuidAsString().equals(e.lastStrike)){e.energy=Math.min(GridModel.CAPACITY,e.energy+3000);e.lastStrike=bolt.getUuidAsString();e.markDirty();}
+                if(!bolt.getUuidAsString().equals(e.lastStrike)){e.lastPeakVoltage=300_000_000;e.lastPeakCurrent=30_000;e.lastCapturedEnergy=Math.min(GridModel.CAPACITY-e.energy,.5*1e-13*e.lastPeakVoltage*e.lastPeakVoltage*(2d/3));e.energy+=e.lastCapturedEnergy;e.lastStrike=bolt.getUuidAsString();e.markDirty();}
             }
         }
         double added=Math.min(watts*GridModel.DT,GridModel.CAPACITY-e.energy);

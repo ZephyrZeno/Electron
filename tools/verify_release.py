@@ -60,9 +60,9 @@ assert not native.findall('.//failure') and native_count==sum(len(re.findall(r'@
 assets=json.loads((ROOT/'build/asset-review/validation.json').read_text(encoding='utf-8'))
 localization=json.loads((ROOT/'build/localization-verification.json').read_text(encoding='utf-8'))
 summary['map']=json.loads((ROOT/'build/academy-package-verification.json').read_text(encoding='utf-8'))
-summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'client_visual':'Offline model previews and native light propagation tests. Shader mappings audited; per-pack visual acceptance remains incomplete.'}
-shader_report=ROOT/'build/shader-compat-verification.json'
-if shader_report.exists():summary['local_shader_compatibility']=json.loads(shader_report.read_text(encoding='utf-8'))
+summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'client_visual':'Offline model previews and native light propagation tests. Multiblock geometry exported from native tests; no Computer Use or in-game visual acceptance.'}
+shader_report=ROOT/'build/shader-rollback-verification.json'
+if shader_report.exists():summary['local_shader_rollback']=json.loads(shader_report.read_text(encoding='utf-8'))
 (ROOT/'build/foundry-release-verification.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 out=ROOT/f'dist/circuit-foundry-{VERSION}'
 out.mkdir(parents=True,exist_ok=True)
@@ -75,21 +75,23 @@ shutil.copy2(ROOT/'docs/design/ELECTRON_THREE_SCALES_V3.md',out/'三层电路设
 shutil.copy2(ROOT/'README.md',out/'玩法与合成说明.md')
 shutil.copy2(ROOT/'docs/design/GRID_AND_MECHANICS_V4.md',out/'大型供电与传动-v4.md')
 shutil.copy2(ROOT/'build/asset-review/grid.png',out/'grid-preview.png')
+shutil.copy2(ROOT/'build/asset-review/assemblies.png',out/'assembled-preview.png')
+shutil.copy2(ROOT/'docs/design/MULTIBLOCKS_V5.md',out/'多方块与高压-v5.md')
 (out/'安装说明.txt').write_text(f"""Electron: Circuit Foundry — {VERSION}
 Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-本版新增：火电、水电、风电、引雷、核电、市电进线、240→24 V 变电、传动轴与旋转夹持台。
+本版新增：随高度变化的锥形塔架、三层横担绝缘子、可拆解整体机器模型和分格碰撞、固定高压变电站、目录式工程手册和图片放大。
 主要样机改由真实风机持续供电，入口架空线接入负载。5 V 手摇课程仍需补能，电容需按按钮，故障区需手摇启动。
-普通器件放在平滑石上；风机与引雷装置放在玩家搭建的塔架上。详细结构与接线见《大型供电与传动-v4.md》。
-大型网络使用 240 V 整流直流模型；无免费市电、无免费调压，不模拟交流相位或核反应物理。
+普通器件放在平滑石上；风机与引雷装置放在玩家搭建的塔架上。成型结构和高压接线见《多方块与高压-v5.md》。
+成型火电 11 kV、水电 6.6 kV、核电 24 kV，使用固定绕组降到 240 V、24 V；雷击为 300 MV / 30 kA 短时事件，仅回收有限能量。网络使用直流等效模型；无免费市电、无免费调压，不模拟交流相位或核反应物理。
 八种颜色的导线和八种颜色的电缆均为独立物品；旧线轴与已付费长度保留。
 电缆加粗并采用贴图，跨线桥加高；240 V 架空线离地或障碍不足两格会漏电放电。
 工程灯在额定供电时发出原版 15 级光照；光源增加 labPBR 发光材质。断电和损坏时熄灭。
-本机光影兼容工具生成 Electron Lights 副本，保留原光影；第三方光影不随本发行包分发。
-18 页手册、14 张教程图各有中英版本。生存实时数值仍只通过万用表 HUD 测量。
+不添加光影包。此前 Electron Lights 副本已备份移出 shaderpacks，原包保持不变。
+20 页手册、16 张教程图各有中英版本。生存实时数值仍只通过万用表 HUD 测量。
 主线不依赖计算器。PCB 制板、焊接、开发板、三相交流等尚未实现。
 
 教学地图：解压 circuit-academy-{VERSION}.zip，将 Circuit_Foundry_Academy 放入 saves。

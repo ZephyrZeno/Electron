@@ -46,7 +46,7 @@ public final class CircuitToolItem extends Item {
     }
     @Override public void appendTooltip(ItemStack stack,TooltipContext context,List<Text> lines,TooltipType type) {
         var n=data(stack);
-        if(tool==Tool.SPOOL){lines.add(Text.translatable(cable(stack)?"tooltip.electron.cable_rating":"tooltip.electron.wire_rating"));lines.add(Text.translatable("tooltip.electron.spool_balance",String.format(Locale.ROOT,"%.4f",units(stack)/16d),colorName(color(stack)),n.getInt("layer")).formatted(Formatting.AQUA));lines.add(Text.translatable("tooltip.electron.spool_route"));lines.add(Text.translatable("tooltip.electron.spool_tap"));lines.add(Text.translatable("tooltip.electron.spool_controls"));}
+        if(tool==Tool.SPOOL){lines.add(Text.translatable(cable(stack)?"tooltip.electron.cable_rating":"tooltip.electron.wire_rating"));lines.add(Text.translatable("tooltip.electron.spool_balance",String.format(Locale.ROOT,"%.4f",units(stack)/16d),colorName(color(stack)),n.getInt("layer")).formatted(Formatting.AQUA));lines.add(Text.translatable("tooltip.electron.spool_controls"));}
         else if(tool==Tool.CUTTER){lines.add(Text.translatable("tooltip.electron.cut_run"));lines.add(Text.translatable("tooltip.electron.cut_controls"));}
         else if(tool==Tool.WRENCH){lines.add(Text.translatable("tooltip.electron.wrench_turn"));lines.add(Text.translatable("tooltip.electron.wrench_wired"));}
         else {lines.add(Text.translatable("tooltip.electron.meter_measure"));lines.add(Text.translatable("tooltip.electron.meter_network"));}

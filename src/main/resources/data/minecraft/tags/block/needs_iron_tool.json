@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
+    "electron:substation_11k",
+    "electron:substation_24k",
+    "electron:substation_6k6",
     "electron:uranium_ore"
   ]
 }

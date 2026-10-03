@@ -21,7 +21,7 @@ import top.lacrus.zephyrzeno.electron.circuit.CircuitState;
 import top.lacrus.zephyrzeno.electron.logic.LogicFunction;
 
 /** Two visible, physically separate pins on the selected mounting face. */
-public final class ComponentBlock extends BlockWithEntity {
+public class ComponentBlock extends BlockWithEntity {
     public enum Kind { CRANK, RESISTOR, LED, SWITCH, GATE, DIODE, FUSE, BUTTON, CAPACITOR, BATTERY, TERMINAL_STRIP, REDSTONE_SWITCH, MOSFET, RELAY, BOOST, BUCK, GENERATOR, DISTRIBUTION, BREAKER, LAMP, MOTOR, THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS;
         public boolean large(){return this==GENERATOR||this==DISTRIBUTION||this==BREAKER||this==LAMP||this==MOTOR||top.lacrus.zephyrzeno.electron.power.GridDevices.handles(this);}
     }
@@ -111,6 +111,7 @@ public final class ComponentBlock extends BlockWithEntity {
     }
     @Override protected void onBlockAdded(BlockState state,World world,BlockPos pos,BlockState old,boolean notify){super.onBlockAdded(state,world,pos,old,notify);if(world instanceof ServerWorld server)CircuitState.get(server).track(pos,state);}
     @Override protected void onStateReplaced(BlockState state,World world,BlockPos pos,BlockState next,boolean moved){
+        if(!next.isOf(this)&&top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(state)&&world instanceof ServerWorld server)top.lacrus.zephyrzeno.electron.multiblock.Assembly.dismantle(server,pos,pos);
         super.onStateReplaced(state,world,pos,next,moved);
         if(kind==Kind.REDSTONE_SWITCH&&(!next.isOf(this)||redstoneSide(next)!=redstoneSide(state)))world.updateNeighborsAlways(pos.offset(redstoneSide(state)),this);
     }

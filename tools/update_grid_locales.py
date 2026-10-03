@@ -79,3 +79,7 @@ for name,zh,en in colors:
 for i,locale in enumerate(('zh_cn','en_us')):
     p=A/'lang'/f'{locale}.json';data=json.loads(p.read_text(encoding='utf-8'));data.update({key:value[i] for key,value in entries.items()})
     p.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+# Apply the current assembly chapter after the earlier grid translations.
+import runpy
+runpy.run_path(str(Path(__file__).with_name("generate_assembly_assets.py")))
