@@ -6,6 +6,7 @@ ROOT=Path(__file__).resolve().parents[1];A=ROOT/'src/main/resources/assets/elect
 def write(p,obj):p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(obj,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
 def cube(a,b,t):return {'from':list(a),'to':list(b),'faces':{f:{'texture':'#'+t,'uv':[0,0,16,16]} for f in ('up','down','north','south','east','west')}}
 TX={k:'electron:block/assembled/'+k for k in ('cast_base','galvanized','control_case','service_panel','console_panel','copper_bus','porcelain','vent','firebrick','steel_pipe','hydro_blue','boiler')}
+TX.update({k:'electron:block/pcb/'+k for k in ('brushed_steel','enamel','rubber','panel_seam','terminal_red','terminal_black','rating_plate','display_glass')})
 DISPLAY={'gui':{'rotation':[25,225,0],'scale':[.65,.65,.65]},'ground':{'translation':[0,3,0],'scale':[.35,.35,.35]},'fixed':{'rotation':[0,180,0],'scale':[.6,.6,.6]},'firstperson_righthand':{'rotation':[0,45,0],'scale':[.5,.5,.5]},'firstperson_lefthand':{'rotation':[0,-45,0],'scale':[.5,.5,.5]},'thirdperson_righthand':{'rotation':[65,45,0],'translation':[0,2,0],'scale':[.375,.375,.375]},'thirdperson_lefthand':{'rotation':[65,-45,0],'translation':[0,2,0],'scale':[.375,.375,.375]}}
 def model(els,tx=None):return {'parent':'minecraft:block/block','ambientocclusion':True,'textures':{'particle':'electron:block/assembled/galvanized',**TX,**(tx or {})},'elements':els,'display':DISPLAY}
 def round_vertical(x,y,z,r,h,t):
@@ -22,9 +23,19 @@ def transform(els,face,turn):
  return out
 names={'ore_crusher':('电动粉碎机','Electric Ore Crusher'),'centrifuge':('电动离心分离机','Powered Centrifuge'),'electric_kiln':('电炉','Electric Kiln'),'fuel_fabricator':('压制封装机','Press and Fuel Fabricator')}
 for name in names:
- els=[cube((0,0,0),(16,1,16),'cast_base'),cube((1.6,1,2),(2.4,14.6,3),'galvanized'),cube((13.6,1,2),(14.4,14.6,3),'galvanized'),cube((1,14.6,2),(15,15,4),'control_case')]
- for x in (3,11):
-  els += [cube((x-.5,1,6.5),(x+.5,13.5,7.5),'galvanized'),cube((x-.9,13.5,6.1),(x+.9,14.7,7.9),'porcelain'),cube((x-.5,14.7,6.5),(x+.5,15.2,7.5),'copper_bus')]
+ # Keep the released connector coordinates, but bury the long risers inside a
+ # proper rear service cabinet. Only the small recessed socket mouths remain.
+ els=[cube((0,0,0),(16,1,16),'cast_base'),cube((1,1,.65),(14.8,14.3,7.6),'enamel'),
+      cube((.85,14.3,.5),(14.95,14.65,7.9),'brushed_steel'),cube((1.35,2,.52),(14.4,13.9,.65),'panel_seam')]
+ for x in (1.6,8):
+  els += [cube((x,2.4,.45),(x+5.9,13.5,.52),'enamel'),cube((x+4.8,6.5,.2),(x+5.15,9,.45),'brushed_steel')]
+  for y in (3,3.5,4,4.5):els.append(cube((x+.7,y,.38),(x+3.9,y+.13,.45),'rubber'))
+ els += [cube((2.1,10,.38),(5.8,12.7,.45),'display_glass'),cube((8.5,14.65,2),(12.5,14.69,4),'rating_plate')]
+ for x,tx in ((3,'terminal_red'),(11,'terminal_black')):
+  els += [cube((x-1.1,14.65,5.8),(x+1.1,14.9,8.2),'rubber'),cube((x-.78,14.9,6.2),(x+.78,15.03,7.8),tx),
+          cube((x-.45,15.03,6.55),(x+.45,15.12,7.45),'rubber'),cube((x-.2,15.12,6.8),(x+.2,15.2,7.2),'copper_bus')]
+ for x in (1.5,14.3):
+  for z in (1,7.3):els += [cube((x-.14,14.65,z-.14),(x+.14,14.75,z+.14),'brushed_steel')]
  if name=='ore_crusher':
   els += [cube((4.5,1,3),(11.5,7,14),'boiler'),cube((5,7,8),(6,14,15),'galvanized'),cube((10,7,8),(11,14,15),'galvanized'),cube((5,7,14),(11,14,15),'galvanized')]
   for x in (6.4,9):
@@ -40,6 +51,14 @@ for name in names:
  else:
   els += [cube((4.5,1,8),(11.5,3,15),'cast_base'),cube((4.7,3,12),(5.7,14,13),'galvanized'),cube((10.3,3,12),(11.3,14,13),'galvanized'),cube((4.3,13.5,9),(11.7,15,14.5),'control_case'),cube((7,8.5,10.5),(9,13.5,12.5),'steel_pipe'),cube((5.9,7.8,9.3),(10.1,8.5,13.5),'galvanized'),cube((6,3,9.5),(10,3.7,13.5),'galvanized')]
   for x in (6.5,8,9.5):els+=round_vertical(x,3.7,11.5,.4,.9,'cast_base')
+ # Retain physical texel density on chassis strips instead of stretching an
+ # entire panel texture across every screw and thin edge.
+ for el in els:
+  dx,dy,dz=[b-a for a,b in zip(el['from'],el['to'])]
+  for face,details in el['faces'].items():
+   if details['texture'] in ('#brushed_steel','#enamel','#rubber'):
+    w,h=(dx,dz) if face in ('up','down') else (dx,dy) if face in ('north','south') else (dz,dy)
+    details['uv']=[0,0,w,h]
  variants={}
  for face in ('up','down','north','south','west','east'):
   for turn in range(4):

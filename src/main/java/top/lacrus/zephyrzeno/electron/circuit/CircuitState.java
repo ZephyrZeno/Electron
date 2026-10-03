@@ -56,7 +56,7 @@ public final class CircuitState extends PersistentState {
         devices.forEach((pos,d)->{
             if(!(Registries.BLOCK.get(net.minecraft.util.Identifier.of(d.block)) instanceof ComponentBlock c))return;
             if(c.kind==ComponentBlock.Kind.WIND&&d.formed)return;
-            for(int pin=0;pin<ComponentPins.count(c.kind);pin++){if(c==top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE&&pin<2)continue;var e=ComponentPins.endpoint(pos,d.face,d.turn,c.kind,pin);result.put(e.id(),e);}
+            for(int pin=0;pin<ComponentPins.count(c.kind);pin++){if(c==top.lacrus.zephyrzeno.electron.industrial.Industrial.WIND_BASE&&pin<2)continue;var e=ComponentPins.endpoint(pos,d.face,d.turn,c,pin);result.put(e.id(),e);}
         });
         junctions.values().forEach(j->{var e=j.endpoint();result.put(e.id(),e);});
         cores.values().forEach(c->c.endpoints().forEach(e->result.put(e.id(),e)));return result;
@@ -220,6 +220,7 @@ public final class CircuitState extends PersistentState {
             BlockState state=world.getBlockState(pos);ComponentBlock block=(ComponentBlock)state.getBlock();
             boolean broken=state.get(ComponentBlock.BROKEN);
             if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.stamp(world,pos,state,entity,branches);continue;}
+            if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){pcb.stamp(branches,world.getTime());continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.stamp(block,state,entity,pos,branches);continue;}
             if(block.kind==ComponentBlock.Kind.TERMINAL_STRIP){terminalBranches(branches,pos,broken?1e12:.002);continue;}
             if(block.kind==ComponentBlock.Kind.BATTERY){
@@ -243,7 +244,7 @@ public final class CircuitState extends PersistentState {
                 case FUSE -> branches.add(DcSolver.Branch.resistor(id,a,b,.2));
                 case REDSTONE_SWITCH -> branches.add(DcSolver.Branch.resistor(id,a,b,RedstoneSwitchModel.COIL_OHMS));
                 case CRANK -> {double emf=state.get(ComponentBlock.ENABLED)&&entity.energy>1e-9?5*Math.min(1,entity.energy/.25):0;branches.add(DcSolver.Branch.source(id,a,b,emf,emf>0?5:1e12));}
-                case GATE -> throw new AssertionError("Gate stamp handled above");
+                case PCB,GATE -> throw new AssertionError("Gate stamp handled above");
                 case BATTERY,TERMINAL_STRIP -> throw new AssertionError("Multi-pin stamp handled above");
                 case THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS,MOSFET,RELAY,BOOST,BUCK,GENERATOR,DISTRIBUTION,BREAKER,LAMP,MOTOR->throw new AssertionError("Power stamp handled above");
             }
@@ -294,12 +295,14 @@ public final class CircuitState extends PersistentState {
             for(int pin=1;pin<ComponentPins.count(block.kind);pin++)entity.paused|=paused.containsKey(node(pos,pin));
             entity.current=readings.current(id);entity.voltage=readings.voltage(node(pos,0))-readings.voltage(node(pos,1));
             if(entity.paused){
+                if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb)pcb.pause();
                 if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)&&state.get(ComponentBlock.LEVEL)!=0)world.setBlockState(pos,state.with(ComponentBlock.LEVEL,0),Block.NOTIFY_ALL);
                 if(PowerDevices.handles(block.kind))PowerDevices.pause(world,pos,state,entity);
                 if(block.kind==ComponentBlock.Kind.REDSTONE_SWITCH){entity.signal=0;entity.contactClosed=entity.pendingContact=false;if(state.get(ComponentBlock.LEVEL)!=0||state.get(ComponentBlock.ENABLED))world.setBlockState(pos,state.with(ComponentBlock.LEVEL,0).with(ComponentBlock.ENABLED,false),Block.NOTIFY_ALL);}
                 continue;
             }
             if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind)){top.lacrus.zephyrzeno.electron.power.GridDevices.update(world,pos,state,entity,readings);continue;}
+            if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){pcb.update(readings,n->strong.containsKey(n)&&driven.contains(find(strong,n)));continue;}
             if(PowerDevices.handles(block.kind)){PowerDevices.update(world,pos,state,entity,readings);continue;}
             if(block.kind==ComponentBlock.Kind.GATE) {
                 double supply=entity.voltage;

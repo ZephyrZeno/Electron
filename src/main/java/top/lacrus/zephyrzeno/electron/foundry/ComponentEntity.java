@@ -60,7 +60,7 @@ public class ComponentEntity extends BlockEntity {
         var text=Text.translatable("reading.electron.values",String.format(Locale.ROOT,"%.3f",voltage),String.format(Locale.ROOT,"%.2f",current*1000));
         if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.GATE)text.append(Text.translatable("reading.electron.gate",new String[]{"0","1","X","Z"}[logicState]));
         if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.CAPACITOR)text.append(Text.translatable("reading.electron.capacitor",String.format(Locale.ROOT,"%.3f",capacitorVoltage),String.format(Locale.ROOT,"%.3f",CapacitorModel.joules(capacitorVoltage))));
-        if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.BATTERY)text.append(Text.translatable("reading.electron.battery",String.format(Locale.ROOT,"%.2f",energy),String.format(Locale.ROOT,"%.3f",inputVoltage),String.format(Locale.ROOT,"%.2f",inputCurrent*1000)));
+        if(getCachedState().getBlock() instanceof ComponentBlock c&&(c.kind==ComponentBlock.Kind.BATTERY||getCachedState().isOf(top.lacrus.zephyrzeno.electron.industrial.Automation.EMERGENCY)))text.append(Text.translatable("reading.electron.battery",String.format(Locale.ROOT,"%.2f",energy),String.format(Locale.ROOT,"%.3f",inputVoltage),String.format(Locale.ROOT,"%.2f",inputCurrent*1000)));
         if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.REDSTONE_SWITCH)text.append(Text.translatable(contactClosed?"reading.electron.contact_closed":"reading.electron.contact_open",signal));
         if(getCachedState().getBlock() instanceof ComponentBlock c&&(c.kind==ComponentBlock.Kind.BOOST||c.kind==ComponentBlock.Kind.BUCK||c.kind==ComponentBlock.Kind.RELAY||c.kind==ComponentBlock.Kind.MOSFET))text.append(Text.translatable("reading.electron.control_input",String.format(Locale.ROOT,"%.3f",inputVoltage),String.format(Locale.ROOT,"%.2f",inputCurrent*1000)));
         if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.MOTOR&&!(c instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock))text.append(Text.translatable("reading.electron.motor",String.format(Locale.ROOT,"%.0f",top.lacrus.zephyrzeno.electron.circuit.MotorModel.rpm(omega)),Text.translatable("motor.electron.load_"+loadMode)));
@@ -77,11 +77,11 @@ public class ComponentEntity extends BlockEntity {
     private static double finite(double x,double max){return Double.isFinite(x)?Math.clamp(x,0,max):0;}
     @Override protected void addComponents(net.minecraft.component.ComponentMap.Builder builder){
         super.addComponents(builder);
-        if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.BATTERY)builder.add(Foundry.BATTERY_ENERGY,getCachedState().get(ComponentBlock.BROKEN)?0:BatteryModel.clampEnergy(energy));
+        if(getCachedState().getBlock() instanceof ComponentBlock c&&(c.kind==ComponentBlock.Kind.BATTERY||getCachedState().isOf(top.lacrus.zephyrzeno.electron.industrial.Automation.EMERGENCY)))builder.add(Foundry.BATTERY_ENERGY,getCachedState().get(ComponentBlock.BROKEN)?0:BatteryModel.clampEnergy(energy));
     }
     @Override protected void readComponents(ComponentsAccess components){
         super.readComponents(components);
-        if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.BATTERY)energy=BatteryModel.clampEnergy(components.getOrDefault(Foundry.BATTERY_ENERGY,0d));
+        if(getCachedState().getBlock() instanceof ComponentBlock c&&(c.kind==ComponentBlock.Kind.BATTERY||getCachedState().isOf(top.lacrus.zephyrzeno.electron.industrial.Automation.EMERGENCY)))energy=BatteryModel.clampEnergy(components.getOrDefault(Foundry.BATTERY_ENERGY,0d));
     }
-    @Override public void removeFromCopiedStackNbt(NbtCompound nbt){super.removeFromCopiedStackNbt(nbt);if(getCachedState().getBlock() instanceof ComponentBlock c&&c.kind==ComponentBlock.Kind.BATTERY)nbt.remove("energy");}
+    @Override public void removeFromCopiedStackNbt(NbtCompound nbt){super.removeFromCopiedStackNbt(nbt);if(getCachedState().getBlock() instanceof ComponentBlock c&&(c.kind==ComponentBlock.Kind.BATTERY||getCachedState().isOf(top.lacrus.zephyrzeno.electron.industrial.Automation.EMERGENCY)))nbt.remove("energy");}
 }

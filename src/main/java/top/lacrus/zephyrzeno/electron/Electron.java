@@ -60,6 +60,7 @@ public final class Electron implements ModInitializer {
             entries.add(Foundry.TOWER_SECTION);entries.add(Foundry.SHAFT);entries.add(Foundry.TURNTABLE);
             for(var item:new net.minecraft.item.ItemConvertible[]{Foundry.PLANT_CASING,Foundry.REACTOR_CASING,Foundry.URANIUM_ORE,Foundry.RAW_URANIUM,Foundry.URANIUM_PELLET,Foundry.FUEL_ROD,Foundry.SPENT_ROD})entries.add(item);
         }).build());
+        Registry.register(Registries.ITEM_GROUP,id("integrated"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.integrated")).icon(()->new ItemStack(top.lacrus.zephyrzeno.electron.pcb.Pcb.BOARD)).entries((context,entries)->{top.lacrus.zephyrzeno.electron.pcb.PcbFabrication.items().forEach(entries::add);entries.add(top.lacrus.zephyrzeno.electron.pcb.Pcb.BENCH);entries.add(top.lacrus.zephyrzeno.electron.pcb.Pcb.SOCKET);}).build());
         Registry.register(Registries.ITEM_GROUP,id("redstone"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.redstone"))
                 .icon(()->new ItemStack(MEMORY)).entries((context,entries)->BLOCKS.values().forEach(entries::add)).build());
         Registry.register(Registries.ITEM_GROUP,id("workshop"),FabricItemGroup.builder().displayName(Text.translatable("itemGroup.electron.workshop"))

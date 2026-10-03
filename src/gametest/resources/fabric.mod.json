@@ -19,7 +19,8 @@
       "top.lacrus.zephyrzeno.electron.test.IndustrialTests",
       "top.lacrus.zephyrzeno.electron.test.FaultAndWaterTests",
       "top.lacrus.zephyrzeno.electron.test.PlantServiceTests",
-      "top.lacrus.zephyrzeno.electron.test.ProcessingTests"
+      "top.lacrus.zephyrzeno.electron.test.ProcessingTests",
+      "top.lacrus.zephyrzeno.electron.test.PcbTests"
     ]
   },
   "depends": {

@@ -17,6 +17,6 @@ public final class Lighting {
         var item=Registry.register(Registries.ITEM,Electron.id(id),new ComponentItem(block,new Item.Settings()));Foundry.DEVICES.put(id,block);Foundry.ITEMS.put(id,item);return block;
     }
     public static void register(){WORKSHOP=lamp("workshop_lamp",2.4);YARD=lamp("yard_lamp",6);}
-    public static boolean fixture(ComponentBlock block){return block==WORKSHOP||block==YARD;}
+    public static boolean fixture(ComponentBlock block){return block==WORKSHOP||block==YARD||block==Automation.EMERGENCY;}
     private Lighting(){}
 }

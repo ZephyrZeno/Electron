@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:workshop_lamp"
+    },
+    {
+      "item": "electron:rechargeable_battery"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:silicon_diode"
+    }
+  ],
+  "result": {
+    "id": "electron:emergency_lamp",
+    "count": 1
+  }
+}

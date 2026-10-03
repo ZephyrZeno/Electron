@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:copper_coil"
+    },
+    {
+      "item": "electron:electrical_relay"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "electron:dc_motor"
+    },
+    {
+      "item": "minecraft:diamond"
+    }
+  ],
+  "result": {
+    "id": "electron:pcb_drill",
+    "count": 1
+  }
+}

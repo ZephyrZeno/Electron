@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:assembly_table"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:copper_coil"
+    },
+    {
+      "item": "electron:magnifying_visor"
+    },
+    {
+      "item": "electron:electrical_relay"
+    },
+    {
+      "item": "minecraft:glass"
+    }
+  ],
+  "result": {
+    "id": "electron:precision_workbench",
+    "count": 1
+  }
+}

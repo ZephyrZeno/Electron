@@ -12,6 +12,8 @@ public final class PowerDevices {
     public static boolean handles(ComponentBlock.Kind k){return switch(k){case MOSFET,RELAY,BOOST,BUCK,GENERATOR,DISTRIBUTION,BREAKER,LAMP,MOTOR->true;default->false;};}
     public static void stamp(ComponentBlock block,BlockState state,ComponentEntity e,BlockPos p,List<DcSolver.Branch> b){
         String id="d:"+p.asLong(),a=node(p,0),z=node(p,1);boolean broken=state.get(ComponentBlock.BROKEN),enabled=state.get(ComponentBlock.ENABLED);
+        if(e instanceof top.lacrus.zephyrzeno.electron.pcb.PcbBenchEntity bench){b.add(DcSolver.Branch.resistor(id,a,z,broken||!bench.ready()?1e12:24));return;}
+        if(top.lacrus.zephyrzeno.electron.industrial.Automation.handles(block)){top.lacrus.zephyrzeno.electron.industrial.Automation.stamp(block,e,b);return;}
         if(block instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock){b.add(DcSolver.Branch.resistor(id,a,z,broken||!enabled||!top.lacrus.zephyrzeno.electron.industrial.Processing.ready(e)?1e12:block.resistance));return;}
         if(block==top.lacrus.zephyrzeno.electron.industrial.Industrial.PUMP){b.add(DcSolver.Branch.resistor(id,a,z,broken?1e12:240));return;}
         switch(block.kind){
@@ -32,7 +34,10 @@ public final class PowerDevices {
     }
     public static void update(ServerWorld world,BlockPos pos,BlockState state,ComponentEntity e,DcSolver.Result r){
         var kind=((ComponentBlock)state.getBlock()).kind;String id="d:"+pos.asLong();boolean broken=state.get(ComponentBlock.BROKEN);double ratio=0;int level=0;
-        if(state.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock){
+        if(e instanceof top.lacrus.zephyrzeno.electron.pcb.PcbBenchEntity bench){level=bench.process(broken);ratio=Math.max(e.voltage/30,-e.voltage/.5);
+        }else if(top.lacrus.zephyrzeno.electron.industrial.Automation.handles((ComponentBlock)state.getBlock())){
+            level=top.lacrus.zephyrzeno.electron.industrial.Automation.update(world,pos,e,(ComponentBlock)state.getBlock(),r);ratio=kind==ComponentBlock.Kind.LAMP?Math.max(e.voltage/28,-e.voltage/.5):Math.max(Math.max(e.inputVoltage/5.5,-e.inputVoltage/.5),Math.max(Math.abs(e.voltage)/30,Math.abs(e.current)/2));
+        }else if(state.getBlock() instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock){
             level=top.lacrus.zephyrzeno.electron.industrial.Processing.update(world,pos,e,broken);ratio=Math.max(e.voltage/30,-e.voltage/.5);
         }else switch(kind){
             case MOSFET->{e.inputVoltage=r.voltage(node(pos,0))-r.voltage(node(pos,2));e.inputCurrent=r.current("gate:"+id);e.voltage=r.voltage(node(pos,1))-r.voltage(node(pos,2));e.current=r.current(id)-r.current("body:"+id);e.contactClosed=!broken&&ControlModel.mosfet(e.inputVoltage,e.contactClosed);ratio=Math.max(Math.abs(e.inputVoltage)/12,Math.max(Math.abs(e.voltage)/30,Math.abs(e.current)/2));level=e.contactClosed?15:0;}

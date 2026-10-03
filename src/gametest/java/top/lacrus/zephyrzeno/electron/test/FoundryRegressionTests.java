@@ -44,8 +44,9 @@ public final class FoundryRegressionTests implements FabricGameTest {
             var state=block.getDefaultState().with(ComponentBlock.FACING,face).with(ComponentBlock.TURN,turn);
             world.setBlockState(pos,state);s.track(pos,state);t.assertEquals(ComponentGeometry.inset(block.kind),block.kind.large()?1:13,"Small panels stay 3/16; power enclosures use their full block depth");
             for(var pin:s.endpoints().values())if(pin.point().host().equals(pos)){
-                var hit=s.position(pin.point()).add(Vec3d.of(face.getVector()).multiply(.12));
-                var selected=CircuitPicking.pick(world,s,new BlockHitResult(hit,face.getOpposite(),pos,false),0);
+                var testFace=block.rearPowerPorts()?pin.point().face():face;
+                var hit=s.position(pin.point()).add(Vec3d.of(testFace.getVector()).multiply(.12));
+                var selected=CircuitPicking.pick(world,s,new BlockHitResult(hit,block.rearPowerPorts()?testFace:testFace.getOpposite(),pos,false),0);
                 t.assertEquals(selected,pin.point(),"A raised part's side still selects the visible pin: "+block.kind+" "+face+" "+turn);
             }
         }

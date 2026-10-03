@@ -29,7 +29,8 @@ public final class ElectronClient implements ClientModInitializer {
     private record PathPreview(String start,SurfacePoint target,List<SurfacePoint> path,Endpoint end,Text status,long tick){}
     private static PathPreview cachedRoute;private static long nextRouteUpdate;
     @Override public void onInitializeClient() {
-        MagnifierZoom.register();
+        MagnifierZoom.register();WorkshopMechanismRenderer.register();
+        net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.pcb.Pcb.SCREEN,PcbScreen::new);
         ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.power.FaultEffects.Event.ID,(payload,context)->context.client().execute(()->ArcRenderer.receive(payload.data())));
         ClientPlayConnectionEvents.DISCONNECT.register((handler,client)->ArcRenderer.clear());
         WorldRenderEvents.AFTER_ENTITIES.register(ArcRenderer::render);

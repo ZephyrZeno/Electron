@@ -7,12 +7,13 @@ import static top.lacrus.zephyrzeno.electron.circuit.CircuitParts.*;
 
 /** Canonical unrotated pin layout shared by routing, hit tests, selection and labels. */
 public final class ComponentPins {
-    public static int count(ComponentBlock.Kind kind){return switch(kind){case GATE->5;case BATTERY,BOOST,BUCK,SUBSTATION,MAINS,RELAY->4;case MOSFET->3;case TERMINAL_STRIP,DISTRIBUTION->8;default->2;};}
+    public static int count(ComponentBlock.Kind kind){return switch(kind){case PCB->6;case GATE->5;case BATTERY,BOOST,BUCK,SUBSTATION,MAINS,RELAY->4;case MOSFET->3;case TERMINAL_STRIP,DISTRIBUTION->8;default->2;};}
     public static int u(ComponentBlock.Kind kind,int pin){
-        return switch(kind){case GATE->new int[]{3,11,3,11,7}[pin];case BATTERY,BOOST,BUCK,SUBSTATION,MAINS,RELAY->pin%2==0?3:11;case MOSFET->new int[]{3,11,7}[pin];case TERMINAL_STRIP,DISTRIBUTION->pin<4?3:11;default->pin==0?3:11;};
+        return switch(kind){case PCB->pin<3?1:15;case GATE->new int[]{3,11,3,11,7}[pin];case BATTERY,BOOST,BUCK,SUBSTATION,MAINS,RELAY->pin%2==0?3:11;case MOSFET->new int[]{3,11,7}[pin];case TERMINAL_STRIP,DISTRIBUTION->pin<4?3:11;default->pin==0?3:11;};
     }
-    public static int v(ComponentBlock.Kind kind,int pin){return switch(kind){case GATE->new int[]{13,13,3,3,7}[pin];case BATTERY,BOOST,BUCK,SUBSTATION,MAINS,RELAY,MOSFET->pin<2?13:3;case TERMINAL_STRIP,DISTRIBUTION->3+4*(pin%4);default->7;};}
+    public static int v(ComponentBlock.Kind kind,int pin){return switch(kind){case PCB->new int[]{13,7,3,13,7,3}[pin];case GATE->new int[]{13,13,3,3,7}[pin];case BATTERY,BOOST,BUCK,SUBSTATION,MAINS,RELAY,MOSFET->pin<2?13:3;case TERMINAL_STRIP,DISTRIBUTION->3+4*(pin%4);default->7;};}
     public static String label(ComponentBlock.Kind kind,int pin){return switch(kind){
+        case PCB->new String[]{"VCC","GND","A","B","Y","Z"}[pin];
         case GATE->new String[]{"VCC","GND","A","B","Y"}[pin];
         case BATTERY,BOOST,BUCK,SUBSTATION,MAINS->new String[]{"IN+","IN-","OUT+","OUT-"}[pin];
         case RELAY->new String[]{"COIL+","COIL-","COM","NO"}[pin];
@@ -31,6 +32,15 @@ public final class ComponentPins {
     public static Endpoint endpoint(BlockPos pos,Direction face,int turn,ComponentBlock.Kind kind,int pin){
         var point=ComponentGeometry.rotate(new SurfacePoint(pos,face,u(kind,pin),v(kind,pin),0),turn);
         return new Endpoint(node(pos,pin),point,name(kind,pin));
+    }
+    public static Endpoint endpoint(BlockPos pos,Direction face,int turn,ComponentBlock block,int pin){
+        if(!block.rearPowerPorts())return endpoint(pos,face,turn,block.kind,pin);
+        // Canonical rear sockets are at (3,7,0) and (11,7,0) in an upright chassis.
+        var at=ComponentGeometry.local(face,turn,pin==0?3:11,0,9);
+        var inside=ComponentGeometry.local(face,turn,pin==0?3:11,1,9);
+        var outward=at.subtract(inside);
+        var side=Direction.getFacing(outward.x,outward.y,outward.z);
+        return new Endpoint(node(pos,pin),SurfacePoint.hit(pos,side,Vec3d.of(pos).add(at),0),name(block.kind,pin));
     }
     private ComponentPins(){}
 }

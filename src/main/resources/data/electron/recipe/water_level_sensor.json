@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:electrical_relay"
+    },
+    {
+      "item": "minecraft:bucket"
+    },
+    {
+      "item": "electron:resistor_1000"
+    },
+    {
+      "item": "minecraft:copper_ingot"
+    }
+  ],
+  "result": {
+    "id": "electron:water_level_sensor",
+    "count": 1
+  }
+}

@@ -79,9 +79,9 @@ for path in (A/'blockstates').glob('*.json'):
             model(matches[0]['apply']['model']);state_count+=1
 
 zh=read(A/'lang/zh_cn.json')
-for name in ('ore_crusher','centrifuge','electric_kiln','fuel_fabricator','workshop_lamp','yard_lamp'):
+for name in ('ore_crusher','centrifuge','electric_kiln','fuel_fabricator','workshop_lamp','yard_lamp','precision_workbench','pcb_socket','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','water_level_sensor','temperature_sensor','emergency_lamp'):
     variants=read(A/'blockstates'/f'{name}.json')['variants']
-    fixture=name in ('workshop_lamp','yard_lamp')
+    fixture=name in ('workshop_lamp','yard_lamp','emergency_lamp')
     assert len(variants)==24*(32 if fixture else 2),(name,'Unexpected mounted variants')
     for face,turn,broken,power in itertools.product(('up','down','north','south','west','east'),range(4),('false','true'),range(16)):
         key=f'facing={face},turn={turn},broken={broken}'+(f',power={power}' if fixture else '')
@@ -140,7 +140,9 @@ def render(ref):
             if name not in e['faces']:continue
             f=e['faces'][name];im=texture(f['texture'],tx)
             u0,v0,u1,v1=f.get('uv',[0,0,16,16]);w,h=im.size
-            im=im.crop((min(u0,u1)*w/16,min(v0,v1)*h/16,max(u0,u1)*w/16,max(v0,v1)*h/16))
+            # Subpixel UV spans on screw seams still sample a texel in Minecraft.
+            # Floor/ceil instead of Pillow rounding both ends to the same integer.
+            im=im.crop((math.floor(min(u0,u1)*w/16),math.floor(min(v0,v1)*h/16),math.ceil(max(u0,u1)*w/16),math.ceil(max(v0,v1)*h/16)))
             if u1<u0:im=im.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
             if v1<v0:im=im.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
             if 'rotation' in e:
@@ -172,6 +174,10 @@ def sheet(filename,title,names):
         d.text((x+10,y+222),zh[key],font=font,fill='#e5edf3')
     canvas.save(OUT/filename)
 
+if '--pcb' in sys.argv:
+    sheet('pcb-workshop.png','ELECTRON / 俯视工坊、PCB 加工与沉金',[(n,'item/'+n) for n in ['precision_workbench','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','pcb_socket','assembled_pcb','water_level_sensor','temperature_sensor','emergency_lamp','smd_not']])
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    sys.exit(0)
 if '--processing' in sys.argv:
     sheet('processing.png','ELECTRON / 用电加工、立体材料与照明',[(n,'item/'+n) for n in ['ore_crusher','centrifuge','electric_kiln','fuel_fabricator','crushed_uranium','fuel_concentrate','uranium_tailings','fuel_cladding','iron_plate','copper_coil','workshop_lamp','yard_lamp']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')

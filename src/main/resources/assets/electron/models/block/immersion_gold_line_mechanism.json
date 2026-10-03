@@ -1,0 +1,346 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "particle": "electron:block/assembled/galvanized",
+    "cast_base": "electron:block/assembled/cast_base",
+    "galvanized": "electron:block/assembled/galvanized",
+    "control_case": "electron:block/assembled/control_case",
+    "service_panel": "electron:block/assembled/service_panel",
+    "console_panel": "electron:block/assembled/console_panel",
+    "copper_bus": "electron:block/assembled/copper_bus",
+    "porcelain": "electron:block/assembled/porcelain",
+    "vent": "electron:block/assembled/vent",
+    "firebrick": "electron:block/assembled/firebrick",
+    "steel_pipe": "electron:block/assembled/steel_pipe",
+    "hydro_blue": "electron:block/assembled/hydro_blue",
+    "boiler": "electron:block/assembled/boiler",
+    "laminate": "electron:block/pcb/laminate",
+    "gold_trace": "electron:block/pcb/gold_trace",
+    "solder_joint": "electron:block/pcb/solder_joint",
+    "ic_package": "electron:block/pcb/ic_package",
+    "resistor": "electron:block/pcb/resistor",
+    "led_on": "electron:block/pcb/led_on",
+    "led_off": "electron:block/pcb/led_off",
+    "resin": "electron:block/pcb/resin",
+    "mat": "electron:block/pcb/mat",
+    "chemical": "electron:block/pcb/chemical",
+    "bath_gold": "electron:block/pcb/bath_gold",
+    "uv_lens": "electron:block/pcb/uv_lens",
+    "drill": "electron:block/pcb/drill",
+    "brushed_steel": "electron:block/pcb/brushed_steel",
+    "enamel": "electron:block/pcb/enamel",
+    "rubber": "electron:block/pcb/rubber",
+    "panel_seam": "electron:block/pcb/panel_seam",
+    "terminal_red": "electron:block/pcb/terminal_red",
+    "terminal_black": "electron:block/pcb/terminal_black",
+    "rating_plate": "electron:block/pcb/rating_plate",
+    "mat_detail": "electron:block/pcb/mat_detail",
+    "display_glass": "electron:block/pcb/display_glass",
+    "uv_detail": "electron:block/pcb/uv_detail",
+    "fluid_window": "electron:block/pcb/fluid_window",
+    "pump_paint": "electron:block/pcb/pump_paint"
+  },
+  "elements": [
+    {
+      "from": [
+        7.15,
+        7,
+        7
+      ],
+      "to": [
+        7.45,
+        12.7,
+        11
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            7.15,
+            7,
+            7.45,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#brushed_steel",
+          "uv": [
+            7.15,
+            5,
+            7.45,
+            9
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            8.55,
+            3.3000000000000007,
+            8.85,
+            9
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            7.15,
+            3.3000000000000007,
+            7.45,
+            9
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            5,
+            3.3000000000000007,
+            9,
+            9
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            7,
+            3.3000000000000007,
+            11,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        8.55,
+        7,
+        7
+      ],
+      "to": [
+        8.85,
+        12.7,
+        11
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            8.55,
+            7,
+            8.85,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#brushed_steel",
+          "uv": [
+            8.55,
+            5,
+            8.85,
+            9
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            7.15,
+            3.3000000000000007,
+            7.449999999999999,
+            9
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            8.55,
+            3.3000000000000007,
+            8.85,
+            9
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            5,
+            3.3000000000000007,
+            9,
+            9
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            7,
+            3.3000000000000007,
+            11,
+            9
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7.3,
+        5.8,
+        7.2
+      ],
+      "to": [
+        8.7,
+        9.3,
+        7.35
+      ],
+      "faces": {
+        "up": {
+          "texture": "#laminate",
+          "uv": [
+            7.3,
+            7.2,
+            8.7,
+            7.35
+          ]
+        },
+        "down": {
+          "texture": "#laminate",
+          "uv": [
+            7.3,
+            8.65,
+            8.7,
+            8.8
+          ]
+        },
+        "north": {
+          "texture": "#laminate",
+          "uv": [
+            7.300000000000001,
+            6.699999999999999,
+            8.7,
+            10.2
+          ]
+        },
+        "south": {
+          "texture": "#laminate",
+          "uv": [
+            7.3,
+            6.699999999999999,
+            8.7,
+            10.2
+          ]
+        },
+        "east": {
+          "texture": "#laminate",
+          "uv": [
+            8.65,
+            6.699999999999999,
+            8.8,
+            10.2
+          ]
+        },
+        "west": {
+          "texture": "#laminate",
+          "uv": [
+            7.2,
+            6.699999999999999,
+            7.35,
+            10.2
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        25,
+        225,
+        0
+      ],
+      "scale": [
+        0.65,
+        0.65,
+        0.65
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        -45,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        65,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        65,
+        -45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    }
+  }
+}

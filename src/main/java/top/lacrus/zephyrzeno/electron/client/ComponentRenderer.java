@@ -34,9 +34,11 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
             for(int i=0;i<(block.kind==ComponentBlock.Kind.WIND?0:ComponentPins.count(block.kind));i++)label(consumers,matrix,Direction.UP,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-1.4,.985,ComponentPins.label(block.kind,i),.007f,0xe4eeee,light);
             return;
         }
+        if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){PcbRenderer.draw(pcb,consumers,matrix,light,overlay);for(int i=0;i<6;i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-.85,12.99,ComponentPins.label(block.kind,i),.005f,0xe4eeee,light);return;}
+        if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbBenchEntity)return;
+        if(block==top.lacrus.zephyrzeno.electron.industrial.Automation.WATER||block==top.lacrus.zephyrzeno.electron.industrial.Automation.TEMPERATURE)return;
         if(block instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock machine){
-            label(consumers,matrix,face,turn,7,3.1,inset-.015,"24 V DC",.008f,0xe7edf5,light);
-            processing(entity,machine,consumers,matrix,dt,light,overlay);
+            if(machine.rearPowerPorts())WorkshopMechanismRenderer.draw(entity,machine,matrices,consumers,dt,light,overlay);else processing(entity,machine,consumers,matrix,dt,light,overlay);
             return;
         }
         if(block.kind==ComponentBlock.Kind.CRANK||block.kind==ComponentBlock.Kind.GENERATOR){
@@ -71,7 +73,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         else if(block.kind==ComponentBlock.Kind.CRANK)label(consumers,matrix,face,turn,7,3.1,inset-.015,"5 V DC",.010f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.CAPACITOR)label(consumers,matrix,face,turn,7,3.1,inset-.015,"100 mF / 10 V",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.BUTTON)label(consumers,matrix,face,turn,7,3.1,inset-.015,"1 s / NO",.010f,0xf4f5eb,light);
-        else if(block.kind==ComponentBlock.Kind.GENERATOR||block.kind==ComponentBlock.Kind.LAMP||block.kind==ComponentBlock.Kind.MOTOR||block.kind==ComponentBlock.Kind.BREAKER)label(consumers,matrix,face,turn,7,3.1,inset-.015,block.kind==ComponentBlock.Kind.BREAKER?"1 A DC":"24 V DC",.010f,0xf4f5eb,light);
+        else if(!block.rearPowerPorts()&&(block.kind==ComponentBlock.Kind.GENERATOR||block.kind==ComponentBlock.Kind.LAMP||block.kind==ComponentBlock.Kind.MOTOR||block.kind==ComponentBlock.Kind.BREAKER))label(consumers,matrix,face,turn,7,3.1,inset-.015,block.kind==ComponentBlock.Kind.BREAKER?"1 A DC":"24 V DC",.010f,0xf4f5eb,light);
         else if(top.lacrus.zephyrzeno.electron.power.GridDevices.handles(block.kind))label(consumers,matrix,face,turn,7.5,11.2,inset-.015,block.kind==ComponentBlock.Kind.SUBSTATION?"240 / 24 V":"240 V DC",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.MOSFET)label(consumers,matrix,face,turn,7,10.5,inset-.92,"N-MOS",.008f,0xf4f5eb,light);
         else if(block.kind==ComponentBlock.Kind.RELAY)label(consumers,matrix,face,turn,7,9.5,inset-.92,"5 V",.009f,0xf4f5eb,light);
@@ -118,7 +120,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         if(angle!=0){double x=u-7,y=v-11.5;u=7+x*Math.cos(angle)-y*Math.sin(angle);v=11.5+x*Math.sin(angle)+y*Math.cos(angle);}
         return ComponentGeometry.local(face,turn,u,v,inset+d);
     }
-    private static void cuboid(VertexConsumer out,Matrix4f m,Direction face,int turn,int inset,double u0,double v0,double d0,double u1,double v1,double d1,double angle,int light,int overlay){
+    static void cuboid(VertexConsumer out,Matrix4f m,Direction face,int turn,int inset,double u0,double v0,double d0,double u1,double v1,double d1,double angle,int light,int overlay){
         Vec3d[] p={point(face,turn,inset,u0,v0,d0,angle),point(face,turn,inset,u1,v0,d0,angle),point(face,turn,inset,u1,v1,d0,angle),point(face,turn,inset,u0,v1,d0,angle),point(face,turn,inset,u0,v0,d1,angle),point(face,turn,inset,u1,v0,d1,angle),point(face,turn,inset,u1,v1,d1,angle),point(face,turn,inset,u0,v1,d1,angle)};
         int[][] sides={{0,3,2,1},{4,5,6,7},{0,4,7,3},{1,2,6,5},{3,7,6,2},{0,1,5,4}};float[][] uv={{0,0},{0,1},{1,1},{1,0}};
         var normals=new org.joml.Matrix3f(m).invert().transpose();

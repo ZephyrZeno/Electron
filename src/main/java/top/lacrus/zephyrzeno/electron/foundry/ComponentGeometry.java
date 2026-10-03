@@ -25,6 +25,7 @@ public final class ComponentGeometry {
     private static VoxelShape createShape(ComponentBlock.Kind kind,Direction face,int turn){
         if(kind.large())return box(face,turn,0,0,0,16,16,16);
         var plate=box(face,turn,0,0,13,16,16,16);
+        if(kind==ComponentBlock.Kind.PCB)return VoxelShapes.union(plate,box(face,turn,2.2,3.2,12.2,13.1,11.9,13));
         double front=inset(kind)-1;
         var body=(kind==ComponentBlock.Kind.RESISTOR||kind==ComponentBlock.Kind.DIODE||kind==ComponentBlock.Kind.FUSE)?box(face,turn,4.5,5.8,front,9.5,8.2,13):(kind==ComponentBlock.Kind.BATTERY||kind==ComponentBlock.Kind.BOOST||kind==ComponentBlock.Kind.BUCK||kind==ComponentBlock.Kind.RELAY)?box(face,turn,5,5,front,9,11,13):kind==ComponentBlock.Kind.TERMINAL_STRIP?VoxelShapes.empty():box(face,turn,4.5,9,front,11,15,13);
         VoxelShape shape=VoxelShapes.union(plate,body);
@@ -39,6 +40,7 @@ public final class ComponentGeometry {
         // Keep the conductor off the IC, moving handle, resistor body and LED lens.
         if(kind==ComponentBlock.Kind.MOTOR)return !(u>=5&&u<=9&&v>=5&&v<=11);
         if(layer==1)return true;
+        if(kind==ComponentBlock.Kind.PCB)return !(u>=3&&u<=13&&v>=3&&v<=13);
         if(kind==ComponentBlock.Kind.TERMINAL_STRIP||kind==ComponentBlock.Kind.DISTRIBUTION)return true;
         if(kind==ComponentBlock.Kind.GENERATOR||kind==ComponentBlock.Kind.LAMP)return !(u>=5&&u<=9&&v>=9&&v<=13);
         if(kind==ComponentBlock.Kind.BATTERY||kind==ComponentBlock.Kind.BOOST||kind==ComponentBlock.Kind.BUCK||kind==ComponentBlock.Kind.RELAY)return !(u>=5&&u<=9&&v>=5&&v<=11);

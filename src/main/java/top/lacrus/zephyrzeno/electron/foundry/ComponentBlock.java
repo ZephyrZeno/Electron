@@ -22,7 +22,7 @@ import top.lacrus.zephyrzeno.electron.logic.LogicFunction;
 
 /** Two visible, physically separate pins on the selected mounting face. */
 public class ComponentBlock extends BlockWithEntity {
-    public enum Kind { CRANK, RESISTOR, LED, SWITCH, GATE, DIODE, FUSE, BUTTON, CAPACITOR, BATTERY, TERMINAL_STRIP, REDSTONE_SWITCH, MOSFET, RELAY, BOOST, BUCK, GENERATOR, DISTRIBUTION, BREAKER, LAMP, MOTOR, THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS;
+    public enum Kind { PCB, CRANK, RESISTOR, LED, SWITCH, GATE, DIODE, FUSE, BUTTON, CAPACITOR, BATTERY, TERMINAL_STRIP, REDSTONE_SWITCH, MOSFET, RELAY, BOOST, BUCK, GENERATOR, DISTRIBUTION, BREAKER, LAMP, MOTOR, THERMAL,HYDRO,WIND,LIGHTNING,NUCLEAR,SUBSTATION,MAINS;
         public boolean large(){return this==GENERATOR||this==DISTRIBUTION||this==BREAKER||this==LAMP||this==MOTOR||top.lacrus.zephyrzeno.electron.power.GridDevices.handles(this);}
     }
     public static final int BUTTON_TICKS=20;
@@ -40,6 +40,8 @@ public class ComponentBlock extends BlockWithEntity {
         setDefaultState(getStateManager().getDefaultState().with(FACING,Direction.NORTH).with(TURN,0).with(ENABLED,kind!=Kind.BUTTON&&kind!=Kind.REDSTONE_SWITCH).with(BROKEN,false).with(LEVEL,0));
     }
     @Override protected MapCodec<? extends BlockWithEntity> getCodec(){return codec;}
+    /** A chassis connector, facing out of the rear wall instead of raised above the enclosure. */
+    public boolean rearPowerPorts(){return false;}
     @Override protected void appendProperties(StateManager.Builder<Block,BlockState> b){b.add(FACING,TURN,ENABLED,BROKEN,LEVEL);}
     @Override public BlockState getPlacementState(ItemPlacementContext c){
         Direction face=c.getSide();int turn=face.getAxis()==Direction.Axis.Y?(c.getHorizontalPlayerFacing().getHorizontal()+(face==Direction.DOWN?2:0))&3:0;
@@ -64,7 +66,7 @@ public class ComponentBlock extends BlockWithEntity {
     @Override protected int getStrongRedstonePower(BlockState state,BlockView world,BlockPos pos,Direction direction){return getWeakRedstonePower(state,world,pos,direction);}
     @Override public net.minecraft.item.ItemStack getPickStack(net.minecraft.world.WorldView world,BlockPos pos,BlockState state){
         var stack=super.getPickStack(world,pos,state);
-        if(kind==Kind.BATTERY&&world.getBlockEntity(pos) instanceof ComponentEntity entity)stack.set(Foundry.BATTERY_ENERGY,state.get(BROKEN)?0:top.lacrus.zephyrzeno.electron.circuit.BatteryModel.clampEnergy(entity.energy));
+        if((kind==Kind.BATTERY||this==top.lacrus.zephyrzeno.electron.industrial.Automation.EMERGENCY)&&world.getBlockEntity(pos) instanceof ComponentEntity entity)stack.set(Foundry.BATTERY_ENERGY,state.get(BROKEN)?0:top.lacrus.zephyrzeno.electron.circuit.BatteryModel.clampEnergy(entity.energy));
         return stack;
     }
     @Override public BlockEntity createBlockEntity(BlockPos pos,BlockState state){return new ComponentEntity(pos,state);}
