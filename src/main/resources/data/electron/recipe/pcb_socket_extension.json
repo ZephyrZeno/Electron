@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "electron:iron_plate"
+    },
+    {
+      "item": "minecraft:black_dye"
+    }
+  ],
+  "result": {
+    "id": "electron:pcb_socket_extension",
+    "count": 2
+  }
+}

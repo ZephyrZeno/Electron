@@ -68,7 +68,7 @@ public final class PcbTests implements FabricGameTest {
         var e=(PcbBenchEntity)device(t,Pcb.ASSEMBLY,3,3);var design=PcbLayout.inverter();e.setStack(0,Pcb.designed(PcbFabrication.GOLD,design));e.setStack(1,new ItemStack(Pcb.SOLDER,16));e.setStack(6,new ItemStack(Pcb.PARTS.get(PcbLayout.Type.NOT)));
         e.edit(9,12,11,0,0);t.assertEquals(e.draft,design,"Assembly cannot redesign paid copper");t.assertEquals(e.error,5,"Assembly rejects design edits");e.edit(5,0,0,0,0);t.assertTrue(e.working,"Reading the actual gold board permits assembly");
         e.voltage=24;e.current=1;for(int i=0;i<1000;i++)e.process(true);t.assertEquals(e.work,0d,"Broken bench pays no work");e.voltage=17;e.process(false);t.assertEquals(e.work,0d,"Undervoltage cannot process");
-        solder(e,12);double saved=e.work;var copy=new PcbBenchEntity(e.getPos(),e.getCachedState());copy.read(e.createNbt(t.getWorld().getRegistryManager()),t.getWorld().getRegistryManager());t.assertEquals(copy.work,saved,"Paid work survives reload");t.assertEquals(copy.draft,design,"Custom design survives reload");t.assertTrue(copy.getStack(0).isOf(PcbFabrication.GOLD),"Gold board inventory survives reload");t.complete();
+        solder(e,12);double saved=e.work;var copy=new PcbBenchEntity(e.getPos(),e.getCachedState());copy.read(e.createNbt(t.getWorld().getRegistryManager()),t.getWorld().getRegistryManager());t.assertEquals(copy.work,saved,"Paid work survives reload");t.assertEquals(copy.draft,design,"Custom design survives reload");t.assertEquals(copy.properties().get(8),1,"Reserved paid substrate survives reload");t.complete();
     }
     @GameTest(templateName="electron:components_test")
     public void differentDesignCannotMergeIntoMachineOutput(TestContext t){

@@ -25,12 +25,8 @@ public final class PcbBlock extends ComponentBlock {
     @Override protected ActionResult onUse(BlockState s,World w,BlockPos p,PlayerEntity player,BlockHitResult hit){
         if(w.isClient)return ActionResult.SUCCESS;
         if(w.getBlockEntity(p) instanceof PcbBenchEntity e)player.openHandledScreen(e);
-        else if(w.getBlockEntity(p) instanceof PcbSocketEntity e){
-            if(player.isSneaking()&&player.getMainHandStack().isEmpty()&&!e.plantItems.get(0).isEmpty()){
-                var item=e.plantItems.get(0);e.plantItems.set(0,net.minecraft.item.ItemStack.EMPTY);e.boardChanged();player.getInventory().offerOrDrop(item);
-            }else player.sendMessage(Text.translatable(e.plantItems.get(0).isEmpty()?"pcb.electron.insert":"pcb.electron.remove"),true);
-        }
+        else if(w.getBlockEntity(p) instanceof PcbSocketEntity e)return e.interact(player,hit);
         return ActionResult.CONSUME;
     }
-    @Override protected void onStateReplaced(BlockState s,World w,BlockPos p,BlockState next,boolean moved){if(!next.isOf(this)&&!w.isClient&&w.getBlockEntity(p) instanceof PcbBenchEntity e)net.minecraft.util.ItemScatterer.spawn(w,p,e);super.onStateReplaced(s,w,p,next,moved);}
+    @Override protected void onStateReplaced(BlockState s,World w,BlockPos p,BlockState next,boolean moved){if(!next.isOf(this)&&!w.isClient&&w.getBlockEntity(p) instanceof PcbBenchEntity e){e.releaseMaterials();net.minecraft.util.ItemScatterer.spawn(w,p,e);}super.onStateReplaced(s,w,p,next,moved);}
 }

@@ -14,6 +14,8 @@ import top.lacrus.zephyrzeno.electron.item.ComponentItem;
 
 /** Electrically powered batch processing. Recipes commit input/output atomically after paid work. */
 public final class Processing {
+    /** Above the largest supported PCB batch (64 process units plus 4096 vias). */
+    public static final double MAX_SAVED_ENERGY=50000;
     public static ProcessingBlock CRUSHER,CENTRIFUGE,KILN,FABRICATOR;
     public static Item CRUSHED_URANIUM,CONCENTRATE,TAILINGS,IRON_DUST,COPPER_DUST,CLADDING,IRON_PLATE,COPPER_COIL;
     public static ScreenHandlerType<ProcessingScreenHandler> SCREEN;

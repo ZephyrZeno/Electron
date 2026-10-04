@@ -7,14 +7,19 @@ import net.minecraft.util.math.Vec3d;
 public final class ExplosionPlume {
     public record Puff(Vec3d offset,double radius,float alpha,float heat,int tile,boolean ground){}
     public static int lifetime(int kind){return kind==PlantAccident.NUCLEAR?400:kind==PlantAccident.THERMAL?180:100;}
-    public static List<Puff> sample(int kind,double age,long seed){if(age<0||age>=lifetime(kind))return List.of();if(kind!=PlantAccident.NUCLEAR)return pressureCloud(kind,age,seed);var out=new ArrayList<Puff>();var rng=new Random(seed);double fade=Math.min(1,(lifetime(kind)-age)/80);boolean nuclear=true;double scale=1;
-        // Central rising stem, with individual sideways billows rather than a solid cylinder.
-        double growth=1-Math.exp(-age/90),height=(4+40*growth)*scale,capRadius=(2+21*growth)*scale;
-        int stem=nuclear?32:12;for(int i=0;i<stem;i++){double t=i/(double)stem,phase=rng.nextDouble()*Math.PI*2;double radial=(.8+2.7*(1-t))*scale;double y=height*t;out.add(new Puff(new Vec3d(Math.cos(phase)*radial,y,Math.sin(phase)*radial),(1.5+3.8*(1-t)+age*.009)*scale,(float)(fade*.55), (float)(Math.max(0,1-age/70)*(1-t)),rng.nextInt(4),false));}
-        // A rolling toroidal cap and its filled upper centre form the mushroom silhouette.
-        int cap=nuclear?72:30;for(int i=0;i<cap;i++){double azimuth=2*Math.PI*i/cap+rng.nextDouble()*.15;double ring=rng.nextDouble();double roll=age*.025+ring*2*Math.PI;double radial=capRadius*(.4+.5*ring)+Math.cos(roll)*capRadius*.1;double y=height+Math.sin(roll)*capRadius*.16+(1-ring)*capRadius*.2;double radius=capRadius*(.20+rng.nextDouble()*.09);out.add(new Puff(new Vec3d(Math.cos(azimuth)*radial,y,Math.sin(azimuth)*radial),radius,(float)(fade*.68),(float)(Math.max(0,1-age/65)*.8),rng.nextInt(4),false));}
-        // Dust hugs the ground and expands separately from the buoyant smoke.
-        double dustFade=Math.max(0,1-age/110)*fade;for(int i=0;i<24;i++){double a=2*Math.PI*i/24;double r=Math.min(age*.40,32)*scale;out.add(new Puff(new Vec3d(Math.cos(a)*r,.25*scale,Math.sin(a)*r),(1.1+age*.05)*scale,(float)(dustFade*.55),0,rng.nextInt(4),true));}
+    /** Artistic buoyant plume: analytic stem + advected torus + ellipsoidal cap, not a weapon simulation. */
+    public static List<Puff> sample(int kind,double age,long seed){
+        if(age<0||age>=lifetime(kind))return List.of();if(kind!=PlantAccident.NUCLEAR)return pressureCloud(kind,age,seed);
+        var out=new ArrayList<Puff>();var rng=new Random(seed);double fade=Math.min(1,(lifetime(kind)-age)/80d),growth=-Math.expm1(-age/90),height=4+40*growth,radius=2+21*growth;
+        double phase=(seed&65535)*.0001;
+        // Narrow neck, broad entrainment foot; a smooth helical drift avoids disconnected random beads.
+        for(int i=0;i<32;i++){double z=i/31d,theta=i*2.399963229728653+age*.007,neck=(1.2+radius*.075)*(1+1.6*Math.pow(1-z,3));double drift=.3*radius*Math.pow(z,3)*Math.sin(age*.006+phase);double swell=1+.09*Math.sin(7*z+age*.018+phase);out.add(new Puff(new Vec3d(drift+Math.cos(theta)*neck*.35,height*z,Math.sin(theta)*neck*.35),neck*swell,(float)(fade*.62),(float)(Math.max(0,1-age/70)*(1-z)),rng.nextInt(4),false));}
+        // Toroidal vortex surface: r=R+a*cos(phi), y=H+b*sin(phi), phi advects with time.
+        // Coherent Fourier lobes vary the rim without frame-dependent noise.
+        for(int ring=0;ring<3;ring++)for(int i=0;i<32;i++){double theta=2*Math.PI*i/32,phi=2*Math.PI*ring/3+age*.018+2*theta+.24*Math.sin(3*theta+phase);double lobes=1+.06*Math.sin(5*theta+phase)+.035*Math.sin(9*theta-age*.011);double major=radius*.66,minor=radius*.26;double radial=(major+minor*Math.cos(phi))*lobes,y=height+minor*.72*Math.sin(phi);double billow=radius*(.23+.018*Math.sin(3*theta+phi));out.add(new Puff(new Vec3d(radial*Math.cos(theta),y,radial*Math.sin(theta)),billow,(float)(fade*.64),(float)(Math.max(0,1-age/65)*.8),rng.nextInt(4),false));}
+        // Fill the crown using equal-area polar samples of an oblate ellipsoid.
+        for(int i=0;i<16;i++){double r=Math.sqrt((i+.5)/16d)*radius*.7,theta=i*2.399963229728653;double y=height+radius*.24*Math.sqrt(Math.max(0,1-r*r/(radius*radius)));out.add(new Puff(new Vec3d(r*Math.cos(theta),y,r*Math.sin(theta)),radius*.22,(float)(fade*.58),(float)(Math.max(0,1-age/65)*.6),rng.nextInt(4),false));}
+        double dustFade=Math.max(0,1-age/110)*fade;for(int i=0;i<24;i++){double theta=2*Math.PI*i/24,r=32*(-Math.expm1(-age/70));out.add(new Puff(new Vec3d(Math.cos(theta)*r,.25,Math.sin(theta)*r),1.1+age*.05,(float)(dustFade*.55),0,rng.nextInt(4),true));}
         return List.copyOf(out);
     }
     private static List<Puff> pressureCloud(int kind,double age,long seed){

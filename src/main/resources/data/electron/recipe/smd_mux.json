@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_and"
+    },
+    {
+      "item": "electron:smd_and"
+    },
+    {
+      "item": "electron:smd_or"
+    },
+    {
+      "item": "electron:smd_not"
+    },
+    {
+      "item": "electron:solder_alloy"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_mux",
+    "count": 1
+  }
+}

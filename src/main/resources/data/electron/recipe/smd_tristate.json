@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_nand"
+    },
+    {
+      "item": "electron:smd_buffer"
+    },
+    {
+      "item": "electron:solder_alloy"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_tristate",
+    "count": 1
+  }
+}

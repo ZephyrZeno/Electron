@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "electron:block/pcb_socket_extension"
+    }
+  }
+}

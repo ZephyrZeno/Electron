@@ -1,0 +1,275 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "particle": "electron:block/assembled/galvanized",
+    "cast_base": "electron:block/scorched",
+    "galvanized": "electron:block/scorched",
+    "control_case": "electron:block/scorched",
+    "service_panel": "electron:block/scorched",
+    "console_panel": "electron:block/scorched",
+    "copper_bus": "electron:block/scorched",
+    "porcelain": "electron:block/scorched",
+    "vent": "electron:block/scorched",
+    "firebrick": "electron:block/scorched",
+    "steel_pipe": "electron:block/scorched",
+    "hydro_blue": "electron:block/scorched",
+    "boiler": "electron:block/scorched",
+    "brushed_steel": "electron:block/scorched",
+    "enamel": "electron:block/scorched",
+    "rubber": "electron:block/scorched",
+    "panel_seam": "electron:block/scorched",
+    "terminal_red": "electron:block/scorched",
+    "terminal_black": "electron:block/scorched",
+    "laminate": "electron:block/scorched",
+    "gold_trace": "electron:block/scorched",
+    "solder_joint": "electron:block/scorched",
+    "ic_package": "electron:block/scorched",
+    "frame": "electron:block/scorched",
+    "glass": "electron:block/scorched",
+    "segment_on": "electron:block/scorched",
+    "segment_off": "electron:block/scorched",
+    "rgb_0": "electron:block/scorched",
+    "rgb_1": "electron:block/scorched",
+    "rgb_2": "electron:block/scorched",
+    "rgb_3": "electron:block/scorched",
+    "rgb_4": "electron:block/scorched",
+    "rgb_5": "electron:block/scorched",
+    "rgb_6": "electron:block/scorched",
+    "rgb_7": "electron:block/scorched"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        2.55,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.09999999999999964,
+        2.55,
+        0.1
+      ],
+      "to": [
+        15.9,
+        2.6,
+        15.9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        25,
+        225,
+        0
+      ],
+      "scale": [
+        0.65,
+        0.65,
+        0.65
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        -45,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        65,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        65,
+        -45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    }
+  }
+}

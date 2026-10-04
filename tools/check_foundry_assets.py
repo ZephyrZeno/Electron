@@ -178,6 +178,10 @@ if '--ports' in sys.argv:
     sheet('ports.png','ELECTRON / 专用接口与插电供电',[(n,'item/'+n) for n in ['plant_fuel_port','reactor_fuel_intake','plant_ash_outlet','spent_rod_outlet','plant_water_inlet','wall_outlet','power_strip','appliance_adapter','appliance_power_cord','workshop_lamp','immersion_gold_line','precision_workbench']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
     sys.exit(0)
+if '--dense-pcb' in sys.argv:
+    sheet('pcb-v13.png','ELECTRON / 高密度 PCB、逻辑与像素',[(n,'item/'+n) for n in ['smd_nor','smd_xnor','smd_buffer','smd_dff','smd_clock','smd_tristate','smd_mux','smd_switch','smd_dial','smd_rgb','smd_pixel','smd_sign','pcb_socket','pcb_socket_extension','pixel_display_panel','pcb_design_station']])
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    sys.exit(0)
 if '--digital' in sys.argv:
     sheet('pcb-digital.png','ELECTRON / 独立设计、焊接装配与数字显示',[(n,'item/'+n) for n in ['pcb_design_station','precision_workbench','decimal_input','numeric_display','display_panel','smd_half_adder','smd_display','pcb_socket']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')

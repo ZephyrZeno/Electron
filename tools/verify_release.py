@@ -45,14 +45,19 @@ for label,path,modid,forbidden in [('main',MAIN,'electron',b'top/lacrus/zephyrze
                 assert json.loads(jar.read(f'assets/electron/models/item/{item}.json')).get('elements'), (item,'Expected solid model')
             assert not any(f'data/electron/recipe/{item}.json' in names for item in ('uranium_pellet','fuel_rod')), 'Powered processing must not have legacy recipe bypasses'
             assert 'top/lacrus/zephyrzeno/electron/industrial/ProcessingEntity.class' in names
-            for device in ('pcb_design_station','decimal_input','numeric_display','display_panel','precision_workbench','pcb_socket','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','water_level_sensor','temperature_sensor','emergency_lamp'):
+            for device in ('pcb_design_station','decimal_input','numeric_display','display_panel','pixel_display_panel','precision_workbench','pcb_socket','pcb_socket_extension','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','water_level_sensor','temperature_sensor','emergency_lamp'):
                 assert f'assets/electron/blockstates/{device}.json' in names and f'data/electron/recipe/{device}.json' in names
             for item in ('assembled_pcb','pcb_photomask','exposed_pcb','drilled_pcb','etched_pcb','masked_pcb','gold_finished_pcb','smd_r1k','smd_r10k','smd_led','smd_not','smd_and','smd_or','smd_xor','smd_nand','smd_half_adder','smd_display'):
                 assert json.loads(jar.read(f'assets/electron/models/item/{item}.json')).get('elements'), (item,'Expected miniature solid model')
+            for part in ('nor','xnor','buffer','rgb','pixel','dial','switch','dff','clock','tristate','mux','sign'):
+                item='smd_'+part
+                assert json.loads(jar.read(f'assets/electron/models/item/{item}.json')).get('elements'), (item,'Expected miniature solid model')
+                assert f'data/electron/recipe/{item}.json' in names
             for item in ('assembled_pcb','pcb_photomask','exposed_pcb','drilled_pcb','etched_pcb','masked_pcb','gold_finished_pcb'):
                 assert f'data/electron/recipe/{item}.json' not in names, (item,'PCB processing must not have a crafting bypass')
-            for cls in ('PcbLayout','PcbCircuit','PcbBenchEntity','PcbSocketEntity','PcbScreenHandler','PcbFabrication','PcbNetworking'):
+            for cls in ('PcbLayout','PcbCircuit','PcbBenchEntity','PcbSocketEntity','PcbScreenHandler','PcbFabrication','PcbNetworking','PcbRouter','PcbCopperMesh','SingleBoardCalculator','PcbExamples','PcbExtensionBlock'):
                 assert f'top/lacrus/zephyrzeno/electron/pcb/{cls}.class' in names
+            assert 'top/lacrus/zephyrzeno/electron/display/PixelMatrix.class' in names
             assert 'assets/electron/textures/gui/precision_mat.png' in names
             for machine in ('pcb_drill','immersion_gold_line'):
                 assert f'assets/electron/models/block/{machine}_mechanism.json' in names
@@ -124,13 +129,18 @@ shutil.copy2(ROOT/'build/asset-review/ports.png',out/'ports-preview.png')
 shutil.copy2(ROOT/'docs/design/PCB_EDITOR_AND_ACCIDENTS_V12.md',out/'PCB显示与机组事故-v12.md')
 shutil.copy2(ROOT/'build/asset-review/pcb-digital.png',out/'pcb-digital-preview.png')
 shutil.copy2(ROOT/'build/asset-review/plant-plumes.png',out/'plant-plumes-preview.png')
+shutil.copy2(ROOT/'docs/design/DENSE_PCB_AND_PIXELS_V13.md',out/'高密度PCB与像素-v13.md')
+shutil.copy2(ROOT/'build/asset-review/pcb-v13.png',out/'pcb-v13-preview.png')
+shutil.copy2(ROOT/'build/asset-review/single-board-calculator.png',out/'single-board-calculator.png')
 (out/'安装说明.txt').write_text(f"""Electron: Circuit Foundry — {VERSION}
 Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-本版拆分PCB设计与焊接装配，增加独立元件区、搜索、撤销、缩放和拖动预览；新增5 V输入拨盘、微型显示、自动拼接大屏及真实门电路加减计算器。机组故障加入分层烟尘与3种定位爆炸声，核电事故有蘑菇状烟云。操作与版本迁移以《PCB显示与机组事故-v12.md》及手册为准。
+本版将样机改为单张80×88、四层PCB：58个元件中52个为板内基本逻辑门，支持两个0–9输入的加减法，结果−9…18。板外使用小型导线；3×4底座只提供支撑。设计最大128×96、256元件，支持1–4铜层、贯穿孔、自定义板边接口及缩放平移。面积和层数增加实际耗材、耗电和加工时间，大板需要扩展底座；分批装配材料和加工进度可保存。
+补齐NOR、XNOR、缓冲器、D触发器、时钟、三态、选择器、板上拨盘与开关、RGB、负号条、8×8像素屏。像素屏每点可写，外部面板按矩形拼接，串行时钟和锁存控制整帧。核电事故烟云改为随时间变化的环面、椭球及烟柱几何采样。当前规则、坐标和限制以《高密度PCB与像素-v13.md》及手册为准。
+前版拆分PCB设计与焊接装配，增加独立元件区、搜索、撤销、缩放和拖动预览；新增5 V输入拨盘、微型显示、自动拼接大屏及门电路加减计算器。机组故障加入分层烟尘与3种定位爆炸声。历史设计见《PCB显示与机组事故-v12.md》。
 前版完成专用煤料/燃料棒输入器、独立炉灰/乏燃料输出器、管道进水口，取消机身任意投料和核电控制室。接线柜可开关门；新增插孔、三位插排、双芯电源线和消耗能量的固定24 V适配器。改善跨线桥连续跨线，移除电器电压铭牌。详见《机组接口与插电供电-v11.md》，其坐标和操作规则优先于历史文档。
 此前新增俯视防静电工作台、拖动微型配件与自定义板形、光绘→曝光→钻孔→蚀刻清洗→阻焊→沉金→焊接的耗电制板流程。六端口底座接入实际电路网络；新增水位开关、温度联锁和蓄电应急灯。新机器使用后侧矮接线盒、分体细节模型与加工动件；旧加工机将长柱收进接线柜并保留接线坐标。当前工序、配方、教程与限制见《PCB工坊与联锁-v10.md》。
 此前修复手册偏绿、风机检修门穿模，增加按材料维修成型设施。新增四台 24 V 耗电加工机、工坊防护灯和庭院柱灯；铀矿、燃料及加工材料使用立体模型。提高机组部件制作门槛，移除工作台燃料棒和熔炉芯块捷径。当前玩法和清单见《用电与加工-v9.md》，大型结构坐标及接口操作以《机组接口与插电供电-v11.md》及手册为准。
@@ -143,8 +153,8 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 电缆加粗并采用贴图，跨线桥保持粗线所需间距并减少反复爬升；架空及垂直悬线按实际电压检查净距，240 V为0.45格，6.6/11/24 kV为1.2/1.6/2.4格；详见故障取水与模型-v7.md。
 工程灯在额定供电时发出原版 15 级光照；光源增加 labPBR 发光材质。断电和损坏时熄灭。
 不添加光影包。此前 Electron Lights 副本已备份移出 shaderpacks，原包保持不变。
-31页手册、27张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
-主线不依赖计算器。已实现单面 PCB 制作与焊接；双面过孔、可编程开发板、板上升降压芯片及三相交流尚未实现。开发板后续模拟游戏内功能，不兼容真实STM32固件。
+33页手册、29张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
+主线不依赖独立计算器模组。已实现四层PCB、贯穿孔、门电路、寄存与像素显示；可编程开发板、模拟运放、板上升降压芯片及三相交流尚未实现。开发板后续模拟游戏内功能，不兼容真实STM32固件。六个板边焊盘可自定义位置，底座的六个外部接线点保持固定；多格PCB须水平安装。
 
 教学地图：解压 circuit-academy-{VERSION}.zip，将 Circuit_Foundry_Academy 放入 saves。
 旧玩家存档不会被覆盖。生成器仅用于开发期导出，不进入主线发行 JAR。

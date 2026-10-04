@@ -13,6 +13,14 @@ public final class PcbNetworking {
         };
         public Id<? extends CustomPayload> getId(){return ID;}
     }
-    public static void register(){PayloadTypeRegistry.playC2S().register(Action.ID,Action.CODEC);ServerPlayNetworking.registerGlobalReceiver(Action.ID,(a,c)->c.server().execute(()->{if(c.player().currentScreenHandler instanceof PcbScreenHandler h&&h.syncId==a.sync)h.action(c.player(),a);}));}
+    public record Snapshot(int sync,int revision,String layout) implements CustomPayload {
+        public static final Id<Snapshot> ID=new Id<>(Electron.id("pcb_snapshot"));
+        public static final PacketCodec<RegistryByteBuf,Snapshot> CODEC=new PacketCodec<>(){
+            public Snapshot decode(RegistryByteBuf b){return new Snapshot(b.readVarInt(),b.readVarInt(),b.readString(PcbLayout.MAX_ENCODING));}
+            public void encode(RegistryByteBuf b,Snapshot s){b.writeVarInt(s.sync);b.writeVarInt(s.revision);b.writeString(s.layout,PcbLayout.MAX_ENCODING);}
+        };
+        public Id<? extends CustomPayload> getId(){return ID;}
+    }
+    public static void register(){PayloadTypeRegistry.playS2C().register(Snapshot.ID,Snapshot.CODEC);PayloadTypeRegistry.playC2S().register(Action.ID,Action.CODEC);ServerPlayNetworking.registerGlobalReceiver(Action.ID,(a,c)->c.server().execute(()->{if(c.player().currentScreenHandler instanceof PcbScreenHandler h&&h.syncId==a.sync)h.action(c.player(),a);}));}
     private PcbNetworking(){}
 }

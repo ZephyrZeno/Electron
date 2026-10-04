@@ -3,46 +3,75 @@ package top.lacrus.zephyrzeno.electron.pcb;
 import java.util.*;
 import java.util.function.Predicate;
 import top.lacrus.zephyrzeno.electron.circuit.DcSolver;
-import top.lacrus.zephyrzeno.electron.logic.WireLogic;
+import top.lacrus.zephyrzeno.electron.logic.*;
 
-/** Compiled copper nets are cached per board; outputs switch paid supply rails, never synthesize power. */
+/** Copper, finite supply rails and delayed logic. There is no expression/arithmetic evaluator. */
 public final class PcbCircuit {
     public final PcbLayout layout;
-    private final int[] nets,states,pending;
-    private final long[] due;
+    public final List<PcbCopperMesh.Run> surfaceCopper;
+    private final int[] nets,states,pending,clocks,latches;
+    private final long[] due,shift;
+    public final int[] controls,displays;
+    public final long[] pixels;
+    public final BitSet leds=new BitSet();
     public int ledMask;
-    public final int[] displays;
-    public PcbCircuit(PcbLayout layout){this.layout=layout;nets=layout.nets();states=new int[layout.parts().size()*2];Arrays.fill(states,3);pending=states.clone();due=new long[states.length];displays=new int[layout.parts().size()];Arrays.fill(displays,-1);}
-    private String pin(String id,int at){return id+":n"+nets[at];}
+    public PcbCircuit(PcbLayout layout){this.layout=layout;surfaceCopper=PcbCopperMesh.compile(layout);nets=layout.nets();int n=layout.parts().size();states=new int[n*4];Arrays.fill(states,3);pending=states.clone();due=new long[states.length];displays=new int[n];Arrays.fill(displays,-1);controls=new int[n];clocks=new int[n];latches=new int[n];shift=new long[n];pixels=new long[n];}
+    public String net(String id,int at){return id+":n"+nets[at];}
+    private String pin(String id,PcbLayout.Part p,int index){return net(id,p.pin(index));}
+    private static int outputPin(PcbLayout.Type t,int out){return t==PcbLayout.Type.DIAL?out+2:t==PcbLayout.Type.MUX?5:out+4;}
+    private static int inputEnd(PcbLayout.Type t){return t.input()?2:t==PcbLayout.Type.SIGN?3:t==PcbLayout.Type.DISPLAY||t==PcbLayout.Type.PIXEL?6:t==PcbLayout.Type.RGB||t==PcbLayout.Type.MUX?5:4;}
     public void stamp(String id,String[] ports,List<DcSolver.Branch> branches,long tick,boolean broken){
-        for(int i=0;i<ports.length;i++)branches.add(DcSolver.Branch.resistor(id+":port"+i,ports[i],pin(id,layout.ports()[i]),broken?1e12:.005));
+        for(int i=0;i<ports.length;i++)branches.add(DcSolver.Branch.resistor(id+":port"+i,ports[i],net(id,layout.ports()[i]),broken?1e12:.005));
         branches.add(DcSolver.Branch.resistor(id,ports[0],ports[1],broken?1e12:100000));
         for(int i=0;i<layout.parts().size();i++){
-            var part=layout.parts().get(i);String name=id+":c"+i,a=pin(id,part.pin(0)),b=pin(id,part.pin(1));
-            if(!part.type().digital()){branches.add(broken?DcSolver.Branch.resistor(name,a,b,1e12):switch(part.type()){case R1K->DcSolver.Branch.resistor(name,a,b,1000);case R10K->DcSolver.Branch.resistor(name,a,b,10000);default->DcSolver.Branch.led(name,a,b);});}
+            var p=layout.parts().get(i);var t=p.type();String name=id+":c"+i,a=pin(id,p,0),b=pin(id,p,1);
+            if(!t.digital())branches.add(broken?DcSolver.Branch.resistor(name,a,b,1e12):switch(t){case R1K->DcSolver.Branch.resistor(name,a,b,1000);case R10K->DcSolver.Branch.resistor(name,a,b,10000);default->DcSolver.Branch.led(name,a,b);});
             else{
-                boolean display=part.type()==PcbLayout.Type.DISPLAY;
-                branches.add(DcSolver.Branch.resistor(name,a,b,broken?1e12:display?1000:10000));
-                for(int j=2;j<(display?6:4);j++)branches.add(DcSolver.Branch.resistor(name+":in"+j,pin(id,part.pin(j)),b,1e7));
-                for(int out=0;out<(display?0:part.type()==PcbLayout.Type.HALF_ADDER?2:1);out++){int channel=i*2+out;if(due[channel]<=tick)states[channel]=pending[channel];branches.add(DcSolver.Branch.resistor(name+(out==0?":out":":carry"),pin(id,part.pin(4+out)),states[channel]==1?a:b,!broken&&states[channel]<2?100:1e12));}
+                double resistance=t==PcbLayout.Type.DISPLAY?1000:t==PcbLayout.Type.RGB?5/(.001+.003*Integer.bitCount(Math.max(0,displays[i]))):t==PcbLayout.Type.PIXEL?5/(.002+.0003*Long.bitCount(pixels[i])):10000;
+                branches.add(DcSolver.Branch.resistor(name,a,b,broken?1e12:resistance));
+                for(int j=2;j<inputEnd(t);j++)branches.add(DcSolver.Branch.resistor(name+":in"+j,pin(id,p,j),b,1e7));
+                for(int out=0;out<t.outputs();out++){int channel=i*4+out;if(due[channel]<=tick)states[channel]=pending[channel];branches.add(DcSolver.Branch.resistor(name+(out==0?":out":out==1?":carry":":out"+out),pin(id,p,outputPin(t,out)),states[channel]==1?a:b,!broken&&states[channel]<2?100:1e12));}
             }
         }
     }
+    private int input(String id,PcbLayout.Part p,int j,DcSolver.Result r,Predicate<String> driven,double supply){String n=pin(id,p,j);return WireLogic.input(r.voltage(n)-r.voltage(pin(id,p,1)),supply,driven.test(n));}
     public double update(String id,DcSolver.Result r,Predicate<String> driven,long tick,boolean broken){
-        double stress=0;ledMask=0;
+        double stress=0;leds.clear();ledMask=0;
         for(int i=0;i<layout.parts().size();i++){
-            var p=layout.parts().get(i);String name=id+":c"+i;double supply=r.voltage(pin(id,p.pin(0)))-r.voltage(pin(id,p.pin(1))),current=r.current(name);
-            if(p.type().digital()){
-                int a=WireLogic.input(r.voltage(pin(id,p.pin(2)))-r.voltage(pin(id,p.pin(1))),supply,driven.test(pin(id,p.pin(2))));
-                int b=WireLogic.input(r.voltage(pin(id,p.pin(3)))-r.voltage(pin(id,p.pin(1))),supply,driven.test(pin(id,p.pin(3))));
-                if(p.type()==PcbLayout.Type.DISPLAY){int value=0;for(int bit=0;bit<4;bit++){int input=WireLogic.input(r.voltage(pin(id,p.pin(bit+2)))-r.voltage(pin(id,p.pin(1))),supply,driven.test(pin(id,p.pin(bit+2))));if(input>1){value=-1;break;}value|=input<<bit;}displays[i]=broken||supply<4.5||supply>5.5?-1:value;}
-                else for(int out=0;out<(p.type()==PcbLayout.Type.HALF_ADDER?2:1);out++){var function=p.type()==PcbLayout.Type.HALF_ADDER?(out==0?top.lacrus.zephyrzeno.electron.logic.LogicFunction.XOR:top.lacrus.zephyrzeno.electron.logic.LogicFunction.AND):p.type().logic;int next=broken||supply<.5?3:supply<4.5||supply>5.5?2:WireLogic.evaluate(function,a,b);int channel=i*2+out;if(next!=pending[channel]){pending[channel]=next;due[channel]=tick+2;}}
-                stress=Math.max(stress,Math.max(Math.max(supply/5.5,-supply/.5),Math.abs(r.current(name+":out"))/.02));
-                stress=Math.max(stress,Math.abs(r.current(name+":carry"))/.02);
-            }else if(p.type()==PcbLayout.Type.LED){if(!broken&&current>.001)ledMask|=1<<i;stress=Math.max(stress,Math.max(current/.025,-supply/5));}
+            var p=layout.parts().get(i);var t=p.type();String name=id+":c"+i;double supply=r.voltage(pin(id,p,0))-r.voltage(pin(id,p,1)),current=r.current(name);
+            if(t.digital()){
+                boolean powered=!broken&&supply>=4.5&&supply<=5.5;int a=inputEnd(t)>2?input(id,p,2,r,driven,supply):0,b=inputEnd(t)>3?input(id,p,3,r,driven,supply):0;
+                if(t==PcbLayout.Type.SIGN)displays[i]=powered&&a<2?a:-1;
+                else if(t==PcbLayout.Type.DISPLAY||t==PcbLayout.Type.RGB){int value=0;for(int bit=0;bit<(t==PcbLayout.Type.RGB?3:4);bit++){int level=input(id,p,bit+2,r,driven,supply);if(level>1){value=-1;break;}value|=level<<bit;}displays[i]=powered?value:-1;}
+                else if(t==PcbLayout.Type.PIXEL){int latch=input(id,p,4,r,driven,supply),clear=input(id,p,5,r,driven,supply);
+                    if(!powered||clear==1){shift[i]=pixels[i]=0;}
+                    else{if(b==1&&clocks[i]==0&&a<2)shift[i]=(shift[i]<<1)|a;if(latch==1&&latches[i]==0)pixels[i]=shift[i];}
+                    clocks[i]=b;latches[i]=latch;
+                }
+                else for(int out=0;out<t.outputs();out++){
+                    int channel=i*4+out,next;
+                    if(!powered)next=broken||supply<.5?3:2;
+                    else if(t.logic!=null)next=WireLogic.evaluate(t.logic,a,b);
+                    else next=switch(t){
+                        case HALF_ADDER->WireLogic.evaluate(out==0?LogicFunction.XOR:LogicFunction.AND,a,b);
+                        case DIAL->(Math.clamp(controls[i],0,9)>>out)&1;
+                        case SWITCH->controls[i]&1;
+                        case CLOCK->(int)((tick/Math.max(2,controls[i]>0?controls[i]:10))&1);
+                        case DFF->b==1&&clocks[i]==0?a:pending[channel]<2?pending[channel]:0;
+                        case TRISTATE->b==0?3:b==1?a:2;
+                        case MUX->{int select=input(id,p,4,r,driven,supply);yield select==0?a:select==1?b:2;}
+                        default->3;
+                    };
+                    if(next!=pending[channel]){pending[channel]=next;due[channel]=tick+2;}
+                    stress=Math.max(stress,Math.abs(r.current(name+(out==0?":out":out==1?":carry":":out"+out)))/.02);
+                }
+                if(t==PcbLayout.Type.DFF)clocks[i]=powered?b:2;
+                if(t==PcbLayout.Type.DIAL||t==PcbLayout.Type.SWITCH||t==PcbLayout.Type.CLOCK)displays[i]=powered?controls[i]:-1;
+                stress=Math.max(stress,Math.max(supply/5.5,-supply/.5));
+            }else if(t==PcbLayout.Type.LED){if(!broken&&current>.001){leds.set(i);if(i<32)ledMask|=1<<i;}stress=Math.max(stress,Math.max(current/.025,-supply/5));}
             else stress=Math.max(stress,Math.abs(supply*current)/.125);
         }
         return stress;
     }
-    public void reset(){Arrays.fill(states,3);Arrays.fill(pending,3);Arrays.fill(due,0);Arrays.fill(displays,-1);ledMask=0;}
+    public void reset(){Arrays.fill(states,3);Arrays.fill(pending,3);Arrays.fill(due,0);Arrays.fill(displays,-1);Arrays.fill(clocks,2);Arrays.fill(latches,2);Arrays.fill(shift,0);Arrays.fill(pixels,0);leds.clear();ledMask=0;}
 }

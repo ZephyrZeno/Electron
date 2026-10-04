@@ -1,0 +1,275 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "particle": "electron:block/assembled/galvanized",
+    "cast_base": "electron:block/assembled/cast_base",
+    "galvanized": "electron:block/assembled/galvanized",
+    "control_case": "electron:block/assembled/control_case",
+    "service_panel": "electron:block/assembled/service_panel",
+    "console_panel": "electron:block/assembled/console_panel",
+    "copper_bus": "electron:block/assembled/copper_bus",
+    "porcelain": "electron:block/assembled/porcelain",
+    "vent": "electron:block/assembled/vent",
+    "firebrick": "electron:block/assembled/firebrick",
+    "steel_pipe": "electron:block/assembled/steel_pipe",
+    "hydro_blue": "electron:block/assembled/hydro_blue",
+    "boiler": "electron:block/assembled/boiler",
+    "brushed_steel": "electron:block/pcb/brushed_steel",
+    "enamel": "electron:block/pcb/enamel",
+    "rubber": "electron:block/pcb/rubber",
+    "panel_seam": "electron:block/pcb/panel_seam",
+    "terminal_red": "electron:block/pcb/terminal_red",
+    "terminal_black": "electron:block/pcb/terminal_black",
+    "laminate": "electron:block/pcb/laminate",
+    "gold_trace": "electron:block/pcb/gold_trace",
+    "solder_joint": "electron:block/pcb/solder_joint",
+    "ic_package": "electron:block/pcb/ic_package",
+    "frame": "electron:block/display/frame",
+    "glass": "electron:block/display/glass",
+    "segment_on": "electron:block/display/segment_on",
+    "segment_off": "electron:block/display/segment_off",
+    "rgb_0": "electron:block/pcb/rgb_0",
+    "rgb_1": "electron:block/pcb/rgb_1",
+    "rgb_2": "electron:block/pcb/rgb_2",
+    "rgb_3": "electron:block/pcb/rgb_3",
+    "rgb_4": "electron:block/pcb/rgb_4",
+    "rgb_5": "electron:block/pcb/rgb_5",
+    "rgb_6": "electron:block/pcb/rgb_6",
+    "rgb_7": "electron:block/pcb/rgb_7"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        2.55,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0.09999999999999964,
+        2.55,
+        0.1
+      ],
+      "to": [
+        15.9,
+        2.6,
+        15.9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#glass",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        25,
+        225,
+        0
+      ],
+      "scale": [
+        0.65,
+        0.65,
+        0.65
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        -45,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        65,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        65,
+        -45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    }
+  }
+}

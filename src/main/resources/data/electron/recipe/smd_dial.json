@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_switch"
+    },
+    {
+      "item": "electron:smd_mux"
+    },
+    {
+      "item": "electron:copper_foil"
+    },
+    {
+      "item": "electron:solder_alloy"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_dial",
+    "count": 1
+  }
+}

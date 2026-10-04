@@ -36,7 +36,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         }
         if(block instanceof top.lacrus.zephyrzeno.electron.appliance.ApplianceBlock)return;
         if(entity instanceof top.lacrus.zephyrzeno.electron.display.DisplayEntity display){DisplayRenderer.draw(display,consumers,matrix,light,overlay);return;}
-        if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){PcbRenderer.draw(pcb,consumers,matrix,light,overlay);for(int i=0;i<6;i++)label(consumers,matrix,face,turn,ComponentPins.u(block.kind,i),ComponentPins.v(block.kind,i)-.85,12.99,ComponentPins.label(block.kind,i),.005f,0xe4eeee,light);return;}
+        if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity pcb){PcbRenderer.draw(pcb,consumers,matrix,light,overlay);return;}
         if(entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbBenchEntity)return;
         if(block==top.lacrus.zephyrzeno.electron.industrial.Automation.WATER||block==top.lacrus.zephyrzeno.electron.industrial.Automation.TEMPERATURE)return;
         if(block instanceof top.lacrus.zephyrzeno.electron.industrial.ProcessingBlock machine){
@@ -126,7 +126,7 @@ public final class ComponentRenderer implements BlockEntityRenderer<ComponentEnt
         var out=consumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(GLOW));double h=width/2;double[][] coords={{u-h,v+h,0,0},{u-h,v-h,0,1},{u+h,v-h,1,1},{u+h,v+h,1,0}};
         for(var c:coords){var p=ComponentGeometry.local(face,turn,c[0],c[1],depth);out.vertex(matrix,(float)p.x,(float)p.y,(float)p.z).color(r,g,b,alpha*.75f).texture((float)c[2],(float)c[3]).overlay(OverlayTexture.DEFAULT_UV).light(LightmapTextureManager.MAX_LIGHT_COORDINATE).normal(face.getOffsetX(),face.getOffsetY(),face.getOffsetZ());}
     }
-    @Override public boolean rendersOutsideBoundingBox(ComponentEntity entity){return entity instanceof top.lacrus.zephyrzeno.electron.display.DisplayEntity||top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(entity.getCachedState())||entity.getCachedState().isOf(Foundry.WIND);}
+    @Override public boolean rendersOutsideBoundingBox(ComponentEntity entity){return entity instanceof top.lacrus.zephyrzeno.electron.pcb.PcbSocketEntity||entity instanceof top.lacrus.zephyrzeno.electron.display.DisplayEntity||top.lacrus.zephyrzeno.electron.multiblock.Assembly.formed(entity.getCachedState())||entity.getCachedState().isOf(Foundry.WIND);}
     static void centeredBox(VertexConsumer out,Matrix4f m,double x0,double y0,double z0,double x1,double y1,double z1,int light,int overlay){
         cuboid(out,m,Direction.NORTH,0,0,x0*16,y0*16,z0*16,x1*16,y1*16,z1*16,0,light,overlay);
     }

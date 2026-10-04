@@ -28,7 +28,8 @@ public final class PcbFabrication {
         var s=stage(e);if(s==null||!e.plantItems.get(0).isOf(s.input)||!e.plantItems.get(1).isOf(s.reagent))return null;
         var l=layout(e,s);if(l.parts().isEmpty()||l.supplyShort())return null;
         boolean wet=s.input==DRILLED||s.input==COATED;
-        return new Processing.Recipe(s.machine.machine+":"+l.encode(),s.machine.machine,s.input,1,s.reagent,1,s.output,1,wet?WASTE:Items.AIR,wet?1:0,s.joules);
+        if(e.plantItems.get(0).getCount()<(s.input==Pcb.BLANK?l.laminateCost():1)||e.plantItems.get(1).getCount()<(s.input==Pcb.BLANK?1:l.laminateCost()))return null;
+        return new Processing.Recipe(s.machine.machine+":"+l.encode(),s.machine.machine,s.input,s.input==Pcb.BLANK?l.laminateCost():1,s.reagent,s.input==Pcb.BLANK?1:l.laminateCost(),s.output,1,wet?WASTE:Items.AIR,wet?l.laminateCost():0,s.joules*l.laminateCost()+l.vias().size()*2);
     }
     public static ItemStack output(ComponentEntity e){var s=stage(e);return s==null?ItemStack.EMPTY:Pcb.designed(s.output,layout(e,s));}
     private PcbFabrication(){}

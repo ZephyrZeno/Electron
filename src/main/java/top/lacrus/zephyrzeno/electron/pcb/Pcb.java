@@ -15,6 +15,7 @@ import top.lacrus.zephyrzeno.electron.item.*;
 
 public final class Pcb {
     public static PcbBlock BENCH,ASSEMBLY,SOCKET;
+    public static PcbExtensionBlock EXTENSION;
     public static final int INPUT_SLOTS=3+PcbLayout.Type.values().length,OUTPUT_SLOT=INPUT_SLOTS,INVENTORY_SIZE=INPUT_SLOTS+1;
     public static Item BLANK,SOLDER,FOIL,BOARD;
     public static final EnumMap<PcbLayout.Type,Item> PARTS=new EnumMap<>(PcbLayout.Type.class);
@@ -27,6 +28,7 @@ public final class Pcb {
         Collections.addAll(MATERIALS,BLANK,SOLDER,FOIL);
         for(var type:PcbLayout.Type.values()){var part=item("smd_"+type.name().toLowerCase(Locale.ROOT),new PcbPartItem(type));PARTS.put(type,part);MATERIALS.add(part);}
         BENCH=block("pcb_design_station",PcbBlock.Role.DESIGN);ASSEMBLY=block("precision_workbench",PcbBlock.Role.ASSEMBLY);SOCKET=block("pcb_socket",PcbBlock.Role.SOCKET);
+        EXTENSION=Registry.register(Registries.BLOCK,Electron.id("pcb_socket_extension"),new PcbExtensionBlock());item("pcb_socket_extension",new BlockItem(EXTENSION,new Item.Settings()));
         SCREEN=Registry.register(Registries.SCREEN_HANDLER,Electron.id("pcb_workbench"),new ScreenHandlerType<>(PcbScreenHandler::new,FeatureFlags.VANILLA_FEATURES));
     }
     public static ItemStack board(PcbLayout layout){return designed(BOARD,layout);}

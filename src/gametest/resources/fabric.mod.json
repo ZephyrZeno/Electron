@@ -23,7 +23,8 @@
       "top.lacrus.zephyrzeno.electron.test.PcbTests",
       "top.lacrus.zephyrzeno.electron.test.PlantUpgradeTests",
       "top.lacrus.zephyrzeno.electron.test.PcbAdvancedTests",
-      "top.lacrus.zephyrzeno.electron.test.PlantAccidentTests"
+      "top.lacrus.zephyrzeno.electron.test.PlantAccidentTests",
+      "top.lacrus.zephyrzeno.electron.test.PcbMultilayerTests"
     ]
   },
   "depends": {

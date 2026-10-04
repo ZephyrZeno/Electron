@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_dff"
+    },
+    {
+      "item": "electron:smd_dff"
+    },
+    {
+      "item": "electron:smd_led"
+    },
+    {
+      "item": "electron:smd_led"
+    },
+    {
+      "item": "electron:smd_led"
+    },
+    {
+      "item": "electron:smd_led"
+    },
+    {
+      "item": "electron:smd_mux"
+    },
+    {
+      "item": "electron:solder_alloy"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_pixel",
+    "count": 1
+  }
+}

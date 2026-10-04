@@ -31,6 +31,10 @@ public final class DisplayRenderer {
         var group=new Screen(e.getPos().offset(u,minU).offset(v,minV),maxU-minU+1,maxV-minV+1);for(var p:points.keySet())screens.put(p,rectangle?group:new Screen(p,1,1));return screens.get(e.getPos());
     }
     public static void draw(DisplayEntity e,VertexConsumerProvider out,Matrix4f m,int light,int overlay){var s=e.getCachedState();var face=s.get(ComponentBlock.FACING);int turn=s.get(ComponentBlock.TURN);int value=e.role()==DisplayBlock.Role.DIAL?e.value:e.glyph();
+        if(e.role()==DisplayBlock.Role.PIXEL){
+            var glass=out.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/display/glass.png")));ComponentRenderer.cuboid(glass,m,face,turn,13,.1,.1,-.32,15.9,15.9,-.30,0,light,overlay);
+            for(int row=0;row<8;row++)for(int col=0;col<8;col++){boolean on=e.value>=0&&(e.pixelBits&(1L<<(63-row*8-col)))!=0;double a=col*2+.2,b=row*2+.2,c=a+1.6,d=b+1.6;if(face.getAxis()!=Direction.Axis.Y){b=16-b;d=16-d;}if(face==Direction.NORTH||face==Direction.EAST){a=16-a;c=16-c;}var pixel=out.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/display/segment_"+(on?"on":"off")+".png")));ComponentRenderer.cuboid(pixel,m,face,turn,13,Math.min(a,c),Math.min(b,d),-.35,Math.max(a,c),Math.max(b,d),-.33,0,on?LightmapTextureManager.MAX_LIGHT_COORDINATE:light,overlay);}return;
+        }
         if(e.role()!=DisplayBlock.Role.PANEL){glyph(out,m,face,turn,12.15,4.5,3.3,6.5,8.5,value,light,overlay);return;}
         var screen=screen(e);if(!screen.root.equals(e.getPos()))return;double w=16d*screen.width,h=16d*screen.height;var bezel=out.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/display/frame.png")));ComponentRenderer.cuboid(bezel,m,face,turn,13,0,0,-.30,w,h,-.04,0,light,overlay);var glass=out.getBuffer(RenderLayer.getEntityCutoutNoCull(Electron.id("textures/block/display/glass.png")));ComponentRenderer.cuboid(glass,m,face,turn,13,.7,.7,-.32,w-.7,h-.7,-.30,0,light,overlay);
         double gh=Math.min(h-3,(w-3)*1.65),gw=gh/1.65;glyph(out,m,face,turn,12.65,(w-gw)/2,(h-gh)/2,gw,gh,value,light,overlay);
