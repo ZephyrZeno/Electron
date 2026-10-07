@@ -127,8 +127,10 @@ public final class AssemblyGeometry {
                 for(int i=0;i<8;i++)box(1.85,.28,-1.02+i*.12,3.15,1.17,-.96+i*.12,"galvanized");
                 box(-2.95,.08,-4.1,-.55,1.65,-2.9,"transformer_oil");
                 for(int i=0;i<10;i++)box(-2.96,.2,-4.03+i*.105,-.5,1.52,-3.99+i*.105,"copper_bus");
-                pipe(.5,3.6,-3.5,2.5,3.6,-3.5,.09);pipe(2.5,3.6,-3.5,2.5,1,-2.5,.09);
-                pipe(2.5,1,-2.5,-1.6,1,-3.5,.09);pipe(-1.6,1,-3.5,-1.6,.4,-.5,.08);
+                pipePath(.09,new double[][]{{.5,3.6,-3.5},{2.5,3.6,-3.5},{2.5,3.6,-2.5},{2.5,1,-2.5}});
+                pipePath(.09,new double[][]{{2.5,1,-2.5},{2.5,1,-3.5},{-1.6,1,-3.5}});
+                pipePath(.08,new double[][]{{-1.6,1,-3.5},{-1.6,1,-.5},{-1.6,.4,-.5}});
+                pipePath(.07,new double[][]{{-1.35,.7,-.5},{-.45,.7,-.5},{-.45,1.5,-.5},{-.45,1.5,-3.5}});
                 rail(-1.35,3.0,-4.8,2,3.0,-4.8);rail(-1.35,3.0,-4.8,-1.35,3.0,-2.3);
                 // Refractory firebox, ash doors, supported catwalk, guarded ladder and relief piping.
                 box(-.92,.05,-4.9,-.86,1.14,-2.66,"firebrick");box(1.86,.05,-4.9,1.92,1.14,-2.66,"firebrick");
@@ -179,16 +181,20 @@ public final class AssemblyGeometry {
                 // A locked steel grille has a full thin collision lid, with cutout mesh revealing the water.
                 box(-13.7,2.4,-11.7,-9,2.48,-5.4,"pool_grille");
                 rail(-14,2.4,-12,-8.7,2.4,-12);rail(-14,2.4,-5.1,-8.7,2.4,-5.1);rail(-14,2.4,-12,-14,2.4,-5.1);
-                pipe(-11.2,1.7,-11.4,-11.2,1.7,-19.5,.16);pipe(-11.2,1.7,-19.5,-7.8,1.7,-19.5,.16);
-                pipe(2.8,5,-19.5,6.5,5,-19.5,.19);pipe(6.5,5,-19.5,6.5,2,-6.5,.19);
-                pipe(10.5,1.4,-6.5,10.5,1.4,-15.5,.16);pipe(10.5,1.4,-15.5,9.5,1.4,-19.2,.16);
+                pipePath(.16,new double[][]{{-11.2,1.7,-11.4},{-11.2,1.7,-19.5},{-7.65,1.7,-19.5}});
+                // Steam header enters BOTH turbines, with orthogonal risers and continuous swept elbows.
+                pipePath(.19,new double[][]{{2.65,5,-19.5},{6.5,5,-19.5},{6.5,5,-12},{6.5,2,-12},{6.5,2,-6.5},{7.5,2,-6.5}});
+                pipePath(.16,new double[][]{{6.5,3.2,-12},{10.5,3.2,-12},{10.5,3.2,-6.5},{10.5,1.8,-6.5}});
+                pipePath(.16,new double[][]{{10.5,1.4,-6.5},{10.5,1.4,-15.5},{9.5,1.4,-15.5},{9.5,1.4,-19.35}});
+                // Visible return leg completes the reservoir / cooling-tower circuit.
+                pipePath(.14,new double[][]{{8.5,.8,-19.35},{8.5,.8,-16.5},{-11.2,.8,-16.5},{-11.2,.8,-11.4}});
                 serviceYard();
                 rail(-8.7,2.4,-12,-8.7,2.4,-5.1);
                 // Containment ribs, accessible service ring, personnel airlock and pipe penetrations.
                 for(int i=0;i<24;i++){double a=i*Math.PI/12,x=-2.5+5.5*Math.cos(a),z=-19.5+5.5*Math.sin(a);beam(x,.25,z,x,9.85,z,.055,"reactor_rib");}
                 for(double y:new double[]{3.0,6.0,9.8})cylinder(-2.5,y,-19.5,5.5,.075,"reactor_rib");
                 box(-4,.0,-14.1,-1,2.85,-12.9,"reactor_shell");box(-3.62,.06,-12.91,-1.4,2.58,-12.8,"hatch");
-                pipe(-5.8,3.0,-14.9,-5.8,3,-10.8,.14);pipe(-5.8,3,-10.8,4.2,3,-10.8,.14);wheel(-5.8,3,-12.5,.34);
+                pipePath(.14,new double[][]{{-5.8,3,-15.4},{-5.8,3,-10.8},{4.2,3,-10.8},{4.2,1.4,-10.8},{4.2,1.4,-6.5},{6.7,1.4,-6.5}});wheel(-5.8,3,-12.5,.34);
                 // Cooling tower is hollow at the crown, with separate louvres and ring columns.
                 for(int i=0;i<24;i++){double a=i*Math.PI/12,x=9.5+3.6*Math.cos(a),z=-22.5+3.6*Math.sin(a);beam(x,.05,z,x,.95,z,.1,"reactor_rib");}
                 for(int i=0;i<10;i++)cylinder(9.5,.25+i*.08,-22.5,3.83,.025,"grating");
@@ -201,7 +207,7 @@ public final class AssemblyGeometry {
                 box(4.6,4.04,-6.9,12.55,4.28,-6.45,"safety_yellow");box(8.05,3.5,-6.95,8.8,4.03,-6.35,"cast_base");beam(8.4,3.5,-6.65,8.4,2.25,-6.65,.024,"galvanized");
                 for(double x:new double[]{7.5,10.5}){box(x-.44,2.2,-6.9,x+.44,2.46,-6.1,"service_panel");wheel(x,1.5,-5.2,.28);}
                 for(int i=0;i<3;i++){double z=-17+i*2.3;box(11.5,.12,z,13.8,.72,z+1.2,"transformer_oil");for(double x:new double[]{12,13.3})for(int j=0;j<5;j++)cylinder(x,.72+j*.11,z+.6,.17,.05,"porcelain");}
-                pipe(-13.4,.75,-10.8,-13.4,.75,-5.6,.10);wheel(-13.4,.75,-8.5,.24);
+                pipePath(.10,new double[][]{{-13.4,.75,-5.6},{-13.4,.75,-10.8},{-11.2,.75,-10.8},{-11.2,1.7,-10.8},{-11.2,1.7,-11.4}});wheel(-13.4,.75,-8.5,.24);
             }
             case SUBSTATION -> {
                 box(-.25,.1,-.97,1.25,1.5,-.08,"transformer_oil");
@@ -253,6 +259,25 @@ public final class AssemblyGeometry {
             }
         }
     }
+    private void pipePath(double radius,double[][] knots){
+        Vec3d previous=new Vec3d(knots[0][0],knots[0][1],knots[0][2]);
+        for(int i=1;i<knots.length-1;i++){
+            var corner=new Vec3d(knots[i][0],knots[i][1],knots[i][2]);
+            var next=new Vec3d(knots[i+1][0],knots[i+1][1],knots[i+1][2]);
+            double bend=Math.min(radius*2.5,Math.min(previous.distanceTo(corner),corner.distanceTo(next))*.35);
+            var entry=corner.add(previous.subtract(corner).normalize().multiply(bend));
+            var exit=corner.add(next.subtract(corner).normalize().multiply(bend));
+            pipe(previous.x,previous.y,previous.z,entry.x,entry.y,entry.z,radius);
+            Vec3d a=entry;
+            for(int j=1;j<=6;j++){
+                double t=j/6d;var b=entry.multiply((1-t)*(1-t)).add(corner.multiply(2*t*(1-t))).add(exit.multiply(t*t));
+                var d=b.subtract(a).normalize().multiply(.008);
+                parts.add(new Piece(a.subtract(d),b.add(d),radius,"steel_pipe",true,16));a=b;
+            }
+            previous=exit;
+        }
+        var end=knots[knots.length-1];pipe(previous.x,previous.y,previous.z,end[0],end[1],end[2],radius);
+    }
     private void serviceYard(){
         // Exposed service skid replaces the former walk-in room. Ports at (20,1,-3/-5) stay unobstructed.
         box(14,0,-7,21,.08,-.1,"floor_tiles");
@@ -260,15 +285,16 @@ public final class AssemblyGeometry {
             box(16,.1,z-.4,18.6,.28,z+.4,"cast_base");
             box(17.1,.28,z-.38,18.4,1.4,z+.38,"cabinet_skin");
             box(17.14,.4,z+.381,18.36,1.25,z+.399,"service_panel");
-            pipe(18.4,1.5,z,20.1,1.5,z,.14);
-            pipe(17.8,1.55,z,17.8,2.6,z,.12);
-            pipe(17.8,2.6,z,13.1,2.6,z,.12);
+            pipePath(.14,new double[][]{{17.8,1.1,z},{17.8,1.5,z},{20.5,1.5,z}});
+            double height=z==-2.5?3.4:3.85,targetX=z==-2.5?-2.3:-.8,headerZ=z==-2.5?-13.0:-13.7;
+            // Closed material-transfer ducts continue into containment instead of ending beside the hall.
+            pipePath(.12,new double[][]{{17.8,1.1,z},{17.8,height,z},{13.7,height,z},{13.7,height,headerZ},{targetX,height,headerZ},{targetX,height,-14.5}});
             for(double x:new double[]{16.2,18.7})beam(x,.12,z,x,2.5,z,.055,"galvanized");
         }
         // Independent rain canopies, pipe racks and grounded metal trays; no walls or hidden inventory.
         for(double z:new double[]{-4.5,-2.5})box(16,2.78,z-.6,20.9,2.9,z+.6,"roof_panels");
         for(double x:new double[]{14.4,16.2,18.2})box(x,.09,-6.65,x+.08,.18,-.6,"grating");
-        pipe(-13.5,.5,-4,-13.5,.5,-5.5,.13);
+        pipe(-13.5,.5,-3.5,-13.5,.5,-5.5,.13);
         box(15.1,.12,-1.45,16.3,1.8,-.9,"cabinet_skin");
         box(15.2,.5,-.89,16.2,1.6,-.87,"service_panel");
     }

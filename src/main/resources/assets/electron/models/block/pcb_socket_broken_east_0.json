@@ -163,15 +163,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#frame",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -231,15 +222,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#enamel",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -292,15 +274,6 @@
           ]
         },
         "east": {
-          "texture": "#brushed_steel",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#brushed_steel",
           "uv": [
             0,
@@ -435,15 +408,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#brushed_steel",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -564,15 +528,6 @@
           ]
         },
         "east": {
-          "texture": "#brushed_steel",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#brushed_steel",
           "uv": [
             0,
@@ -707,15 +662,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#brushed_steel",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -843,15 +789,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -904,15 +841,6 @@
           ]
         },
         "east": {
-          "texture": "#gold_trace",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#gold_trace",
           "uv": [
             0,
@@ -979,15 +907,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1040,15 +959,6 @@
           ]
         },
         "east": {
-          "texture": "#gold_trace",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#gold_trace",
           "uv": [
             0,
@@ -1115,15 +1025,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1176,15 +1077,6 @@
           ]
         },
         "east": {
-          "texture": "#gold_trace",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#gold_trace",
           "uv": [
             0,
@@ -1251,15 +1143,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1312,15 +1195,6 @@
           ]
         },
         "east": {
-          "texture": "#gold_trace",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#gold_trace",
           "uv": [
             0,
@@ -1387,15 +1261,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1448,15 +1313,6 @@
           ]
         },
         "east": {
-          "texture": "#gold_trace",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#gold_trace",
           "uv": [
             0,
@@ -1523,15 +1379,6 @@
             16,
             16
           ]
-        },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1584,15 +1431,6 @@
           ]
         },
         "east": {
-          "texture": "#gold_trace",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#gold_trace",
           "uv": [
             0,

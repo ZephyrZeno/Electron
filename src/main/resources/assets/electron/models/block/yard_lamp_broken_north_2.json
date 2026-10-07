@@ -118,24 +118,6 @@
             16
           ]
         },
-        "north": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#galvanized",
           "uv": [
@@ -178,24 +160,6 @@
           ]
         },
         "down": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#galvanized",
           "uv": [
             0,
@@ -314,24 +278,6 @@
           ]
         },
         "down": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#galvanized",
           "uv": [
             0,
@@ -467,15 +413,6 @@
             16
           ]
         },
-        "south": {
-          "texture": "#copper_bus",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#copper_bus",
           "uv": [
@@ -518,24 +455,6 @@
           ]
         },
         "down": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#galvanized",
           "uv": [
             0,
@@ -671,15 +590,6 @@
             16
           ]
         },
-        "south": {
-          "texture": "#copper_bus",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#copper_bus",
           "uv": [
@@ -739,15 +649,6 @@
             16
           ]
         },
-        "south": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#cast_base",
           "uv": [
@@ -790,24 +691,6 @@
           ]
         },
         "down": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#galvanized",
           "uv": [
             0,
@@ -926,24 +809,6 @@
           ]
         },
         "down": {
-          "texture": "#lens",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#lens",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#lens",
           "uv": [
             0,
@@ -1079,15 +944,6 @@
             16
           ]
         },
-        "south": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#cast_base",
           "uv": [
@@ -1130,24 +986,6 @@
           ]
         },
         "down": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#cast_base",
           "uv": [
             0,
@@ -1206,24 +1044,6 @@
             16
           ]
         },
-        "north": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#cast_base",
           "uv": [
@@ -1274,24 +1094,6 @@
             16
           ]
         },
-        "north": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#cast_base",
           "uv": [
@@ -1334,24 +1136,6 @@
           ]
         },
         "down": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "north": {
-          "texture": "#cast_base",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#cast_base",
           "uv": [
             0,
@@ -1504,15 +1288,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#cord_contact",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1565,15 +1340,6 @@
           ]
         },
         "up": {
-          "texture": "#cord_inlet",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
           "texture": "#cord_inlet",
           "uv": [
             0,

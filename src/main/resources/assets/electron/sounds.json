@@ -215,7 +215,8 @@
     "sounds": [
       {
         "name": "electron:plant_alarm",
-        "attenuation_distance": 24
+        "attenuation_distance": 16,
+        "preload": true
       }
     ]
   },

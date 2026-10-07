@@ -84,15 +84,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#case",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -212,15 +203,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#silver",
           "uv": [
@@ -272,15 +254,6 @@
           ]
         },
         "west": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
           "texture": "#silver",
           "uv": [
             0,
@@ -348,15 +321,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#silver",
           "uv": [
@@ -408,15 +372,6 @@
           ]
         },
         "west": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
           "texture": "#silver",
           "uv": [
             0,
@@ -484,15 +439,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#rubber",
           "uv": [
@@ -544,15 +490,6 @@
           ]
         },
         "west": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
           "texture": "#copper",
           "uv": [
             0,
@@ -620,15 +557,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#chip",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#pin0",
           "uv": [
@@ -680,15 +608,6 @@
           ]
         },
         "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
           "texture": "#rubber",
           "uv": [
             0,
@@ -756,15 +675,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#silver",
           "uv": [
@@ -816,15 +726,6 @@
           ]
         },
         "west": {
-          "texture": "#chip",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
           "texture": "#chip",
           "uv": [
             0,
@@ -892,15 +793,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#trim",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#trim",
           "uv": [
@@ -952,15 +844,6 @@
           ]
         },
         "west": {
-          "texture": "#flood_lens_on",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "up": {
           "texture": "#flood_lens_on",
           "uv": [
             0,
@@ -1028,15 +911,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#silver",
           "uv": [
@@ -1096,15 +970,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#silver",
           "uv": [
@@ -1495,15 +1360,6 @@
             16
           ]
         },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "up": {
           "texture": "#rubber",
           "uv": [
@@ -1555,15 +1411,6 @@
           ]
         },
         "east": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#rubber",
           "uv": [
             0,
@@ -1631,15 +1478,6 @@
             16
           ]
         },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "up": {
           "texture": "#rubber",
           "uv": [
@@ -1699,15 +1537,6 @@
             16
           ]
         },
-        "west": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "up": {
           "texture": "#rubber",
           "uv": [
@@ -1759,15 +1588,6 @@
           ]
         },
         "east": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#rubber",
           "uv": [
             0,
@@ -1885,15 +1705,6 @@
             16
           ]
         },
-        "south": {
-          "texture": "#cord_contact",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "east": {
           "texture": "#cord_contact",
           "uv": [
@@ -1945,15 +1756,6 @@
       ],
       "faces": {
         "north": {
-          "texture": "#cord_inlet",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
           "texture": "#cord_inlet",
           "uv": [
             0,

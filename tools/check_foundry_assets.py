@@ -43,6 +43,7 @@ for p in models:
     for value in resolved.get('textures',{}).values():
         if value.startswith(('electron:','#')):texture(value,resolved['textures'])
     for element in resolved.get('elements',[]):
+        assert 1<=len(element.get('faces',{}))<=6,f'Minecraft rejects empty-face elements: {p}'
         assert all(a<b for a,b in zip(element['from'],element['to'])),f'Degenerate cube: {p}'
         assert all(-16<=v<=32 for v in element['from']+element['to']),f'Bounds: {p}'
         for face in element['faces'].values():texture(face['texture'],resolved['textures'])

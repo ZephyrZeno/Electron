@@ -6,6 +6,7 @@ repositories { mavenCentral() }
 sourceSets {
     gametest { compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output; runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output }
     showcase { compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output; runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output }
+    clientqa { compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output; runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output }
 }
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -23,7 +24,7 @@ test { useJUnitPlatform() }
 check.dependsOn compileGametestJava
 
 loom {
-    mods { electron { sourceSet sourceSets.main }; electron_test { sourceSet sourceSets.gametest }; electron_showcase { sourceSet sourceSets.showcase } }
+    mods { electron { sourceSet sourceSets.main }; electron_test { sourceSet sourceSets.gametest }; electron_showcase { sourceSet sourceSets.showcase }; electron_clientqa { sourceSet sourceSets.clientqa } }
     runs {
         gametest {
             server(); source sourceSets.gametest; name = 'Electron Foundry GameTests'; vmArg '-Dfabric-api.gametest'
@@ -33,6 +34,7 @@ loom {
             runDir 'build/gametest-runs/' + UUID.randomUUID().toString()
         }
         qaClient { client(); source sourceSets.main; name = 'Electron Visual QA'; vmArg '-Xmx3G'; runDir 'run-client-review'; programArgs '--width','1280','--height','800' }
+        interfaceQa { client(); source sourceSets.clientqa; name = 'Electron automated interface review'; vmArg '-Xmx6G'; vmArg '-Delectron.interface.output=' + file('build/interface-review').absolutePath; runDir 'build/interface-client'; programArgs '--width','1280','--height','800' }
         showcase { server(); source sourceSets.showcase; name = 'Build Circuit Foundry Academy'; vmArg '-Xmx3G'; vmArg '-Delectron.academy.verify=' + (project.findProperty('academyVerify') ?: 'false'); runDir 'build/showcase-run'; programArg 'nogui' }
     }
 }

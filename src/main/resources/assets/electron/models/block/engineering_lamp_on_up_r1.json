@@ -76,15 +76,6 @@
             16
           ]
         },
-        "up": {
-          "texture": "#case",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "down": {
           "texture": "#case",
           "uv": [
@@ -220,15 +211,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -281,15 +263,6 @@
           ]
         },
         "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
           "texture": "#silver",
           "uv": [
             0,
@@ -356,15 +329,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -417,15 +381,6 @@
           ]
         },
         "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
           "texture": "#silver",
           "uv": [
             0,
@@ -492,15 +447,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -553,15 +499,6 @@
           ]
         },
         "up": {
-          "texture": "#copper",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
           "texture": "#copper",
           "uv": [
             0,
@@ -628,15 +565,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#chip",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -689,15 +617,6 @@
           ]
         },
         "up": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
           "texture": "#rubber",
           "uv": [
             0,
@@ -764,15 +683,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -832,15 +742,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#chip",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -893,15 +794,6 @@
           ]
         },
         "up": {
-          "texture": "#trim",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
           "texture": "#trim",
           "uv": [
             0,
@@ -968,15 +860,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#flood_lens_on",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1029,15 +912,6 @@
           ]
         },
         "up": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "down": {
           "texture": "#silver",
           "uv": [
             0,
@@ -1104,15 +978,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#silver",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -1468,15 +1333,6 @@
         15.7
       ],
       "faces": {
-        "north": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#rubber",
           "uv": [
@@ -1536,15 +1392,6 @@
         15.7
       ],
       "faces": {
-        "north": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#rubber",
           "uv": [
@@ -1604,15 +1451,6 @@
         15.7
       ],
       "faces": {
-        "north": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#rubber",
           "uv": [
@@ -1672,15 +1510,6 @@
         15.7
       ],
       "faces": {
-        "north": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#rubber",
           "uv": [
@@ -1740,15 +1569,6 @@
         15.7
       ],
       "faces": {
-        "north": {
-          "texture": "#rubber",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#rubber",
           "uv": [
@@ -1903,15 +1723,6 @@
             16
           ]
         },
-        "west": {
-          "texture": "#cord_contact",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "up": {
           "texture": "#cord_contact",
           "uv": [
@@ -1963,15 +1774,6 @@
           ]
         },
         "east": {
-          "texture": "#cord_inlet",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
           "texture": "#cord_inlet",
           "uv": [
             0,

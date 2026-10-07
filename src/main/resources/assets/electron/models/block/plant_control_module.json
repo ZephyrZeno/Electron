@@ -138,15 +138,6 @@
             16,
             16
           ]
-        },
-        "down": {
-          "texture": "#control_case",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
         }
       }
     },
@@ -162,15 +153,6 @@
         15.9
       ],
       "faces": {
-        "north": {
-          "texture": "#console_panel",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#console_panel",
           "uv": [
@@ -230,15 +212,6 @@
         15.8
       ],
       "faces": {
-        "north": {
-          "texture": "#service_panel",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#service_panel",
           "uv": [
@@ -298,15 +271,6 @@
         16
       ],
       "faces": {
-        "north": {
-          "texture": "#galvanized",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
         "south": {
           "texture": "#galvanized",
           "uv": [

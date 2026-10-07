@@ -17,7 +17,7 @@ import top.lacrus.zephyrzeno.electron.circuit.*;
 import top.lacrus.zephyrzeno.electron.power.PowerPlant;
 
 public final class Assembly {
-    public static final int GEOMETRY_REVISION=6;
+    public static final int GEOMETRY_REVISION=7;
     public static AssemblyPartBlock PART;
     public static BlockEntityType<AssemblyPartEntity> PART_ENTITY;
     private static final Set<String> CHANGING=new HashSet<>();

@@ -39,6 +39,7 @@ public class ComponentEntity extends BlockEntity {
     public java.util.List<BlockPos> assemblyCells=java.util.List.of();
     public final java.util.Map<BlockPos,BlockState> assemblyBlueprint=new java.util.LinkedHashMap<>();
     public double fuelEnergy,temperature=20,meterEnergy;
+    public final top.lacrus.zephyrzeno.electron.power.PlantAlarm coolantAlarm=new top.lacrus.zephyrzeno.electron.power.PlantAlarm();
     public double lastPeakVoltage,lastPeakCurrent,lastCapturedEnergy;
     public boolean plantReady,fuelLoaded,cabinetOpen;
     public static java.util.function.Consumer<ComponentEntity> CLIENT_TICK=e->{};

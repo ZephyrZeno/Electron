@@ -15,6 +15,32 @@ import top.lacrus.zephyrzeno.electron.circuit.*;
 
 public final class AssemblyTests implements FabricGameTest {
     @GameTest(templateName="electron:industrial_test",tickLimit=60)
+    public void nuclearPipesEndAtAnotherPipeMachineReservoirOrServicePort(TestContext t){
+        var kind=ComponentBlock.Kind.NUCLEAR;
+        for(int turn=0;turn<4;turn++){
+            var model=AssemblyGeometry.model(kind,0,false,turn);
+            var pipes=model.pieces().stream().filter(p->p.texture().equals("steel_pipe")).toList();
+            var state=Foundry.NUCLEAR.getDefaultState().with(ComponentBlock.TURN,turn);
+            for(var pipe:pipes)for(var point:List.of(pipe.a(),pipe.b())){
+                boolean joined=pipes.stream().anyMatch(other->other!=pipe&&segmentDistance(point,other.a(),other.b())<pipe.radius()+other.radius()+.015);
+                if(!joined){
+                    var canonical=AssemblyGeometry.rotate(point,(4-turn)&3);
+                    joined=new Box(-13.7,.2,-11.7,-9,2.4,-5.4).contains(canonical);
+                    for(var port:List.of(PlantStructures.waterPos(BlockPos.ORIGIN,state),PlantStructures.tankPos(BlockPos.ORIGIN,state),PlantStructures.fuelPos(BlockPos.ORIGIN,state),PlantStructures.outputPos(BlockPos.ORIGIN,state)))joined|=new Box(port).contains(point);
+                }
+                if(!joined)joined=model.pieces().stream().anyMatch(body->{
+                    if(!body.beam())return new Box(body.a(),body.b()).expand(.01).contains(point);
+                    if(body.sides()<=4||!Set.of("reactor_shell","hydro_blue","cast_base","cooling_concrete","transformer_oil").contains(body.texture()))return false;
+                    double length=body.b().distanceTo(body.a()),along=point.subtract(body.a()).dotProduct(body.b().subtract(body.a()).normalize());
+                    return along>=0&&along<=length&&segmentDistance(point,body.a(),body.b())<=Math.max(body.radius(),body.topRadius());
+                });
+                t.assertTrue(joined,"Pipe endpoint must enter a physical destination, turn "+turn+": "+point);
+            }
+        }
+        t.complete();
+    }
+    private static double segmentDistance(Vec3d p,Vec3d a,Vec3d b){var delta=b.subtract(a);return p.distanceTo(a.add(delta.multiply(Math.clamp(p.subtract(a).dotProduct(delta)/delta.lengthSquared(),0,1))));}
+    @GameTest(templateName="electron:industrial_test",tickLimit=60)
     public void bakedMeshesHaveFiniteVerticesUnitNormalsAndReusableDistanceVariants(TestContext t){
         var report=new com.google.gson.JsonObject();
         for(var kind:new ComponentBlock.Kind[]{ComponentBlock.Kind.THERMAL,ComponentBlock.Kind.NUCLEAR,ComponentBlock.Kind.WIND,ComponentBlock.Kind.HYDRO}){

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "id": "electron_clientqa",
+  "version": "1.0.0",
+  "name": "Electron Interface QA (development only)",
+  "environment": "client",
+  "entrypoints": {"client": ["top.lacrus.zephyrzeno.electron.client.InterfaceQa"]},
+  "depends": {"electron": "*", "fabric-lifecycle-events-v1": "*"}
+}

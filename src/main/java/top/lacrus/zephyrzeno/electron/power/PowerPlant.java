@@ -51,7 +51,11 @@ public final class PowerPlant {
             e.temperature=Math.clamp(e.temperature+heating-(cooling?.0025*Math.max(0,e.temperature-20):.0003),20,1000);
             if(cooling&&(burning||e.temperature>25))tank.change(-(nuclear?20:4));
             if(!cooling&&e.temperature>35){enabled=false;e.energy=0;e.plantReady=false;e.plantStatus="scram";if(state.get(ComponentBlock.ENABLED))w.setBlockState(p,state.with(ComponentBlock.ENABLED,false),Block.NOTIFY_ALL);}
-            if(!cooling&&e.temperature>45&&w.getTime()%60==0)ElectricalEffects.play(w,p,ElectricalEffects.ALARM,.65f,1);
+            var cue=e.coolantAlarm.update(w.getTime(),Assembly.formed(state)&&!state.get(ComponentBlock.BROKEN),cooling,e.temperature);
+            if(cue!=PlantAlarm.Cue.NONE){
+                var speaker=Vec3d.of(p).add(top.lacrus.zephyrzeno.electron.multiblock.AssemblyGeometry.rotate(new Vec3d(.5,.85,.8),state.get(ComponentBlock.TURN)));
+                ElectricalEffects.play(w,speaker,ElectricalEffects.ALARM,cue==PlantAlarm.Cue.URGENT?.42f:.28f,1);
+            }
             if(e.temperature>180&&!state.get(ComponentBlock.BROKEN)){
                 e.energy=e.fuelEnergy=e.decayHeat=0;e.plantReady=false;e.plantStatus="plant_failure";
                 w.setBlockState(p,w.getBlockState(p).with(ComponentBlock.BROKEN,true).with(ComponentBlock.ENABLED,false),Block.NOTIFY_ALL);

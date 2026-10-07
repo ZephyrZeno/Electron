@@ -17,7 +17,7 @@ for label,path,modid,forbidden in [('main',MAIN,'electron',b'top/lacrus/zephyrze
     with zipfile.ZipFile(path) as jar:
         names=jar.namelist();meta=json.loads(jar.read('fabric.mod.json'))
         assert meta['id']==modid
-        assert not any(n.endswith('GameTests.class') or '/electron/test/' in n or '/electron/showcase/' in n or n.startswith('data/electron/structure/') for n in names)
+        assert not any(n.endswith('GameTests.class') or '/electron/test/' in n or '/electron/showcase/' in n or '/InterfaceQa' in n or n.startswith('data/electron/structure/') for n in names)
         for n in names:
             if n.endswith('.class'):assert forbidden not in jar.read(n),(label,n,'Cross-mod class dependency')
         if label=='main':
@@ -92,7 +92,10 @@ assert not native.findall('.//failure') and native_count==sum(len(re.findall(r'@
 assets=json.loads((ROOT/'build/asset-review/validation.json').read_text(encoding='utf-8'))
 localization=json.loads((ROOT/'build/localization-verification.json').read_text(encoding='utf-8'))
 summary['map']=json.loads((ROOT/'build/academy-package-verification.json').read_text(encoding='utf-8'))
-summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'client_visual':'Offline model previews and native light propagation tests. Multiblock geometry exported from native tests; no Computer Use or in-game visual acceptance.'}
+interface=json.loads((ROOT/'build/interface-review/verified.json').read_text())
+assert interface['manual_rendered'] and interface['pcb_left_drag'] and interface['pcb_middle_drag'] and interface['zoom_at_pointer'] and interface['resize_preserves_view'] and interface['canvas_clipping'] and interface['model_load_errors']==0
+summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'interface':interface,'client_visual':'Actual Minecraft framebuffer captures and interface event checks at GUI scales 2 and 3. Offline model previews and native geometry checks; no Computer Use. Full player-modpack visual acceptance remains manual.'}
+summary['surfaces']=json.loads((ROOT/'build/asset-review/surface-refinement.json').read_text())
 audio_report=json.loads((ROOT/'build/industrial-audio-verification.json').read_text(encoding='utf-8'))
 assert audio_report['decoded'] and not audio_report['clipped'] and len(audio_report['original_ogg_samples'])==37
 summary['audio']=audio_report
@@ -109,6 +112,9 @@ shutil.copy2(ROOT/'build/asset-review/equipment.png',out/'equipment-preview.png'
 shutil.copy2(ROOT/'build/asset-review/towers.png',out/'tower-preview.png')
 shutil.copy2(ROOT/'docs/design/ELECTRON_THREE_SCALES_V3.md',out/'三层电路设计-v3.md')
 shutil.copy2(ROOT/'README.md',out/'玩法与合成说明.md')
+shutil.copy2(ROOT/'docs/design/INTERFACE_AND_MODEL_FIXES_V14.md',out/'界面模型与冷却提示-v14.md')
+for screenshot in ('guide.png','pcb-fit.png','pcb-panned.png','pcb-scaled.png'):
+    shutil.copy2(ROOT/'build/interface-review/screenshots'/screenshot,out/('client-'+screenshot))
 shutil.copy2(ROOT/'docs/design/GRID_AND_MECHANICS_V4.md',out/'大型供电与传动-v4.md')
 shutil.copy2(ROOT/'build/asset-review/grid.png',out/'grid-preview.png')
 shutil.copy2(ROOT/'build/asset-review/assemblies.png',out/'assembled-preview.png')
@@ -138,7 +144,8 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-本版将样机改为单张80×88、四层PCB：58个元件中52个为板内基本逻辑门，支持两个0–9输入的加减法，结果−9…18。板外使用小型导线；3×4底座只提供支撑。设计最大128×96、256元件，支持1–4铜层、贯穿孔、自定义板边接口及缩放平移。面积和层数增加实际耗材、耗电和加工时间，大板需要扩展底座；分批装配材料和加工进度可保存。
+本版修复 PCB 画布拖动、缩放后的越界裁剪与窗口调整时回中问题。选择工具拖动空白处、中键或空格＋左键均可平移；滚轮跟随指针缩放，F 回到整板。手册修复正文被背景覆盖，改为浅色阅读卡片。机组缺水提示改为平滑定位双音，冷机不鸣叫，普通警示间隔20秒。补齐核电站管路，清理工作台、灯具和加工机叠面；详见《界面模型与冷却提示-v14.md》。
+前版将样机改为单张80×88、四层PCB：58个元件中52个为板内基本逻辑门，支持两个0–9输入的加减法，结果−9…18。板外使用小型导线；3×4底座只提供支撑。设计最大128×96、256元件，支持1–4铜层、贯穿孔、自定义板边接口及缩放平移。面积和层数增加实际耗材、耗电和加工时间，大板需要扩展底座；分批装配材料和加工进度可保存。
 补齐NOR、XNOR、缓冲器、D触发器、时钟、三态、选择器、板上拨盘与开关、RGB、负号条、8×8像素屏。像素屏每点可写，外部面板按矩形拼接，串行时钟和锁存控制整帧。核电事故烟云改为随时间变化的环面、椭球及烟柱几何采样。当前规则、坐标和限制以《高密度PCB与像素-v13.md》及手册为准。
 前版拆分PCB设计与焊接装配，增加独立元件区、搜索、撤销、缩放和拖动预览；新增5 V输入拨盘、微型显示、自动拼接大屏及门电路加减计算器。机组故障加入分层烟尘与3种定位爆炸声。历史设计见《PCB显示与机组事故-v12.md》。
 前版完成专用煤料/燃料棒输入器、独立炉灰/乏燃料输出器、管道进水口，取消机身任意投料和核电控制室。接线柜可开关门；新增插孔、三位插排、双芯电源线和消耗能量的固定24 V适配器。改善跨线桥连续跨线，移除电器电压铭牌。详见《机组接口与插电供电-v11.md》，其坐标和操作规则优先于历史文档。
@@ -160,7 +167,7 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 旧玩家存档不会被覆盖。生成器仅用于开发期导出，不进入主线发行 JAR。
 
 验证：{summary['validation']['junit']} 项单元测试、{native_count} 项 Minecraft GameTest、模型/方块状态/双语言检查通过。
-教学地图已经保存后重新载入并通电验证。预览图为离线几何渲染或存档数据示意；未完成逐项人工客户端视觉验收和大型多人压力测试。
+教学地图已经保存后重新载入并通电验证。client-*.png 为真实 Minecraft 客户端截图，PCB 输入事件与缩放裁剪检查通过；其它预览图为离线几何渲染或存档数据示意。未完成用户全部光影／界面模组组合的人工视觉验收和大型多人压力测试。
 详见 verification.json、玩法与合成说明.md、三层电路设计-v3.md。
 """,encoding='utf-8')
 archive=ROOT/f'dist/circuit-foundry-{VERSION}.zip'
