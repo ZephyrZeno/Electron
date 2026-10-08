@@ -45,17 +45,17 @@ for label,path,modid,forbidden in [('main',MAIN,'electron',b'top/lacrus/zephyrze
                 assert json.loads(jar.read(f'assets/electron/models/item/{item}.json')).get('elements'), (item,'Expected solid model')
             assert not any(f'data/electron/recipe/{item}.json' in names for item in ('uranium_pellet','fuel_rod')), 'Powered processing must not have legacy recipe bypasses'
             assert 'top/lacrus/zephyrzeno/electron/industrial/ProcessingEntity.class' in names
-            for device in ('pcb_design_station','decimal_input','numeric_display','display_panel','pixel_display_panel','precision_workbench','pcb_socket','pcb_socket_extension','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','water_level_sensor','temperature_sensor','emergency_lamp'):
+            for device in ('pcb_design_station','decimal_input','numeric_display','display_panel','pixel_display_panel','precision_workbench','pcb_socket','pcb_socket_extension','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','water_level_sensor','temperature_sensor','emergency_lamp','light_sensor','rain_sensor'):
                 assert f'assets/electron/blockstates/{device}.json' in names and f'data/electron/recipe/{device}.json' in names
             for item in ('assembled_pcb','pcb_photomask','exposed_pcb','drilled_pcb','etched_pcb','masked_pcb','gold_finished_pcb','smd_r1k','smd_r10k','smd_led','smd_not','smd_and','smd_or','smd_xor','smd_nand','smd_half_adder','smd_display'):
                 assert json.loads(jar.read(f'assets/electron/models/item/{item}.json')).get('elements'), (item,'Expected miniature solid model')
-            for part in ('nor','xnor','buffer','rgb','pixel','dial','switch','dff','clock','tristate','mux','sign','tff','sr_latch','counter4','shift4'):
+            for part in ('nor','xnor','buffer','rgb','pixel','dial','switch','dff','clock','tristate','mux','sign','tff','sr_latch','counter4','shift4','r220','r100k','diode','cap100uf','pot10k','comparator','schmitt','mosfet','buck5'):
                 item='smd_'+part
                 assert json.loads(jar.read(f'assets/electron/models/item/{item}.json')).get('elements'), (item,'Expected miniature solid model')
                 assert f'data/electron/recipe/{item}.json' in names
             for item in ('assembled_pcb','pcb_photomask','exposed_pcb','drilled_pcb','etched_pcb','masked_pcb','gold_finished_pcb'):
                 assert f'data/electron/recipe/{item}.json' not in names, (item,'PCB processing must not have a crafting bypass')
-            for cls in ('PcbLayout','PcbCircuit','PcbBenchEntity','PcbSocketEntity','PcbScreenHandler','PcbFabrication','PcbNetworking','PcbRouter','PcbCopperMesh','SingleBoardCalculator','PcbExamples','PcbExtensionBlock','PcbSelection','PcbSequential'):
+            for cls in ('PcbLayout','PcbCircuit','PcbBenchEntity','PcbSocketEntity','PcbScreenHandler','PcbFabrication','PcbNetworking','PcbRouter','PcbCopperMesh','SingleBoardCalculator','PcbExamples','PcbExtensionBlock','PcbSelection','PcbSequential','PcbAnalog'):
                 assert f'top/lacrus/zephyrzeno/electron/pcb/{cls}.class' in names
             assert 'top/lacrus/zephyrzeno/electron/display/PixelMatrix.class' in names
             assert 'assets/electron/textures/gui/precision_mat.png' in names
@@ -94,8 +94,8 @@ localization=json.loads((ROOT/'build/localization-verification.json').read_text(
 summary['map']=json.loads((ROOT/'build/academy-package-verification.json').read_text(encoding='utf-8'))
 interface=json.loads((ROOT/'build/interface-review/verified.json').read_text())
 assert interface['manual_rendered'] and interface['pcb_left_drag'] and interface['pcb_middle_drag'] and interface['zoom_at_pointer'] and interface['resize_preserves_view'] and interface['canvas_clipping'] and interface['model_load_errors']==0
-assert all(interface[k] for k in ('region_selection','copy_preview','tool_switch_cancels_paste','select_all_cancels_paste','sequential_tray')) and interface['screenshots']==6
-assert summary['map']['sequential_sample'] and summary['map']['chest_stacks']==397
+assert all(interface[k] for k in ('region_selection','copy_preview','tool_switch_cancels_paste','select_all_cancels_paste','sequential_tray','analog_tray','analog_samples')) and interface['screenshots']==8
+assert summary['map']['sequential_sample'] and summary['map']['chest_stacks']==412 and summary['map']['analog_samples']
 summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'interface':interface,'client_visual':'Actual Minecraft framebuffer captures and interface event checks at GUI scales 2 and 3. Offline model previews and native geometry checks; no Computer Use. Full player-modpack visual acceptance remains manual.'}
 summary['surfaces']=json.loads((ROOT/'build/asset-review/surface-refinement.json').read_text())
 audio_report=json.loads((ROOT/'build/industrial-audio-verification.json').read_text(encoding='utf-8'))
@@ -117,7 +117,9 @@ shutil.copy2(ROOT/'README.md',out/'玩法与合成说明.md')
 shutil.copy2(ROOT/'docs/design/INTERFACE_AND_MODEL_FIXES_V14.md',out/'界面模型与冷却提示-v14.md')
 shutil.copy2(ROOT/'docs/design/PCB_SEQUENTIAL_AND_EDITING_V15.md',out/'PCB时序与批量编辑-v15.md')
 shutil.copy2(ROOT/'build/asset-review/pcb-sequential.png',out/'pcb-sequential-preview.png')
-for screenshot in ('guide.png','pcb-fit.png','pcb-panned.png','pcb-scaled.png','pcb-region.png','pcb-sequential.png'):
+shutil.copy2(ROOT/'docs/design/ANALOG_AND_ENVIRONMENT_V16.md',out/'模拟元件与环境控制-v16.md')
+shutil.copy2(ROOT/'build/asset-review/pcb-analog.png',out/'pcb-analog-preview.png')
+for screenshot in ('guide.png','pcb-fit.png','pcb-panned.png','pcb-scaled.png','pcb-region.png','pcb-sequential.png','pcb-analog.png','pcb-buck.png'):
     shutil.copy2(ROOT/'build/interface-review/screenshots'/screenshot,out/('client-'+screenshot))
 shutil.copy2(ROOT/'docs/design/GRID_AND_MECHANICS_V4.md',out/'大型供电与传动-v4.md')
 shutil.copy2(ROOT/'build/asset-review/grid.png',out/'grid-preview.png')
@@ -148,7 +150,8 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-本版新增 PCB 框选、整组复制／移动／删除，支持跨铜层铜线与贯穿孔、原子撤销及多人修订检查。元件区增加分类和分页。补齐 T 触发器、SR 锁存器、4位计数器、4位移位寄存器，使用独立立体物品模型与实际耗材配方；修复 D 触发器不确定电平与芯片存档状态。教学箱（59,66,158）新增双层计数器成品和沉金裸板：接入5V，RESET置1再置0，显示0–F循环。详见《PCB时序与批量编辑-v15.md》。
+本版新增九种PCB模拟/电源配件、光照与雨水传感器；提供RC延时板和24V输入的稳压驱动板。新增独立立体模型、11种合成配方、中英文提示及两页图文教程，装配台扩展到38个材料槽并迁移旧存档。新教学箱在（63,66,158）。完整引脚、额定值、配方和样板操作见《模拟元件与环境控制-v16.md》。
+前版新增 PCB 框选、整组复制／移动／删除，支持跨铜层铜线与贯穿孔、原子撤销及多人修订检查。元件区增加分类和分页。补齐 T 触发器、SR 锁存器、4位计数器、4位移位寄存器，使用独立立体物品模型与实际耗材配方；修复 D 触发器不确定电平与芯片存档状态。教学箱（59,66,158）新增双层计数器成品和沉金裸板：接入5V，RESET置1再置0，显示0–F循环。详见《PCB时序与批量编辑-v15.md》。
 前版修复 PCB 画布拖动、缩放后的越界裁剪与窗口调整时回中问题。移动工具拖动空白处、中键或空格＋左键均可平移；滚轮跟随指针缩放，F 回到整板。手册修复正文被背景覆盖，改为浅色阅读卡片。机组缺水提示改为平滑定位双音，冷机不鸣叫，普通警示间隔20秒。补齐核电站管路，清理工作台、灯具和加工机叠面；详见《界面模型与冷却提示-v14.md》。
 前版将样机改为单张80×88、四层PCB：58个元件中52个为板内基本逻辑门，支持两个0–9输入的加减法，结果−9…18。板外使用小型导线；3×4底座只提供支撑。设计最大128×96、256元件，支持1–4铜层、贯穿孔、自定义板边接口及缩放平移。面积和层数增加实际耗材、耗电和加工时间，大板需要扩展底座；分批装配材料和加工进度可保存。
 补齐NOR、XNOR、缓冲器、D触发器、时钟、三态、选择器、板上拨盘与开关、RGB、负号条、8×8像素屏。像素屏每点可写，外部面板按矩形拼接，串行时钟和锁存控制整帧。核电事故烟云改为随时间变化的环面、椭球及烟柱几何采样。当前规则、坐标和限制以《高密度PCB与像素-v13.md》及手册为准。
@@ -165,8 +168,8 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 电缆加粗并采用贴图，跨线桥保持粗线所需间距并减少反复爬升；架空及垂直悬线按实际电压检查净距，240 V为0.45格，6.6/11/24 kV为1.2/1.6/2.4格；详见故障取水与模型-v7.md。
 工程灯在额定供电时发出原版 15 级光照；光源增加 labPBR 发光材质。断电和损坏时熄灭。
 不添加光影包。此前 Electron Lights 副本已备份移出 shaderpacks，原包保持不变。
-33页手册、29张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
-主线不依赖独立计算器模组。已实现四层PCB、贯穿孔、门电路、寄存与像素显示；可编程开发板、模拟运放、板上升降压芯片及三相交流尚未实现。开发板后续模拟游戏内功能，不兼容真实STM32固件。六个板边焊盘可自定义位置，底座的六个外部接线点保持固定；多格PCB须水平安装。
+35页手册、31张教程图各有中英版本。生存实时电学数值只通过万用表HUD测量。水槽和燃料有限；失水可能停机、报警、损坏并产生局部压力爆炸。
+主线不依赖独立计算器模组。已实现四层PCB、贯穿孔、门电路、寄存与像素显示；可编程开发板、模拟运放、升压微模块及三相交流尚未实现；固定5V降压微模块已实现。开发板后续模拟游戏内功能，不兼容真实STM32固件。六个板边焊盘可自定义位置，底座的六个外部接线点保持固定；多格PCB须水平安装。
 
 教学地图：解压 circuit-academy-{VERSION}.zip，将 Circuit_Foundry_Academy 放入 saves。
 旧玩家存档不会被覆盖。生成器仅用于开发期导出，不进入主线发行 JAR。

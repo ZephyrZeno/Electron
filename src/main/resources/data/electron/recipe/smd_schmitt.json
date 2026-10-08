@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_comparator"
+    },
+    {
+      "item": "electron:smd_sr_latch"
+    },
+    {
+      "item": "electron:smd_r10k"
+    },
+    {
+      "item": "electron:solder_alloy"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_schmitt",
+    "count": 1
+  }
+}

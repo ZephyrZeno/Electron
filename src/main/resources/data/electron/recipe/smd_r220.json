@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:resistor_220"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_r220",
+    "count": 1
+  }
+}

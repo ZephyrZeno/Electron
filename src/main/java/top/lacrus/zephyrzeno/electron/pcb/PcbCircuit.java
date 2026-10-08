@@ -12,21 +12,25 @@ public final class PcbCircuit {
     private final int[] nets,states,pending,clocks,latches;
     private final long[] due,shift;
     private final PcbSequential[] sequential;
+    private final PcbAnalog[] analog;
     private final int layoutHash;
     public final int[] controls,displays;
     public final long[] pixels;
     public final BitSet leds=new BitSet();
     public int ledMask;
-    public PcbCircuit(PcbLayout layout){this.layout=layout;layoutHash=layout.encode().hashCode();surfaceCopper=PcbCopperMesh.compile(layout);nets=layout.nets();int n=layout.parts().size();states=new int[n*4];Arrays.fill(states,3);pending=states.clone();due=new long[states.length];displays=new int[n];Arrays.fill(displays,-1);controls=new int[n];clocks=new int[n];Arrays.fill(clocks,2);latches=new int[n];Arrays.fill(latches,2);shift=new long[n];pixels=new long[n];sequential=new PcbSequential[n];for(int i=0;i<n;i++)if(layout.parts().get(i).type().sequential())sequential[i]=new PcbSequential(layout.parts().get(i).type());}
+    public PcbCircuit(PcbLayout layout){this.layout=layout;layoutHash=layout.encode().hashCode();surfaceCopper=PcbCopperMesh.compile(layout);nets=layout.nets();int n=layout.parts().size();states=new int[n*4];Arrays.fill(states,3);pending=states.clone();due=new long[states.length];displays=new int[n];Arrays.fill(displays,-1);controls=new int[n];clocks=new int[n];Arrays.fill(clocks,2);latches=new int[n];Arrays.fill(latches,2);shift=new long[n];pixels=new long[n];sequential=new PcbSequential[n];analog=new PcbAnalog[n];for(int i=0;i<n;i++){var type=layout.parts().get(i).type();if(type.sequential())sequential[i]=new PcbSequential(type);if(type.analog())analog[i]=new PcbAnalog(type);if(type==PcbLayout.Type.POT10K)controls[i]=5;}}
     public String net(String id,int at){return id+":n"+nets[at];}
     private String pin(String id,PcbLayout.Part p,int index){return net(id,p.pin(index));}
+    private String[] pins(String id,PcbLayout.Part p){String[] names=new String[p.type().pins()];for(int j=0;j<names.length;j++)names[j]=pin(id,p,j);return names;}
+    public double maxSupplyVoltage(){return layout.parts().stream().anyMatch(p->p.type()==PcbLayout.Type.BUCK5)?30:5.5;}
     private static int inputEnd(PcbLayout.Type t){return t.input()?2:t==PcbLayout.Type.SIGN?3:t==PcbLayout.Type.DISPLAY||t==PcbLayout.Type.PIXEL?6:t==PcbLayout.Type.RGB||t==PcbLayout.Type.MUX||t==PcbLayout.Type.TFF?5:4;}
     public void stamp(String id,String[] ports,List<DcSolver.Branch> branches,long tick,boolean broken){
         for(int i=0;i<ports.length;i++)branches.add(DcSolver.Branch.resistor(id+":port"+i,ports[i],net(id,layout.ports()[i]),broken?1e12:.005));
         branches.add(DcSolver.Branch.resistor(id,ports[0],ports[1],broken?1e12:100000));
         for(int i=0;i<layout.parts().size();i++){
             var p=layout.parts().get(i);var t=p.type();String name=id+":c"+i,a=pin(id,p,0),b=pin(id,p,1);
-            if(!t.digital())branches.add(broken?DcSolver.Branch.resistor(name,a,b,1e12):switch(t){case R1K->DcSolver.Branch.resistor(name,a,b,1000);case R10K->DcSolver.Branch.resistor(name,a,b,10000);default->DcSolver.Branch.led(name,a,b);});
+            if(analog[i]!=null){if(due[i*4]<=tick)states[i*4]=pending[i*4];analog[i].stamp(name,pins(id,p),branches,controls[i],states[i*4],broken);}
+            else if(!t.digital())branches.add(broken?DcSolver.Branch.resistor(name,a,b,1e12):switch(t){case R1K->DcSolver.Branch.resistor(name,a,b,1000);case R10K->DcSolver.Branch.resistor(name,a,b,10000);default->DcSolver.Branch.led(name,a,b);});
             else{
                 double resistance=t==PcbLayout.Type.DISPLAY?1000:t==PcbLayout.Type.RGB?5/(.001+.003*Integer.bitCount(Math.max(0,displays[i]))):t==PcbLayout.Type.PIXEL?5/(.002+.0003*Long.bitCount(pixels[i])):10000;
                 branches.add(DcSolver.Branch.resistor(name,a,b,broken?1e12:resistance));
@@ -40,6 +44,11 @@ public final class PcbCircuit {
         double stress=0;leds.clear();ledMask=0;
         for(int i=0;i<layout.parts().size();i++){
             var p=layout.parts().get(i);var t=p.type();String name=id+":c"+i;double supply=r.voltage(pin(id,p,0))-r.voltage(pin(id,p,1)),current=r.current(name);
+            if(analog[i]!=null){
+                stress=Math.max(stress,analog[i].update(name,pins(id,p),r,driven,broken));
+                if(t.outputs()>0&&pending[i*4]!=analog[i].level){pending[i*4]=analog[i].level;due[i*4]=tick+2;}
+                continue;
+            }
             if(t.digital()){
                 boolean powered=!broken&&supply>=4.5&&supply<=5.5;int a=inputEnd(t)>2?input(id,p,2,r,driven,supply):0,b=inputEnd(t)>3?input(id,p,3,r,driven,supply):0;
                 if(sequential[i]!=null)sequential[i].update(powered,a,b,t==PcbLayout.Type.TFF?input(id,p,4,r,driven,supply):0);
@@ -74,29 +83,33 @@ public final class PcbCircuit {
         }
         return stress;
     }
-    public void reset(){Arrays.fill(states,3);Arrays.fill(pending,3);Arrays.fill(due,0);Arrays.fill(displays,-1);Arrays.fill(clocks,2);Arrays.fill(latches,2);Arrays.fill(shift,0);Arrays.fill(pixels,0);for(var memory:sequential)if(memory!=null)memory.reset();leds.clear();ledMask=0;}
+    public void reset(){Arrays.fill(states,3);Arrays.fill(pending,3);Arrays.fill(due,0);Arrays.fill(displays,-1);Arrays.fill(clocks,2);Arrays.fill(latches,2);Arrays.fill(shift,0);Arrays.fill(pixels,0);for(var memory:sequential)if(memory!=null)memory.reset();for(var part:analog)if(part!=null)part.reset();leds.clear();ledMask=0;}
     public int outputState(int part,int output){if(part<0||part>=layout.parts().size()||output<0||output>=layout.parts().get(part).type().outputs())throw new IllegalArgumentException("output");return states[part*4+output];}
 
     /** Persist solved and pending rails together with memory so reload never invents a clock edge. */
     public long[] snapshot(){
-        var data=new long[3+layout.parts().size()*24];data[0]=1;data[1]=layout.parts().size();data[2]=layoutHash;
-        for(int i=0;i<layout.parts().size();i++){int at=3+i*24;
+        var data=new long[3+layout.parts().size()*27];data[0]=2;data[1]=layout.parts().size();data[2]=layoutHash;
+        for(int i=0;i<layout.parts().size();i++){int at=3+i*27;
             for(int out=0;out<4;out++){data[at+out]=states[i*4+out];data[at+4+out]=pending[i*4+out];data[at+8+out]=due[i*4+out];}
             if(sequential[i]!=null){int[] memory=sequential[i].snapshot();for(int j=0;j<memory.length;j++)data[at+12+j]=memory[j];}
             data[at+20]=clocks[i];data[at+21]=latches[i];data[at+22]=shift[i];data[at+23]=pixels[i];
+            if(analog[i]!=null)System.arraycopy(analog[i].snapshot(),0,data,at+24,3);
         }return data;
     }
     public boolean restore(long[] data){
-        int n=layout.parts().size();if(data.length!=3+n*24||data[0]!=1||data[1]!=n||data[2]!=layoutHash)return false;
+        int n=layout.parts().size();if(data.length<3||data[0]!=1&&data[0]!=2)return false;
+        int stride=data[0]==1?24:27;if(data.length!=3+n*stride||data[1]!=n||data[2]!=layoutHash)return false;
         // Validate the entire snapshot before touching any live state.
         var memories=new int[n][];
-        for(int i=0;i<n;i++){int at=3+i*24;for(int j=0;j<8;j++)if(data[at+j]<0||data[at+j]>3)return false;
+        for(int i=0;i<n;i++){int at=3+i*stride;for(int j=0;j<8;j++)if(data[at+j]<0||data[at+j]>3)return false;
             for(int j=8;j<12;j++)if(data[at+j]<0)return false;
             for(int j=20;j<22;j++)if(data[at+j]<0||data[at+j]>2)return false;
             if(sequential[i]!=null){int[] memory=new int[8];for(int j=0;j<8;j++){long value=data[at+12+j];if(value<Integer.MIN_VALUE||value>Integer.MAX_VALUE)return false;memory[j]=(int)value;}if(!new PcbSequential(layout.parts().get(i).type()).restore(memory))return false;memories[i]=memory;}
+            if(analog[i]!=null&&(stride==24||!new PcbAnalog(layout.parts().get(i).type()).restore(Arrays.copyOfRange(data,at+24,at+27))))return false;
         }
-        for(int i=0;i<n;i++){int at=3+i*24;for(int out=0;out<4;out++){states[i*4+out]=(int)data[at+out];pending[i*4+out]=(int)data[at+4+out];due[i*4+out]=data[at+8+out];}
+        for(int i=0;i<n;i++){int at=3+i*stride;for(int out=0;out<4;out++){states[i*4+out]=(int)data[at+out];pending[i*4+out]=(int)data[at+4+out];due[i*4+out]=data[at+8+out];}
             if(sequential[i]!=null)sequential[i].restore(memories[i]);clocks[i]=(int)data[at+20];latches[i]=(int)data[at+21];shift[i]=data[at+22];pixels[i]=data[at+23];
+            if(analog[i]!=null)analog[i].restore(Arrays.copyOfRange(data,at+24,at+27));
         }return true;
     }
 }

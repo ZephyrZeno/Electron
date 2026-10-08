@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_r10k"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_r100k",
+    "count": 1
+  }
+}

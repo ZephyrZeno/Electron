@@ -51,7 +51,7 @@ public final class PcbBenchEntity extends ComponentEntity implements SidedInvent
         if(finishing()&&op!=7){error=5;return;}
         try{
             if(op==11||op==12){var from=op==11?undo:redo;var to=op==11?redo:undo;if(!from.isEmpty()){remember(to,draft);draft=from.removeLast();changed();}return;}
-            var next=switch(op){case 0->draft.place(PcbLayout.Type.values()[a],b,c,d);case 1->draft.route(a,b,c!=0);case 2->draft.erase(a,b,c);case 3->PcbLayout.empty();case 4->a==4?PcbExamples.counter():a==3?PcbExamples.pixel():a==2?SingleBoardCalculator.layout():a==1?PcbLayout.halfAdder():PcbLayout.inverter();case 7->{var reference=items.get(finishing()?0:1);if(!PcbFabrication.carriesLayout(reference))throw new IllegalArgumentException();yield Pcb.layout(reference);}case 8->draft.resize(a,b);case 9->draft.cut(a,b);case 10->draft.move(a,b,c,d);case 13->{var p=draft.parts().get(a);yield draft.move(a,p.x(),p.y(),(p.turn()+1)&3);}case 14->draft.removePart(a);case 15->draft.withLayers(a);case 16->draft.via(a,b);case 17->draft.port(a,b,c);
+            var next=switch(op){case 0->draft.place(PcbLayout.Type.values()[a],b,c,d);case 1->draft.route(a,b,c!=0);case 2->draft.erase(a,b,c);case 3->PcbLayout.empty();case 4->a==6?PcbExamples.regulated():a==5?PcbExamples.timer():a==4?PcbExamples.counter():a==3?PcbExamples.pixel():a==2?SingleBoardCalculator.layout():a==1?PcbLayout.halfAdder():PcbLayout.inverter();case 7->{var reference=items.get(finishing()?0:1);if(!PcbFabrication.carriesLayout(reference))throw new IllegalArgumentException();yield Pcb.layout(reference);}case 8->draft.resize(a,b);case 9->draft.cut(a,b);case 10->draft.move(a,b,c,d);case 13->{var p=draft.parts().get(a);yield draft.move(a,p.x(),p.y(),(p.turn()+1)&3);}case 14->draft.removePart(a);case 15->draft.withLayers(a);case 16->draft.via(a,b);case 17->draft.port(a,b,c);
                 case 19->PcbSelection.move(draft,PcbSelection.area(a,b),c,d);
                 case 20->PcbSelection.copy(draft,PcbSelection.area(a,b),c,d);
                 case 21->PcbSelection.delete(draft,PcbSelection.area(a,b));
@@ -75,12 +75,12 @@ public final class PcbBenchEntity extends ComponentEntity implements SidedInvent
     public boolean canInsert(int i,ItemStack s,Direction face){return face!=Direction.DOWN&&isValid(i,s);}public boolean canExtract(int i,ItemStack s,Direction face){return i==Pcb.OUTPUT_SLOT;}
     public Text getDisplayName(){return getCachedState().getBlock().getName();}
     public ScreenHandler createMenu(int sync,PlayerInventory inv,PlayerEntity p){return new PcbScreenHandler(sync,inv,this,properties());}
-    @Override protected void writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.writeNbt(n,r);var inv=new NbtCompound();Inventories.writeNbt(inv,items,r);n.put("pcb_items",inv);n.putInt("pcb_inventory_version",4);n.putIntArray("pcb_reserved",reserved.clone());n.putString("pcb_draft",draft.encode());n.putBoolean("pcb_working",working);n.putDouble("pcb_work",work);}
+    @Override protected void writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.writeNbt(n,r);var inv=new NbtCompound();Inventories.writeNbt(inv,items,r);n.put("pcb_items",inv);n.putInt("pcb_inventory_version",5);n.putIntArray("pcb_reserved",reserved.clone());n.putString("pcb_draft",draft.encode());n.putBoolean("pcb_working",working);n.putDouble("pcb_work",work);}
     @Override protected void readNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){
         super.readNbt(n,r);items.clear();Inventories.readNbt(n.getCompound("pcb_items"),items,r);
         int version=n.getInt("pcb_inventory_version");boolean legacy=version<2;
         // v3's output now occupies the first new package slot. Never consume it as a TFF.
-        int oldOutput=legacy?11:version==2?13:version==3?25:Pcb.OUTPUT_SLOT;
+        int oldOutput=legacy?11:version==2?13:version==3?25:version==4?29:Pcb.OUTPUT_SLOT;
         if(oldOutput!=Pcb.OUTPUT_SLOT){items.set(Pcb.OUTPUT_SLOT,items.get(oldOutput));items.set(oldOutput,ItemStack.EMPTY);}
         try{draft=PcbLayout.decode(n.getString("pcb_draft"));}catch(IllegalArgumentException e){draft=PcbLayout.empty();}
         var paid=n.getIntArray("pcb_reserved");java.util.Arrays.fill(reserved,0);int[] required=costs();

@@ -12,14 +12,16 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
     public enum Type {
         R1K(null),R10K(null),LED(null),NOT(LogicFunction.NOT),AND(LogicFunction.AND),OR(LogicFunction.OR),XOR(LogicFunction.XOR),NAND(LogicFunction.NAND),HALF_ADDER(null),DISPLAY(null),
         NOR(LogicFunction.NOR),XNOR(LogicFunction.XNOR),BUFFER(LogicFunction.BUFFER),RGB(null),PIXEL(null),DIAL(null),SWITCH(null),DFF(null),CLOCK(null),TRISTATE(null),MUX(null),SIGN(null),
-        TFF(null),SR_LATCH(null),COUNTER4(null),SHIFT4(null);
+        TFF(null),SR_LATCH(null),COUNTER4(null),SHIFT4(null),
+        R220(null),R100K(null),DIODE(null),CAP100UF(null),POT10K(null),COMPARATOR(null),SCHMITT(null),MOSFET(null),BUCK5(null);
         public final LogicFunction logic;
         Type(LogicFunction logic){this.logic=logic;}
-        public boolean digital(){return logic!=null||ordinal()>=HALF_ADDER.ordinal();}
-        public boolean input(){return this==DIAL||this==SWITCH||this==CLOCK;}
+        public boolean analog(){return ordinal()>=R220.ordinal();}
+        public boolean digital(){return logic!=null||ordinal()>=HALF_ADDER.ordinal()&&!analog();}
+        public boolean input(){return this==DIAL||this==SWITCH||this==CLOCK||this==POT10K;}
         public boolean sequential(){return this==DFF||this==TFF||this==SR_LATCH||this==COUNTER4||this==SHIFT4;}
-        public int pins(){return this==COUNTER4||this==SHIFT4?8:!digital()?2:logic!=null||this==RGB||this==DFF||this==TRISTATE||this==SIGN||this==SWITCH||this==CLOCK||this==SR_LATCH?5:6;}
-        public int outputs(){return this==DIAL||this==COUNTER4||this==SHIFT4?4:this==HALF_ADDER?2:logic!=null||this==SWITCH||this==DFF||this==CLOCK||this==TRISTATE||this==MUX||this==TFF||this==SR_LATCH?1:0;}
+        public int pins(){return this==POT10K||this==MOSFET?3:this==BUCK5?4:this==COMPARATOR||this==SCHMITT?5:this==COUNTER4||this==SHIFT4?8:!digital()?2:logic!=null||this==RGB||this==DFF||this==TRISTATE||this==SIGN||this==SWITCH||this==CLOCK||this==SR_LATCH?5:6;}
+        public int outputs(){return this==DIAL||this==COUNTER4||this==SHIFT4?4:this==HALF_ADDER?2:logic!=null||this==SWITCH||this==DFF||this==CLOCK||this==TRISTATE||this==MUX||this==TFF||this==SR_LATCH||this==COMPARATOR||this==SCHMITT?1:0;}
         public int outputPin(int output){if(output<0||output>=outputs())throw new IllegalArgumentException("output");return this==DIAL?output+2:this==MUX||this==TFF?5:output+4;}
         public String pinName(int pin){return switch(this){
             case HALF_ADDER->new String[]{"VCC","GND","A","B","SUM","CARRY"}[pin];
@@ -32,6 +34,13 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
             case SR_LATCH->new String[]{"VCC","GND","S","R","Q"}[pin];
             case COUNTER4->new String[]{"VCC","GND","CLK","RESET","Q0","Q1","Q2","Q3"}[pin];
             case SHIFT4->new String[]{"VCC","GND","D","CLK","Q0","Q1","Q2","Q3"}[pin];
+            case COMPARATOR->new String[]{"VCC","GND","IN+","IN-","OUT"}[pin];
+            case SCHMITT->new String[]{"VCC","GND","IN","NC","OUT"}[pin];
+            case POT10K->new String[]{"A","B","W"}[pin];
+            case MOSFET->new String[]{"G","D","S"}[pin];
+            case BUCK5->new String[]{"IN+","IN-","OUT+","OUT-"}[pin];
+            case CAP100UF->pin==0?"+":"-";
+            case DIODE->pin==0?"A":"K";
             case TRISTATE->new String[]{"VCC","GND","A","EN","Y"}[pin];
             case MUX->new String[]{"VCC","GND","A","B","SEL","Y"}[pin];
             case SWITCH,CLOCK->new String[]{"VCC","GND","NC","NC","Y"}[pin];
@@ -44,7 +53,9 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
             if(type.pins()==8){u=new int[]{0,2,0,0,1,2,2,1}[pin];v=new int[]{0,0,1,2,2,2,1,0}[pin];}
             else if(type==Type.HALF_ADDER){u=new int[]{0,1,0,0,2,2}[pin];v=new int[]{0,2,1,2,1,2}[pin];}
             else if(type.pins()==6){u=new int[]{0,2,0,2,0,2}[pin];v=new int[]{0,0,1,1,2,2}[pin];}
-            else if(!type.digital()){u=pin==0?0:2;v=1;}
+            else if(type.pins()==3){u=new int[]{0,2,1}[pin];v=new int[]{0,0,2}[pin];}
+            else if(type.pins()==4){u=pin%2*2;v=pin<2?0:2;}
+            else if(type.pins()==2){u=pin==0?0:2;v=1;}
             else{u=new int[]{0,2,0,2,1}[pin];v=new int[]{0,0,2,2,1}[pin];}
             for(int i=0;i<turn;i++){int old=u;u=2-v;v=old;}return point(x+u,y+v);
         }

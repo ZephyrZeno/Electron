@@ -1,0 +1,26 @@
+{
+  "criteria": {
+    "material": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "electron:silicon_diode"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "material"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "electron:smd_diode"
+    ]
+  }
+}

@@ -29,11 +29,11 @@ public final class PcbAdvancedTests implements FabricGameTest {
         bench.setStack(24,new ItemStack(Pcb.PARTS.get(PcbLayout.Type.SIGN),7));bench.setStack(25,Pcb.board(layout));
         var n=bench.createNbt(t.getWorld().getRegistryManager());n.putInt("pcb_inventory_version",3);
         bench.read(n,t.getWorld().getRegistryManager());
-        t.assertEquals(Pcb.layout(bench.getStack(Pcb.OUTPUT_SLOT)),layout,"v3 output 25 migrates intact to 29");
+        t.assertEquals(Pcb.layout(bench.getStack(Pcb.OUTPUT_SLOT)),layout,"v3 output migrates past every material slot");
         t.assertTrue(bench.getStack(25).isEmpty(),"Output is never interpreted as a new TFF package");
         t.assertEquals(bench.getStack(24).getCount(),7,"Existing SIGN material is retained");
         for(var type:List.of(PcbLayout.Type.TFF,PcbLayout.Type.SR_LATCH,PcbLayout.Type.COUNTER4,PcbLayout.Type.SHIFT4))bench.setStack(3+type.ordinal(),new ItemStack(Pcb.PARTS.get(type),3));
-        n=bench.createNbt(t.getWorld().getRegistryManager());t.assertEquals(n.getInt("pcb_inventory_version"),4,"Expanded inventory writes v4");
+        n=bench.createNbt(t.getWorld().getRegistryManager());t.assertEquals(n.getInt("pcb_inventory_version"),5,"Expanded inventory writes v5");
         bench.read(n,t.getWorld().getRegistryManager());
         for(var type:List.of(PcbLayout.Type.TFF,PcbLayout.Type.SR_LATCH,PcbLayout.Type.COUNTER4,PcbLayout.Type.SHIFT4))t.assertEquals(bench.getStack(3+type.ordinal()).getCount(),3,"New material slots survive a second reload");
         t.assertEquals(Pcb.layout(bench.getStack(Pcb.OUTPUT_SLOT)),layout,"Finished output remains separate from all four new inputs");t.complete();

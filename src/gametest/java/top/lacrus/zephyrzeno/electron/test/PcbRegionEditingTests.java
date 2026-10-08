@@ -180,7 +180,7 @@ public final class PcbRegionEditingTests implements FabricGameTest {
         handler.action(player, new PcbNetworking.Action(7, action.revision(), 18, 2, 0, 0, 0));
         t.assertEquals(handler.materialPage, 2, "View-only material paging is independent of a stale design revision");
         t.assertEquals(e.draft, copied, "Material paging cannot change the board");
-        handler.action(player, new PcbNetworking.Action(7, revision, 18, 3, 0, 0, 0));
+        handler.action(player, new PcbNetworking.Action(7, revision, 18, (Pcb.INPUT_SLOTS+11)/12, 0, 0, 0));
         t.assertEquals(handler.materialPage, 2, "Out-of-range material page is ignored");
         player.setPosition(e.getPos().toCenterPos().add(20, 0, 0));
         handler.action(player, new PcbNetworking.Action(7, revision, 21, point(2, 2), point(7, 7), 0, 0));

@@ -1,0 +1,1385 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "ic_package": "electron:block/scorched",
+    "rubber": "electron:block/scorched",
+    "brushed_steel": "electron:block/scorched",
+    "solder_joint": "electron:block/scorched",
+    "enamel": "electron:block/scorched",
+    "particle": "electron:block/scorched",
+    "laminate": "electron:block/scorched",
+    "gold_trace": "electron:block/scorched",
+    "resistor": "electron:block/scorched",
+    "led_off": "electron:block/scorched",
+    "terminal_red": "electron:block/scorched",
+    "display_glass": "electron:block/scorched"
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [
+        0,
+        13.4,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "down": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            16,
+            2.6
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            16,
+            2.6
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            16,
+            2.6
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            16,
+            2.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "board",
+      "from": [
+        0.09999999999999964,
+        13.2,
+        0.09999999999999964
+      ],
+      "to": [
+        15.9,
+        13.4,
+        15.9
+      ],
+      "faces": {
+        "down": {
+          "texture": "#laminate",
+          "uv": [
+            0,
+            0,
+            15.8,
+            15.8
+          ]
+        },
+        "north": {
+          "texture": "#laminate",
+          "uv": [
+            0,
+            0,
+            15.8,
+            0.2
+          ]
+        },
+        "south": {
+          "texture": "#laminate",
+          "uv": [
+            0,
+            0,
+            15.8,
+            0.2
+          ]
+        },
+        "east": {
+          "texture": "#laminate",
+          "uv": [
+            0,
+            0,
+            15.8,
+            0.2
+          ]
+        },
+        "west": {
+          "texture": "#laminate",
+          "uv": [
+            0,
+            0,
+            15.8,
+            0.2
+          ]
+        }
+      }
+    },
+    {
+      "name": "terminal",
+      "from": [
+        2.3,
+        12.9,
+        2.3
+      ],
+      "to": [
+        3.7,
+        13.2,
+        3.7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.4
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        }
+      }
+    },
+    {
+      "name": "screw",
+      "from": [
+        2.7,
+        12.78,
+        2.7
+      ],
+      "to": [
+        3.3,
+        12.9,
+        3.3
+      ],
+      "faces": {
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.6
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        }
+      }
+    },
+    {
+      "name": "terminal",
+      "from": [
+        2.3,
+        12.9,
+        12.3
+      ],
+      "to": [
+        3.7,
+        13.2,
+        13.7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.4
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        }
+      }
+    },
+    {
+      "name": "screw",
+      "from": [
+        2.7,
+        12.78,
+        12.7
+      ],
+      "to": [
+        3.3,
+        12.9,
+        13.3
+      ],
+      "faces": {
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.6
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        }
+      }
+    },
+    {
+      "name": "terminal",
+      "from": [
+        10.3,
+        12.9,
+        2.3
+      ],
+      "to": [
+        11.7,
+        13.2,
+        3.7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.4
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        }
+      }
+    },
+    {
+      "name": "screw",
+      "from": [
+        10.7,
+        12.78,
+        2.7
+      ],
+      "to": [
+        11.3,
+        12.9,
+        3.3
+      ],
+      "faces": {
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.6
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        }
+      }
+    },
+    {
+      "name": "terminal",
+      "from": [
+        10.3,
+        12.9,
+        12.3
+      ],
+      "to": [
+        11.7,
+        13.2,
+        13.7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.4
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.4,
+            0.3
+          ]
+        }
+      }
+    },
+    {
+      "name": "screw",
+      "from": [
+        10.7,
+        12.78,
+        12.7
+      ],
+      "to": [
+        11.3,
+        12.9,
+        13.3
+      ],
+      "faces": {
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.6
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.6,
+            0.12
+          ]
+        }
+      }
+    },
+    {
+      "name": "relay",
+      "from": [
+        5,
+        12.65,
+        5
+      ],
+      "to": [
+        9,
+        13.2,
+        11
+      ],
+      "faces": {
+        "down": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.0,
+            12.5
+          ]
+        },
+        "north": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.0,
+            11.1375
+          ]
+        },
+        "south": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.0,
+            11.1375
+          ]
+        },
+        "east": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.5,
+            11.1375
+          ]
+        },
+        "west": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.5,
+            11.1375
+          ]
+        }
+      }
+    },
+    {
+      "name": "seal",
+      "from": [
+        5.4,
+        12.55,
+        8
+      ],
+      "to": [
+        8.6,
+        12.65,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            3.2,
+            0.1
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            3.2,
+            0.1
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            2.5,
+            0.1
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            2.5,
+            0.1
+          ]
+        }
+      }
+    },
+    {
+      "name": "sensing_plate",
+      "from": [
+        5.1,
+        12.35,
+        5.2
+      ],
+      "to": [
+        8.9,
+        12.55,
+        10.7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            3.8,
+            5.5
+          ]
+        },
+        "up": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            3.8,
+            5.5
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.2
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.2
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            5.5,
+            0.2
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            5.5,
+            0.2
+          ]
+        }
+      }
+    },
+    {
+      "name": "comb",
+      "from": [
+        5.35,
+        12.27,
+        5.6
+      ],
+      "to": [
+        5.53,
+        12.35,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            4.4
+          ]
+        },
+        "north": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "comb",
+      "from": [
+        5.85,
+        12.27,
+        6.2
+      ],
+      "to": [
+        6.03,
+        12.35,
+        10.4
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            4.2
+          ]
+        },
+        "north": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.2,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.2,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "comb",
+      "from": [
+        6.35,
+        12.27,
+        5.6
+      ],
+      "to": [
+        6.53,
+        12.35,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            4.4
+          ]
+        },
+        "north": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "comb",
+      "from": [
+        6.85,
+        12.27,
+        6.2
+      ],
+      "to": [
+        7.03,
+        12.35,
+        10.4
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            4.2
+          ]
+        },
+        "north": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.2,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.2,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "comb",
+      "from": [
+        7.35,
+        12.27,
+        5.6
+      ],
+      "to": [
+        7.53,
+        12.35,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            4.4
+          ]
+        },
+        "north": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "comb",
+      "from": [
+        7.85,
+        12.27,
+        6.2
+      ],
+      "to": [
+        8.03,
+        12.35,
+        10.4
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            4.2
+          ]
+        },
+        "north": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.2,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.2,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "comb",
+      "from": [
+        8.35,
+        12.27,
+        5.6
+      ],
+      "to": [
+        8.53,
+        12.35,
+        10
+      ],
+      "faces": {
+        "down": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            4.4
+          ]
+        },
+        "north": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            0.18,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#gold_trace",
+          "uv": [
+            0,
+            0,
+            4.4,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "status",
+      "from": [
+        5.3,
+        12.5,
+        10.72
+      ],
+      "to": [
+        6.1,
+        12.65,
+        10.99
+      ],
+      "faces": {
+        "down": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.8,
+            0.27
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.8,
+            0.15
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.8,
+            0.15
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.27,
+            0.15
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.27,
+            0.15
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        35,
+        225,
+        0
+      ],
+      "scale": [
+        0.65,
+        0.65,
+        0.65
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        90,
+        180,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        15,
+        45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        15,
+        -45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        65,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        65,
+        -45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  }
+}

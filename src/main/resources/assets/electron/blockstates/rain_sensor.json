@@ -1,0 +1,2308 @@
+{
+  "variants": {
+    "facing=up,turn=0,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_up_0"
+    },
+    "facing=up,turn=1,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_up_1"
+    },
+    "facing=up,turn=2,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_up_2"
+    },
+    "facing=up,turn=3,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_up_3"
+    },
+    "facing=down,turn=0,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_down_0"
+    },
+    "facing=down,turn=1,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_down_1"
+    },
+    "facing=down,turn=2,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_down_2"
+    },
+    "facing=down,turn=3,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_down_3"
+    },
+    "facing=north,turn=0,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_north_0"
+    },
+    "facing=north,turn=1,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_north_1"
+    },
+    "facing=north,turn=2,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_north_2"
+    },
+    "facing=north,turn=3,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_north_3"
+    },
+    "facing=south,turn=0,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_south_0"
+    },
+    "facing=south,turn=1,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_south_1"
+    },
+    "facing=south,turn=2,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_south_2"
+    },
+    "facing=south,turn=3,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_south_3"
+    },
+    "facing=west,turn=0,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_west_0"
+    },
+    "facing=west,turn=1,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_west_1"
+    },
+    "facing=west,turn=2,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_west_2"
+    },
+    "facing=west,turn=3,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_west_3"
+    },
+    "facing=east,turn=0,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_east_0"
+    },
+    "facing=east,turn=1,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_east_1"
+    },
+    "facing=east,turn=2,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_east_2"
+    },
+    "facing=east,turn=3,broken=false,power=0": {
+      "model": "electron:block/rain_sensor_off_east_3"
+    },
+    "facing=up,turn=0,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=0,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_up_0"
+    },
+    "facing=up,turn=1,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=1,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_up_1"
+    },
+    "facing=up,turn=2,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=2,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_up_2"
+    },
+    "facing=up,turn=3,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=up,turn=3,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_up_3"
+    },
+    "facing=down,turn=0,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=0,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_down_0"
+    },
+    "facing=down,turn=1,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=1,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_down_1"
+    },
+    "facing=down,turn=2,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=2,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_down_2"
+    },
+    "facing=down,turn=3,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=down,turn=3,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_down_3"
+    },
+    "facing=north,turn=0,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=0,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_north_0"
+    },
+    "facing=north,turn=1,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=1,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_north_1"
+    },
+    "facing=north,turn=2,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=2,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_north_2"
+    },
+    "facing=north,turn=3,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=north,turn=3,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_north_3"
+    },
+    "facing=south,turn=0,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=0,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_south_0"
+    },
+    "facing=south,turn=1,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=1,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_south_1"
+    },
+    "facing=south,turn=2,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=2,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_south_2"
+    },
+    "facing=south,turn=3,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=south,turn=3,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_south_3"
+    },
+    "facing=west,turn=0,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=0,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_west_0"
+    },
+    "facing=west,turn=1,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=1,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_west_1"
+    },
+    "facing=west,turn=2,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=2,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_west_2"
+    },
+    "facing=west,turn=3,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=west,turn=3,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_west_3"
+    },
+    "facing=east,turn=0,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=0,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_east_0"
+    },
+    "facing=east,turn=1,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=1,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_east_1"
+    },
+    "facing=east,turn=2,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=2,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_east_2"
+    },
+    "facing=east,turn=3,broken=false,power=1": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=2": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=3": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=4": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=5": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=6": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=7": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=8": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=9": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=10": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=11": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=12": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=13": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=14": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=east,turn=3,broken=false,power=15": {
+      "model": "electron:block/rain_sensor_on_east_3"
+    },
+    "facing=up,turn=0,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=0,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_up_0"
+    },
+    "facing=up,turn=1,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=1,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_up_1"
+    },
+    "facing=up,turn=2,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=2,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_up_2"
+    },
+    "facing=up,turn=3,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=up,turn=3,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_up_3"
+    },
+    "facing=down,turn=0,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=0,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_down_0"
+    },
+    "facing=down,turn=1,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=1,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_down_1"
+    },
+    "facing=down,turn=2,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=2,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_down_2"
+    },
+    "facing=down,turn=3,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=down,turn=3,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_down_3"
+    },
+    "facing=north,turn=0,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=0,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_north_0"
+    },
+    "facing=north,turn=1,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=1,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_north_1"
+    },
+    "facing=north,turn=2,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=2,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_north_2"
+    },
+    "facing=north,turn=3,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=north,turn=3,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_north_3"
+    },
+    "facing=south,turn=0,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=0,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_south_0"
+    },
+    "facing=south,turn=1,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=1,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_south_1"
+    },
+    "facing=south,turn=2,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=2,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_south_2"
+    },
+    "facing=south,turn=3,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=south,turn=3,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_south_3"
+    },
+    "facing=west,turn=0,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=0,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_west_0"
+    },
+    "facing=west,turn=1,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=1,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_west_1"
+    },
+    "facing=west,turn=2,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=2,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_west_2"
+    },
+    "facing=west,turn=3,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=west,turn=3,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_west_3"
+    },
+    "facing=east,turn=0,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=0,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_east_0"
+    },
+    "facing=east,turn=1,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=1,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_east_1"
+    },
+    "facing=east,turn=2,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=2,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_east_2"
+    },
+    "facing=east,turn=3,broken=true,power=0": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=1": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=2": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=3": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=4": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=5": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=6": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=7": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=8": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=9": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=10": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=11": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=12": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=13": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=14": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    },
+    "facing=east,turn=3,broken=true,power=15": {
+      "model": "electron:block/rain_sensor_broken_east_3"
+    }
+  }
+}

@@ -26,7 +26,7 @@ public final class PcbSocketEntity extends ComponentEntity {
         if(!supported(circuit().layout)){pause();return;}
         var state=getCachedState();boolean broken=state.get(ComponentBlock.BROKEN);String id="d:"+pos.asLong();
         double stress=circuit().update(id,r,driven,world.getTime(),broken);current=r.current(id+":port0")+r.current(id);
-        stress=Math.max(stress,Math.max(voltage/5.5,-voltage/.5));overload=Math.max(0,overload+(stress>1?(stress-1)*.05:-.05));
+        stress=Math.max(stress,Math.max(voltage/circuit().maxSupplyVoltage(),-voltage/.5));overload=Math.max(0,overload+(stress>1?(stress-1)*.05:-.05));
         if(!broken&&overload>=3){ElectricalEffects.burn((ServerWorld)world,pos,state,false);world.setBlockState(pos,state.with(ComponentBlock.BROKEN,true).with(ComponentBlock.LEVEL,0));plantItems.set(0,new net.minecraft.item.ItemStack(Foundry.SCRAP));boardChanged();circuit().reset();}
         int next=world.getBlockState(pos).get(ComponentBlock.BROKEN)?0:circuit().ledMask;
         if(ledMask!=next||!Arrays.equals(displays,circuit().displays)||!Arrays.equals(pixels,circuit().pixels)||!leds.equals(circuit().leds)){ledMask=next;displays=circuit().displays.clone();pixels=circuit().pixels.clone();leds=(BitSet)circuit().leds.clone();world.updateListeners(pos,getCachedState(),getCachedState(),Block.NOTIFY_LISTENERS);}markDirty();
@@ -47,7 +47,7 @@ public final class PcbSocketEntity extends ComponentEntity {
             var center=ComponentGeometry.local(s.get(ComponentBlock.FACING),s.get(ComponentBlock.TURN),u(l,p.x()+1),v(l,p.y()+1),12.45).add(net.minecraft.util.math.Vec3d.of(pos));
             double distance=center.squaredDistanceTo(hit.getPos());if(distance<nearest){nearest=distance;picked=i;}
         }
-        if(picked>=0){var type=l.parts().get(picked).type();int mod=type==PcbLayout.Type.DIAL?10:type==PcbLayout.Type.SWITCH?2:5;
+        if(picked>=0){var type=l.parts().get(picked).type();int mod=type==PcbLayout.Type.POT10K?11:type==PcbLayout.Type.DIAL?10:type==PcbLayout.Type.SWITCH?2:5;
             int value=type==PcbLayout.Type.CLOCK?Math.max(0,circuit().controls[picked]/5-1):circuit().controls[picked];
             setControl(picked,Math.floorMod(value+(player.isSneaking()?-1:1),mod)*(type==PcbLayout.Type.CLOCK?5:1)+(type==PcbLayout.Type.CLOCK?5:0));
             return net.minecraft.util.ActionResult.CONSUME;
@@ -56,7 +56,7 @@ public final class PcbSocketEntity extends ComponentEntity {
         else player.sendMessage(net.minecraft.text.Text.translatable(plantItems.get(0).isEmpty()?"pcb.electron.insert":"pcb.electron.board_controls"),true);
         return net.minecraft.util.ActionResult.CONSUME;
     }
-    public void setControl(int index,int value){var c=circuit();if(index<0||index>=c.controls.length||!c.layout.parts().get(index).type().input())return;int clamped=Math.clamp(value,0,c.layout.parts().get(index).type()==PcbLayout.Type.DIAL?9:c.layout.parts().get(index).type()==PcbLayout.Type.SWITCH?1:25);if(c.controls[index]==clamped)return;c.controls[index]=clamped;savedControls=c.controls.clone();markDirty();if(world!=null)world.updateListeners(pos,getCachedState(),getCachedState(),Block.NOTIFY_LISTENERS);}
+    public void setControl(int index,int value){var c=circuit();if(index<0||index>=c.controls.length||!c.layout.parts().get(index).type().input())return;var type=c.layout.parts().get(index).type();int clamped=Math.clamp(value,0,type==PcbLayout.Type.POT10K?10:type==PcbLayout.Type.DIAL?9:type==PcbLayout.Type.SWITCH?1:25);if(c.controls[index]==clamped)return;c.controls[index]=clamped;savedControls=c.controls.clone();markDirty();if(world!=null)world.updateListeners(pos,getCachedState(),getCachedState(),Block.NOTIFY_LISTENERS);}
     private void writeVisibleNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.writeNbt(n,r);n.putIntArray("pcb_controls",(circuit==null?savedControls:circuit.controls).clone());}
     @Override protected void writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){writeVisibleNbt(n,r);n.putLongArray("pcb_circuit_state",circuit==null?savedCircuitState.clone():circuit.snapshot());}
     @Override protected void readNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.readNbt(n,r);circuit=null;ledMask=n.getInt("pcb_leds");displays=n.getIntArray("pcb_displays");pixels=n.getLongArray("pcb_pixels");leds=BitSet.valueOf(n.getLongArray("pcb_led_bits"));savedControls=n.getIntArray("pcb_controls");savedCircuitState=n.getLongArray("pcb_circuit_state");}

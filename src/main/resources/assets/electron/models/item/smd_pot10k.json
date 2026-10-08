@@ -1,0 +1,1406 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "ic_package": "electron:block/pcb/ic_package",
+    "rubber": "electron:block/pcb/rubber",
+    "brushed_steel": "electron:block/pcb/brushed_steel",
+    "solder_joint": "electron:block/pcb/solder_joint",
+    "enamel": "electron:block/pcb/enamel",
+    "particle": "electron:block/pcb/ic_package",
+    "laminate": "electron:block/pcb/laminate",
+    "gold_trace": "electron:block/pcb/gold_trace",
+    "resistor": "electron:block/pcb/resistor",
+    "led_off": "electron:block/pcb/led_off",
+    "terminal_red": "electron:block/pcb/terminal_red",
+    "display_glass": "electron:block/pcb/display_glass"
+  },
+  "elements": [
+    {
+      "name": "case",
+      "from": [
+        4.2,
+        6,
+        4.2
+      ],
+      "to": [
+        11.8,
+        8.4,
+        11.8
+      ],
+      "faces": {
+        "up": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            7.6,
+            7.6
+          ]
+        },
+        "down": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            7.6,
+            7.6
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            7.6,
+            2.4
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            7.6,
+            2.4
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            7.6,
+            2.4
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            7.6,
+            2.4
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_0",
+      "from": [
+        5.2,
+        8.4,
+        6.88097
+      ],
+      "to": [
+        5.66667,
+        9.0,
+        9.11903
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            2.23806
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            2.23806,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_1",
+      "from": [
+        5.66667,
+        8.4,
+        6.14797
+      ],
+      "to": [
+        6.13333,
+        9.0,
+        9.85203
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            3.70406
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            3.70406,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_2",
+      "from": [
+        6.13333,
+        8.4,
+        5.72575
+      ],
+      "to": [
+        6.6,
+        9.0,
+        10.27425
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            4.5485
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            4.5485,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_3",
+      "from": [
+        6.6,
+        8.4,
+        5.45463
+      ],
+      "to": [
+        7.06667,
+        9.0,
+        10.54537
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            5.09074
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            5.09074,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_4",
+      "from": [
+        7.06667,
+        8.4,
+        5.28891
+      ],
+      "to": [
+        7.53333,
+        9.0,
+        10.71109
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            5.42218
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            5.42218,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_5",
+      "from": [
+        7.53333,
+        8.4,
+        5.20974
+      ],
+      "to": [
+        8.0,
+        9.0,
+        10.79026
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            5.58052
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            5.58052,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_6",
+      "from": [
+        8.0,
+        8.4,
+        5.20974
+      ],
+      "to": [
+        8.46667,
+        9.0,
+        10.79026
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            5.58052
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            5.58052,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_7",
+      "from": [
+        8.46667,
+        8.4,
+        5.28891
+      ],
+      "to": [
+        8.93333,
+        9.0,
+        10.71109
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            5.42218
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            5.42218,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_8",
+      "from": [
+        8.93333,
+        8.4,
+        5.45463
+      ],
+      "to": [
+        9.4,
+        9.0,
+        10.54537
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            5.09074
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            5.09074,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_9",
+      "from": [
+        9.4,
+        8.4,
+        5.72575
+      ],
+      "to": [
+        9.86667,
+        9.0,
+        10.27425
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            4.5485
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            4.5485,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_10",
+      "from": [
+        9.86667,
+        8.4,
+        6.14797
+      ],
+      "to": [
+        10.33333,
+        9.0,
+        9.85203
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            3.70406
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46666,
+            0.6
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            3.70406,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "round_11",
+      "from": [
+        10.33333,
+        8.4,
+        6.88097
+      ],
+      "to": [
+        10.8,
+        9.0,
+        9.11903
+      ],
+      "faces": {
+        "up": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            2.23806
+          ]
+        },
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.46667,
+            0.6
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            2.23806,
+            0.6
+          ]
+        }
+      }
+    },
+    {
+      "name": "adjuster",
+      "from": [
+        5.6,
+        9,
+        7.8
+      ],
+      "to": [
+        10.4,
+        9.08,
+        8.2
+      ],
+      "faces": {
+        "up": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            4.8,
+            0.4
+          ]
+        },
+        "down": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            4.8,
+            0.4
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            4.8,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            4.8,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_0_foot",
+      "from": [
+        2.3,
+        5.7,
+        4.68
+      ],
+      "to": [
+        3.45,
+        6.02,
+        5.52
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_0_riser",
+      "from": [
+        3.13,
+        6.02,
+        4.68
+      ],
+      "to": [
+        3.45,
+        6.83,
+        5.52
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_0_shoulder",
+      "from": [
+        3.13,
+        6.83,
+        4.68
+      ],
+      "to": [
+        4.6,
+        7.12,
+        5.52
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_1_foot",
+      "from": [
+        2.3,
+        5.7,
+        10.48
+      ],
+      "to": [
+        3.45,
+        6.02,
+        11.32
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_1_riser",
+      "from": [
+        3.13,
+        6.02,
+        10.48
+      ],
+      "to": [
+        3.45,
+        6.83,
+        11.32
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_1_shoulder",
+      "from": [
+        3.13,
+        6.83,
+        10.48
+      ],
+      "to": [
+        4.6,
+        7.12,
+        11.32
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_2_foot",
+      "from": [
+        12.55,
+        5.7,
+        7.58
+      ],
+      "to": [
+        13.7,
+        6.02,
+        8.42
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_2_riser",
+      "from": [
+        12.55,
+        6.02,
+        7.58
+      ],
+      "to": [
+        12.87,
+        6.83,
+        8.42
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_2_shoulder",
+      "from": [
+        11.4,
+        6.83,
+        7.58
+      ],
+      "to": [
+        12.87,
+        7.12,
+        8.42
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        35,
+        225,
+        0
+      ],
+      "scale": [
+        0.92,
+        0.92,
+        0.92
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        90,
+        180,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        15,
+        45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        15,
+        -45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        65,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        65,
+        -45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  }
+}

@@ -109,6 +109,8 @@
     "electron:workshop_lamp",
     "electron:xnor_gate",
     "electron:xor_gate",
-    "electron:yard_lamp"
+    "electron:yard_lamp",
+    "electron:light_sensor",
+    "electron:rain_sensor"
   ]
 }

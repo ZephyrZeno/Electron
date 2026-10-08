@@ -26,7 +26,8 @@
       "top.lacrus.zephyrzeno.electron.test.PlantAccidentTests",
       "top.lacrus.zephyrzeno.electron.test.PcbMultilayerTests",
       "top.lacrus.zephyrzeno.electron.test.PcbRegionEditingTests",
-      "top.lacrus.zephyrzeno.electron.test.PcbCounterExampleTests"
+      "top.lacrus.zephyrzeno.electron.test.PcbCounterExampleTests",
+      "top.lacrus.zephyrzeno.electron.test.AnalogExpansionTests"
     ]
   },
   "depends": {

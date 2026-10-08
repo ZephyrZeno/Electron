@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_not"
+    },
+    {
+      "item": "electron:smd_not"
+    },
+    {
+      "item": "electron:smd_r10k"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "electron:solder_alloy"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_comparator",
+    "count": 1
+  }
+}

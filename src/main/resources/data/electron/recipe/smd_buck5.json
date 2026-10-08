@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_mosfet"
+    },
+    {
+      "item": "electron:smd_diode"
+    },
+    {
+      "item": "electron:smd_cap100uf"
+    },
+    {
+      "item": "electron:smd_r10k"
+    },
+    {
+      "item": "electron:copper_coil"
+    },
+    {
+      "item": "electron:solder_alloy"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_buck5",
+    "count": 1
+  }
+}

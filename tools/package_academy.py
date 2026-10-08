@@ -24,11 +24,11 @@ for file in (WORLD/'region').glob('*.mca'):
         saved_chunks[(data['xPos'],data['zPos'])]=data
         blocks.extend(data.get('block_entities',[]))
 components=[b for b in blocks if b['id']=='electron:component'];signs=[b for b in blocks if b['id']=='minecraft:sign'];chests=[b for b in blocks if b['id']=='minecraft:chest']
-assert len(components)==149 and len(signs)==29 and len(chests)==24
+assert len(components)==149 and len(signs)==29 and len(chests)==25
 chest_stacks=sum(len(b.get('Items',[])) for b in chests)
 ash_chest=next(b for b in chests if (b['x'],b['y'],b['z'])==(64,67,6))
 assert len(ash_chest['Items'])==1 and ash_chest['Items'][0]['id']=='electron:combustion_ash' and ash_chest['Items'][0]['count']>0
-assert chest_stacks==397, f'Missing toolbox contents: {chest_stacks}/397 stacks'
+assert chest_stacks==412, f'Missing toolbox contents: {chest_stacks}/412 stacks'
 sequential_box=next(b for b in chests if (b['x'],b['y'],b['z'])==(59,66,158))
 sequential_items={v['Slot']:v for v in sequential_box['Items']}
 assert all(sequential_items[15+i]['id']=='electron:smd_'+kind and sequential_items[15+i]['count']==16 for i,kind in enumerate(('tff','sr_latch','counter4','shift4')))
@@ -36,7 +36,20 @@ counter_layout=sequential_items[13]['components']['minecraft:custom_data']['layo
 assert sequential_items[13]['id']=='electron:assembled_pcb' and sequential_items[14]['id']=='electron:gold_finished_pcb'
 assert sequential_items[14]['components']['minecraft:custom_data']['layout']==counter_layout and '|32,24,2|' in counter_layout
 assert any(part.startswith('24,') for part in counter_layout.split('|')[1].split(';')),'Counter example is missing its actual chip'
-assert all('map.electron.' in message and 'translate' in message for sign in signs for message in sign['front_text']['messages']),'Sign instructions must remain client-translated'
+analog_box=next(b for b in chests if (b['x'],b['y'],b['z'])==(63,66,158))
+analog_items={v['Slot']:v for v in analog_box['Items']}
+assert len(analog_items)==15
+assert block_state(saved_chunks[(3,9)],63,65,158)['Name']=='minecraft:smooth_stone'
+for i,kind in enumerate(('r220','r100k','diode','cap100uf','pot10k','comparator','schmitt','mosfet','buck5')):
+    assert analog_items[i]['id']=='electron:smd_'+kind and analog_items[i]['count']==16
+assert analog_items[9]['id']=='electron:light_sensor' and analog_items[10]['id']=='electron:rain_sensor'
+for start,required in ((11,('29,','31,')),(13,('33,','34,'))):
+    board,bare=analog_items[start],analog_items[start+1]
+    design=board['components']['minecraft:custom_data']['layout']
+    assert board['id']=='electron:assembled_pcb' and bare['id']=='electron:gold_finished_pcb'
+    assert bare['components']['minecraft:custom_data']['layout']==design and '|32,24,2|' in design
+    assert all(any(part.startswith(kind) for part in design.split('|')[1].split(';')) for kind in required)
+assert all('map.electron.'  in message and 'translate' in message for sign in signs for message in sign['front_text']['messages']),'Sign instructions must remain client-translated'
 assert len({(b['x'],b['y'],b['z']) for b in components})==149
 assert {(b['x'],b['y'],b['z']) for b in components}=={position(d['p']) for d in circuit['devices']}
 assert all(not b.get('converter_target') for b in components),'Fixed modules must have no free setting'
@@ -79,8 +92,8 @@ assert report.count('pcb_fabrication_stages=5')==2 and report.count('pcb_control
 assert report.count('processing_machines_working=4')==2
 for xyz, product in (((43,66,152),'assembled_pcb'),((98,66,103),'pcb_photomask'),((122,66,110),'pcb_photomask')):
     machine=next(b for b in components if (b['x'],b['y'],b['z'])==xyz)
-    assert machine.get('pcb_inventory_version')==4
-    assert any(v['Slot']==29 and v['id']=='electron:'+product and v.get('components',{}).get('minecraft:custom_data',{}).get('layout','').startswith('3|') for v in machine['pcb_items']['Items']), ('Separate station failed',xyz)
+    assert machine.get('pcb_inventory_version')==5
+    assert any(v['Slot']==38 and v['id']=='electron:'+product and v.get('components',{}).get('minecraft:custom_data',{}).get('layout','').startswith('3|') for v in machine['pcb_items']['Items']), ('Separate station failed',xyz)
 assert sum(d['block']=='electron:pixel_display_panel' for d in circuit['devices'])==1
 assert len(circuit['junctions'])==0
 
@@ -217,10 +230,11 @@ instructions=f'''Electron: Circuit Foundry 教学与展示地图 — {VERSION}
 生存模式准确读数只显示在万用表 HUD；电压铭牌已移至工程手册。
 固定转换模块没有调压界面，换规格须合成并更换器件；PCB 光绘、曝光、钻孔、蚀刻、阻焊、沉金和焊接已在南侧新工坊开放；电源芯片仍是后续设计。
 选 COM 再选探针测压；潜行点设备/导线测流；潜行对空切换 V/Ω；对空右键清除测点。
+新增模拟元件箱 (63,66,158)：九种微型模拟/电源元件、光照与雨水传感器。RC 延时成品与裸板在槽11/12，接5V后点板上开关，电容充电后点灯；稳压驱动成品与裸板在槽13/14，接24V后调高电位器开启MOSFET。两组均为单底座双层PCB，实时测量使用万用表，参数见手册。
 未加载区块中的网络会暂停，走近实验区会恢复；没有免费持续发电或远程逻辑控制器。
 地图导览是从实际保存的线路数据绘制的平面示意，不是游戏截图。
 验证：每次从干净世界生成。创建后通电 1200 刻，再从存档重开运行 1200 刻，检查 14 个指示负载、2 个旋转电机、4 台原料加工机与 5 台 PCB 工序产出及设计/焊接工作站；每轮实际切换验证2−7=−5、9+9=18、0+0=0，最后恢复9+7=16；两次均接通悬线展台 40 刻并确认漏电电流，随后断开再保存。
-生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、20 个工具／材料箱、2 个供料箱和2 个出料箱中的 397 组物品（含实际生成的炉灰）完整，并检查两套供水和装配台配料。
+生成与重载后均不允许掉落物；打包前扫描全部实体区域，确认 0 个掉落物、21 个工具／材料箱、2 个供料箱和2 个出料箱中的 412 组物品（含实际生成的炉灰）完整，并检查两套供水和装配台配料。
 数字教学箱（59,66,158）增加四种时序芯片、32×24双层计数器成品与沉金裸板。计数器插入PCB底座、接5V，RESET开关置1再置0后开始0–15循环。裸板需在装配站提供实际元件和电力。
 全部 149 个器件完好；存档含真实世界器件、物品箱和持久化线路，未完成逐区人工客户端视觉验收。
 '''
@@ -228,7 +242,7 @@ import shutil
 shutil.copy2(ROOT/'build/asset-review/single-board-calculator.png',out/'单板计算器四层铜线.png')
 (out/'地图说明.txt').write_text(instructions,encoding='utf-8')
 audit={'version':VERSION,'game_mode':'survival','difficulty':'peaceful','spawn':[8,65,-4],'devices':len(components),'wires':len(circuit['wires']),'bridges':len(circuit['bridges']),'signs':len(signs),'chests':len(chests),'chest_stacks':chest_stacks,'dropped_item_entities':0,'fresh_world':True,'components_above_bench':True,'overhead_spans':2,'reopened_and_powered':True,'all_plants_and_substations_powered':True,'generator_required':False,'formed_parts':len(parts),'all_multiblocks_formed':True}
-audit.update(sequential_sample=True,sequential_parts=4,counter_board_size=[32,24],counter_board_layers=2)
+audit.update(analog_samples=True,analog_parts=9,environmental_sensors=2,analog_board_size=[32,24],analog_board_layers=2,sequential_sample=True,sequential_parts=4,counter_board_size=[32,24],counter_board_layers=2)
 audit.update(vertical_drops=2,powered_pumps=2,processing_machines=4,pcb_stages=5,pcb_control_working=True,emergency_lamp_charged=True,fluid_stores=len(fluids),workshop_cells=6,nuclear_foundation=[36,36],arc_demo_powered_test=True,arc_demo_default_off=True,fuel_services_working=True,six_module_workshop=True,plug_cords=4,plug_appliances_working=True,decimal_gate_calculator=True,decimal_input_changes_verified=True,pcb_assembly_working=True,calculator_pcbs=1,calculator_gates=52,calculator_packages=58,pcb_layers=4,pixel_panels=1,junctions=0,single_board_calculator=True,pixel_stream_verified=True)
 (out/'map-verification.json').write_text(json.dumps(audit,indent=2)+'\n',encoding='utf-8')
 archive=ROOT/f'dist/circuit-academy-{VERSION}.zip'

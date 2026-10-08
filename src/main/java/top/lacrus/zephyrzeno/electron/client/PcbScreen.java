@@ -47,7 +47,7 @@ public final class PcbScreen extends HandledScreen<PcbScreenHandler> {
         viewScale=Math.min(1,Math.min(width/548d,height/392d));width=(int)(width/viewScale);height=(int)(height/viewScale);super.init();editing.clear();
         String query=search==null?"":search.getText();
         search=addDrawableChild(new TextFieldWidget(textRenderer,x+12,y+47,96,18,tr("search")));search.setMaxLength(40);search.setChangedListener(value->paletteOffset=0);search.setText(query);search.setPlaceholder(tr("search"));
-        categoryButton=button("category",12,70,96,()->{category=(category+1)%6;paletteOffset=0;},true);
+        categoryButton=button("category",12,70,96,()->{category=(category+1)%7;paletteOffset=0;},true);
         String[] tools={"move","track","select","outline","erase"};int[] ids={0,1,7,2,3};
         for(int i=0;i<tools.length;i++){int t=ids[i];button(tools[i],122+i*39,24,37,()->chooseTool(t),true);}
         undo=button("undo",317,24,36,()->send(11,0,0,0,0),true);redo=button("redo",355,24,37,()->send(12,0,0,0,0),true);
@@ -58,8 +58,8 @@ public final class PcbScreen extends HandledScreen<PcbScreenHandler> {
         paletteNext=button("next_parts",90,202,18,()->pagePalette(1),true);paletteNext.setHeight(14);
         button("size",12,219,46,()->{var l=handler.layout();int[][] sizes={{32,24},{64,48},{80,88},{96,72},{128,96},{16,12}};int n=0;for(int i=0;i<sizes.length;i++)if(sizes[i][0]==l.width()&&sizes[i][1]==l.height())n=(i+1)%sizes.length;send(8,sizes[n][0],sizes[n][1],0,0);},true);
         button("layers",62,219,46,()->send(15,handler.layout().layers()%4+1,0,0,0),true);
-        exampleButton=button("example_0",12,242,70,()->{send(4,new int[]{0,1,3,4}[example],0,0,0);},true);
-        button("next_example",86,242,22,()->example=(example+1)%4,true);
+        exampleButton=button("example_0",12,242,70,()->{send(4,new int[]{0,1,3,4,5,6}[example],0,0,0);},true);
+        button("next_example",86,242,22,()->example=(example+1)%6,true);
         button("calculator",12,264,68,()->send(4,2,0,0,0),true);button("clear",84,264,24,()->send(3,0,0,0,0),true);
         button("load",410,204,110,()->send(7,0,0,0,0),false);make=button("export",410,255,74,()->send(5,0,0,0,0),false);button("stop",488,255,32,()->send(6,0,0,0,0),false);
         button("fit",122,263,36,this::fit,false);
@@ -85,9 +85,9 @@ public final class PcbScreen extends HandledScreen<PcbScreenHandler> {
         case 1->!t.digital();case 2->t.logic!=null||t==PcbLayout.Type.HALF_ADDER||t==PcbLayout.Type.MUX||t==PcbLayout.Type.TRISTATE;
         case 3->Set.of(PcbLayout.Type.DFF,PcbLayout.Type.CLOCK,PcbLayout.Type.TFF,PcbLayout.Type.SR_LATCH,PcbLayout.Type.COUNTER4,PcbLayout.Type.SHIFT4).contains(t);
         case 4->Set.of(PcbLayout.Type.LED,PcbLayout.Type.RGB,PcbLayout.Type.PIXEL,PcbLayout.Type.DISPLAY,PcbLayout.Type.SIGN).contains(t);
-        case 5->t.input();default->true;
+        case 5->t.input();case 6->t.analog();default->true;
     };}
-    private static String partCode(PcbLayout.Type t){return switch(t){case HALF_ADDER->"HA";case SR_LATCH->"SR";case COUNTER4->"CNT4";case SHIFT4->"SH4";case DISPLAY->"7SEG";case TRISTATE->"TRI";default->t.name();};}
+    private static String partCode(PcbLayout.Type t){return switch(t){case COMPARATOR->"CMP";case SCHMITT->"SCH";case CAP100UF->"100uF";case POT10K->"POT";case MOSFET->"MOS";case BUCK5->"BUCK";case HALF_ADDER->"HA";case SR_LATCH->"SR";case COUNTER4->"CNT4";case SHIFT4->"SH4";case DISPLAY->"7SEG";case TRISTATE->"TRI";default->t.name();};}
     private List<PcbLayout.Type> palette(){String q=search==null?"":search.getText().toLowerCase(Locale.ROOT);return Arrays.stream(PcbLayout.Type.values()).filter(this::categoryMatches).filter(t->Pcb.PARTS.get(t).getName().getString().toLowerCase(Locale.ROOT).contains(q)||t.name().toLowerCase(Locale.ROOT).contains(q)).toList();}
     private void pagePalette(int direction){int pages=Math.max(1,(palette().size()+PALETTE_SIZE-1)/PALETTE_SIZE);paletteOffset=Math.clamp(paletteOffset/PALETTE_SIZE+direction,0,pages-1)*PALETTE_SIZE;}
     private PcbLayout.Type paletteAt(double mx,double my){var list=palette();for(int i=paletteOffset;i<Math.min(list.size(),paletteOffset+PALETTE_SIZE);i++){int j=i-paletteOffset;int a=x+12+j%2*50,b=y+95+j/2*27;if(mx>=a&&mx<a+46&&my>=b&&my<b+25)return list.get(i);}return null;}
@@ -182,7 +182,7 @@ public final class PcbScreen extends HandledScreen<PcbScreenHandler> {
     private boolean editable(){return handler.designSynchronized()&&!handler.assembly()&&(handler.value(1)==0||handler.value(1)==4);}
     private boolean validGhost(int u,int v){try{if(dragPart>=0)handler.layout().move(dragPart,u,v,turn);else handler.layout().place(PcbLayout.Type.values()[dragType],u,v,turn);return true;}catch(IllegalArgumentException|IndexOutOfBoundsException e){return false;}}
     private void segment(DrawContext c,int a,int b,int color){double zoom=viewport.zoom();int ax=px(PcbLayout.x(a)),ay=py(PcbLayout.y(a)),bx=px(PcbLayout.x(b)),by=py(PcbLayout.y(b));c.fill(Math.min(ax,bx),Math.min(ay,by),Math.max(ax,bx)+Math.max(1,(int)(zoom*.07)),Math.max(ay,by)+Math.max(1,(int)(zoom*.07)),color);}
-    private void part(DrawContext c,PcbLayout.Part p,int color){double zoom=viewport.zoom();int cx=px(p.x()+1),cy=py(p.y()+1),r=(int)(zoom*.62);c.fill(cx-r,cy-r/2,cx+r,cy+r/2,color);var local=new PcbLayout.Part(p.type(),0,0,p.turn());for(int j=0;j<p.type().pins();j++){int at=local.pin(j),ax=px(p.x()+PcbLayout.x(at)),ay=py(p.y()+PcbLayout.y(at));int pad=Math.max(1,(int)(zoom*.12));c.fill(ax-pad,ay-pad,ax+pad,ay+pad,0xffe7d6b4);}if(zoom>=12){c.getMatrices().push();c.getMatrices().translate(cx,cy,0);c.getMatrices().scale(.65f,.65f,1);c.drawCenteredTextWithShadow(textRenderer,p.type().name().replace("HALF_ADDER","HA").replace("DISPLAY","7S"),0,-3,0xe8edf1);c.getMatrices().pop();}}
+    private void part(DrawContext c,PcbLayout.Part p,int color){double zoom=viewport.zoom();int cx=px(p.x()+1),cy=py(p.y()+1),r=(int)(zoom*.62);c.fill(cx-r,cy-r/2,cx+r,cy+r/2,color);var local=new PcbLayout.Part(p.type(),0,0,p.turn());for(int j=0;j<p.type().pins();j++){int at=local.pin(j),ax=px(p.x()+PcbLayout.x(at)),ay=py(p.y()+PcbLayout.y(at));int pad=Math.max(1,(int)(zoom*.12));c.fill(ax-pad,ay-pad,ax+pad,ay+pad,0xffe7d6b4);}if(zoom>=12){c.getMatrices().push();c.getMatrices().translate(cx,cy,0);c.getMatrices().scale(.65f,.65f,1);c.drawCenteredTextWithShadow(textRenderer,partCode(p.type()),0,-3,0xe8edf1);c.getMatrices().pop();}}
     private void areaBorder(DrawContext c,PcbSelection.Area a,int dx,int dy,int color){
         int half=Math.max(1,(int)Math.ceil(viewport.zoom()/2)),left=px(a.minX()+dx)-half,top=py(a.minY()+dy)-half,right=px(a.maxX()+dx)+half,bottom=py(a.maxY()+dy)+half;
         c.fill(left,top,right,top+1,color);c.fill(left,bottom-1,right,bottom,color);c.fill(left,top,left+1,bottom,color);c.fill(right-1,top,right,bottom,color);

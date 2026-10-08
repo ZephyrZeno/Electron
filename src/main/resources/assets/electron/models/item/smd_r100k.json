@@ -1,0 +1,575 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "ic_package": "electron:block/pcb/ic_package",
+    "rubber": "electron:block/pcb/rubber",
+    "brushed_steel": "electron:block/pcb/brushed_steel",
+    "solder_joint": "electron:block/pcb/solder_joint",
+    "enamel": "electron:block/pcb/enamel",
+    "particle": "electron:block/pcb/ic_package",
+    "laminate": "electron:block/pcb/laminate",
+    "gold_trace": "electron:block/pcb/gold_trace",
+    "resistor": "electron:block/pcb/resistor",
+    "led_off": "electron:block/pcb/led_off",
+    "terminal_red": "electron:block/pcb/terminal_red",
+    "display_glass": "electron:block/pcb/display_glass"
+  },
+  "elements": [
+    {
+      "name": "body",
+      "from": [
+        4,
+        6,
+        6
+      ],
+      "to": [
+        12,
+        7.4,
+        10
+      ],
+      "faces": {
+        "up": {
+          "texture": "#resistor",
+          "uv": [
+            0,
+            0,
+            8,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#resistor",
+          "uv": [
+            0,
+            0,
+            8,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "cap",
+      "from": [
+        3.3,
+        5.8,
+        6
+      ],
+      "to": [
+        4.7,
+        7.55,
+        10
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.75
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.75
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            4,
+            1.75
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            4,
+            1.75
+          ]
+        }
+      }
+    },
+    {
+      "name": "cap",
+      "from": [
+        11.3,
+        5.8,
+        6
+      ],
+      "to": [
+        12.7,
+        7.55,
+        10
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.75
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.4,
+            1.75
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            4,
+            1.75
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            4,
+            1.75
+          ]
+        }
+      }
+    },
+    {
+      "name": "band",
+      "from": [
+        5.6,
+        7.4,
+        6.1
+      ],
+      "to": [
+        6.0,
+        7.47,
+        9.9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            3.8
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        }
+      }
+    },
+    {
+      "name": "band",
+      "from": [
+        7,
+        7.4,
+        6.1
+      ],
+      "to": [
+        7.4,
+        7.47,
+        9.9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            3.8
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        }
+      }
+    },
+    {
+      "name": "band",
+      "from": [
+        8.4,
+        7.4,
+        6.1
+      ],
+      "to": [
+        8.8,
+        7.47,
+        9.9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            3.8
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        }
+      }
+    },
+    {
+      "name": "band",
+      "from": [
+        9.8,
+        7.4,
+        6.1
+      ],
+      "to": [
+        10.2,
+        7.47,
+        9.9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            3.8
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            0.4,
+            0.07
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            3.8,
+            0.07
+          ]
+        }
+      }
+    },
+    {
+      "name": "body",
+      "from": [
+        4.7,
+        6,
+        6
+      ],
+      "to": [
+        11.3,
+        7.4,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#resistor",
+          "uv": [
+            0.7,
+            0.0,
+            7.3,
+            1.4
+          ]
+        }
+      }
+    },
+    {
+      "name": "body",
+      "from": [
+        4.7,
+        6,
+        6
+      ],
+      "to": [
+        11.3,
+        7.4,
+        10
+      ],
+      "faces": {
+        "south": {
+          "texture": "#resistor",
+          "uv": [
+            0.7,
+            0.0,
+            7.3,
+            1.4
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        35,
+        225,
+        0
+      ],
+      "scale": [
+        0.92,
+        0.92,
+        0.92
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        90,
+        180,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        15,
+        45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        15,
+        -45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        65,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        65,
+        -45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  }
+}

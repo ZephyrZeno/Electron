@@ -21,20 +21,22 @@ import static top.lacrus.zephyrzeno.electron.circuit.CircuitParts.node;
 
 /** Powered local sensors expose isolated contacts; emergency light stores only paid energy. */
 public final class Automation {
-    public static ComponentBlock WATER,TEMPERATURE,EMERGENCY;
+    public static ComponentBlock WATER,TEMPERATURE,EMERGENCY,LIGHT,RAIN;
     private static ComponentBlock block(String id,boolean lamp){
         var b=Registry.register(Registries.BLOCK,Electron.id(id),new ComponentBlock(AbstractBlock.Settings.create().strength(2).nonOpaque().sounds(BlockSoundGroup.METAL).pistonBehavior(PistonBehavior.BLOCK).luminance(s->lamp?s.get(ComponentBlock.LEVEL):0),lamp?ComponentBlock.Kind.LAMP:ComponentBlock.Kind.RELAY,lamp?480:2500){
             @Override public boolean rearPowerPorts(){return lamp;}
             @Override protected net.minecraft.util.shape.VoxelShape getOutlineShape(BlockState s,net.minecraft.world.BlockView w,BlockPos p,ShapeContext context){return lamp?top.lacrus.zephyrzeno.electron.pcb.WorkshopGeometry.shape("emergency_lamp",s.get(FACING),s.get(TURN)):super.getOutlineShape(s,w,p,context);}
             @Override protected ActionResult onUse(BlockState s,World w,BlockPos p,PlayerEntity player,BlockHitResult hit){if(!w.isClient&&w.getBlockEntity(p) instanceof ComponentEntity e){
-                if(lamp)w.setBlockState(p,s.cycle(ENABLED));else {e.loadMode=(e.loadMode+1)%3;e.markDirty();player.sendMessage(Text.translatable("automation.electron."+(this==WATER?"water_":"temperature_")+e.loadMode),true);}
+                if(lamp)w.setBlockState(p,s.cycle(ENABLED));else {e.loadMode=(e.loadMode+1)%3;e.markDirty();player.sendMessage(Text.translatable("automation.electron."+(this==WATER?"water_":this==LIGHT?"light_":this==RAIN?"rain_":"temperature_")+e.loadMode),true);}
                 ElectricalEffects.play((ServerWorld)w,p,ElectricalEffects.SWITCH,.3f,1);
             }return ActionResult.SUCCESS;}
         });
         Foundry.DEVICES.put(id,b);var item=Registry.register(Registries.ITEM,Electron.id(id),new ComponentItem(b,new Item.Settings().maxCount(lamp?1:64)));Foundry.ITEMS.put(id,item);return b;
     }
-    public static void register(){WATER=block("water_level_sensor",false);TEMPERATURE=block("temperature_sensor",false);EMERGENCY=block("emergency_lamp",true);}
-    public static boolean handles(ComponentBlock b){return b==WATER||b==TEMPERATURE||b==EMERGENCY;}
+    public static void register(){WATER=block("water_level_sensor",false);TEMPERATURE=block("temperature_sensor",false);EMERGENCY=block("emergency_lamp",true);LIGHT=block("light_sensor",false);RAIN=block("rain_sensor",false);}
+    public static boolean handles(ComponentBlock b){return b==WATER||b==TEMPERATURE||b==EMERGENCY||b==LIGHT||b==RAIN;}
+    public static boolean lightContact(int brightness,int mode,boolean wasClosed){return mode==1?brightness>=(wasClosed?8:11):brightness<=(mode==0?(wasClosed?7:4):(wasClosed?11:8));}
+    public static boolean rainContact(boolean wet,boolean thunder,int mode){return mode==1?!wet:mode==2?wet&&thunder:wet;}
     public static void stamp(ComponentBlock b,ComponentEntity e,List<DcSolver.Branch> out){
         var p=e.getPos();String id="d:"+p.asLong();boolean broken=e.getCachedState().get(ComponentBlock.BROKEN);
         if(b==EMERGENCY){out.add(DcSolver.Branch.resistor(id,node(p,0),node(p,1),broken||!e.getCachedState().get(ComponentBlock.ENABLED)?1e12:480));out.add(DcSolver.Branch.resistor(id+":charge",node(p,0),node(p,1),broken||e.energy>=200?1e12:96));}
@@ -51,7 +53,14 @@ public final class Automation {
         }
         e.inputVoltage=e.voltage;e.inputCurrent=r.current("coil:"+id);e.voltage=r.voltage(node(p,2))-r.voltage(node(p,3));
         boolean valid=!broken&&e.inputVoltage>=4.5&&e.inputVoltage<=5.5,found=false,close=false;
-        if(valid)for(var dir:Direction.values()){
+        if(valid&&(b==LIGHT||b==RAIN)){
+            var target=p.offset(e.getCachedState().get(ComponentBlock.FACING));
+            if(world.isChunkLoaded(target)){
+                found=true;
+                int brightness=Math.max(world.getLightLevel(net.minecraft.world.LightType.BLOCK,target),world.getLightLevel(net.minecraft.world.LightType.SKY,target)-world.getAmbientDarkness());
+                close=b==LIGHT?lightContact(brightness,e.loadMode,e.contactClosed):rainContact(world.hasRain(target),world.isThundering(),e.loadMode);
+            }
+        }else if(valid)for(var dir:Direction.values()){
             var target=p.offset(dir);if(!world.isChunkLoaded(target))continue;
             if(b==WATER&&world.getBlockEntity(target) instanceof FluidEntity tank&&tank.capacity()>=1000){
                 if(found){close=false;break;}found=true;double fill=tank.amount/(double)tank.capacity();int mode=e.loadMode;

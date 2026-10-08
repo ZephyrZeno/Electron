@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:electrical_relay"
+    },
+    {
+      "item": "electron:smd_comparator"
+    },
+    {
+      "item": "electron:smd_pot10k"
+    },
+    {
+      "item": "minecraft:glass"
+    },
+    {
+      "item": "minecraft:quartz"
+    },
+    {
+      "item": "electron:smd_led"
+    }
+  ],
+  "result": {
+    "id": "electron:light_sensor",
+    "count": 1
+  }
+}

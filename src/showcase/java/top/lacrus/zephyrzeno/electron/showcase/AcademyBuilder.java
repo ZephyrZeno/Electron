@@ -324,7 +324,7 @@ public final class AcademyBuilder implements ModInitializer {
         wire(b,bus,2,sensor,2,0,true);wire(b,sensor,3,light,0,2,true);wire(b,light,1,bus,6,1,true);wire(b,bus,3,emergency,0,0,true);wire(b,bus,7,emergency,1,1,true);indicators.add(light);sign(b.add(3,1,16),"pcb_automation","pcb_automation_1","pcb_automation_2","pcb_book");
         // Keep the two established processing boxes and their old slot order. Timing
         // packages live beside the playable counter in the existing digital toolbox.
-        var timingParts=List.of(PcbLayout.Type.TFF,PcbLayout.Type.SR_LATCH,PcbLayout.Type.COUNTER4,PcbLayout.Type.SHIFT4).stream().map(Pcb.PARTS::get).toList();
+        var timingParts=Arrays.stream(PcbLayout.Type.values()).filter(type->type.ordinal()>=PcbLayout.Type.TFF.ordinal()).map(Pcb.PARTS::get).toList();
         var items=new ArrayList<>(PcbFabrication.items().stream().filter(item->!timingParts.contains(item)).toList());Collections.addAll(items,Pcb.BENCH.asItem(),Pcb.ASSEMBLY.asItem(),Pcb.SOCKET.asItem(),Pcb.EXTENSION.asItem(),top.lacrus.zephyrzeno.electron.display.Displays.PIXEL.asItem(),Automation.WATER.asItem(),Automation.TEMPERATURE.asItem(),Automation.EMERGENCY.asItem(),Items.BLACK_DYE);
         for(int box=0;box<(items.size()+26)/27;box++){var p=new BlockPos(40+box*3,65,126);world.setBlockState(p,Blocks.CHEST.getDefaultState().with(ChestBlock.FACING,Direction.SOUTH));var chest=(ChestBlockEntity)world.getBlockEntity(p);
             for(int slot=0;slot<27&&box*27+slot<items.size();slot++){var item=items.get(box*27+slot);var stack=new ItemStack(item,Math.min(16,item.getMaxCount()));if(PcbFabrication.carriesLayout(stack)){stack=Pcb.designed(item,design);stack.setCount(Math.min(16,item.getMaxCount()));}chest.setStack(slot,stack);}chest.markDirty();}
@@ -342,6 +342,10 @@ public final class AcademyBuilder implements ModInitializer {
         chest.setStack(slot++,Pcb.board(PcbExamples.counter()));chest.setStack(slot++,Pcb.designed(PcbFabrication.GOLD,PcbExamples.counter()));
         for(var type:List.of(PcbLayout.Type.TFF,PcbLayout.Type.SR_LATCH,PcbLayout.Type.COUNTER4,PcbLayout.Type.SHIFT4))chest.setStack(slot++,new ItemStack(Pcb.PARTS.get(type),16));
         if(slot>chest.size())throw new IllegalStateException("Digital toolbox exceeds its existing chest");chest.markDirty();
+        box=base.add(17,1,16);world.setBlockState(box.down(),Blocks.SMOOTH_STONE.getDefaultState());world.setBlockState(box,Blocks.CHEST.getDefaultState().with(ChestBlock.FACING,Direction.SOUTH));chest=(ChestBlockEntity)world.getBlockEntity(box);slot=0;
+        for(var type:PcbLayout.Type.values())if(type.analog())chest.setStack(slot++,new ItemStack(Pcb.PARTS.get(type),16));
+        chest.setStack(slot++,new ItemStack(Automation.LIGHT,8));chest.setStack(slot++,new ItemStack(Automation.RAIN,8));
+        for(var sample:List.of(PcbExamples.timer(),PcbExamples.regulated())){chest.setStack(slot++,Pcb.board(sample));chest.setStack(slot++,Pcb.designed(PcbFabrication.GOLD,sample));}chest.markDirty();
     }
     private void first(BlockPos b){var s=source(b,1,3,false,100);var r=device(b,5,3,Foundry.RESISTOR_220);var l=device(b,8,8,Foundry.LED);wire(b,s,0,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,s,1,1,false);indicators.add(l);}
     private void battery(BlockPos b){var s=source(b,1,2,false,100);var m=device(b,5,2,Foundry.BATTERY);var bus=device(b,5,7,Foundry.TERMINAL_STRIP);var r=device(b,8,8,Foundry.RESISTOR_220);var l=device(b,8,12,Foundry.LED);e(m).energy=10;wire(b,s,0,m,0,0,false);wire(b,s,1,m,1,1,false);wire(b,m,2,bus,0,0,false);wire(b,m,3,bus,4,1,false);wire(b,bus,1,r,0,0,false);wire(b,r,1,l,0,2,false);wire(b,l,1,bus,5,1,false);indicators.add(l);}

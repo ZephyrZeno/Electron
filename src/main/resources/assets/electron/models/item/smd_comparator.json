@@ -1,0 +1,1409 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": true,
+  "textures": {
+    "ic_package": "electron:block/pcb/ic_package",
+    "rubber": "electron:block/pcb/rubber",
+    "brushed_steel": "electron:block/pcb/brushed_steel",
+    "solder_joint": "electron:block/pcb/solder_joint",
+    "enamel": "electron:block/pcb/enamel",
+    "particle": "electron:block/pcb/ic_package",
+    "laminate": "electron:block/pcb/laminate",
+    "gold_trace": "electron:block/pcb/gold_trace",
+    "resistor": "electron:block/pcb/resistor",
+    "led_off": "electron:block/pcb/led_off",
+    "terminal_red": "electron:block/pcb/terminal_red",
+    "display_glass": "electron:block/pcb/display_glass"
+  },
+  "elements": [
+    {
+      "name": "lower",
+      "from": [
+        4.3,
+        6.1,
+        4.3
+      ],
+      "to": [
+        11.7,
+        6.65,
+        11.7
+      ],
+      "faces": {
+        "down": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            7.4,
+            7.4
+          ]
+        },
+        "north": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            7.4,
+            0.55
+          ]
+        },
+        "south": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            7.4,
+            0.55
+          ]
+        },
+        "east": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            7.4,
+            0.55
+          ]
+        },
+        "west": {
+          "texture": "#rubber",
+          "uv": [
+            0,
+            0,
+            7.4,
+            0.55
+          ]
+        }
+      }
+    },
+    {
+      "name": "mold",
+      "from": [
+        4.3,
+        6.65,
+        4.3
+      ],
+      "to": [
+        11.7,
+        7.8,
+        11.7
+      ],
+      "faces": {
+        "up": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.85,
+            12.85
+          ]
+        },
+        "north": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.85,
+            11.2875
+          ]
+        },
+        "south": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.85,
+            11.2875
+          ]
+        },
+        "east": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.85,
+            11.2875
+          ]
+        },
+        "west": {
+          "texture": "#ic_package",
+          "uv": [
+            2,
+            11,
+            3.85,
+            11.2875
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_one",
+      "from": [
+        4.9,
+        7.8,
+        5
+      ],
+      "to": [
+        5.6,
+        7.9,
+        5.7
+      ],
+      "faces": {
+        "up": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.7,
+            0.7
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.7,
+            0.1
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.7,
+            0.1
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.7,
+            0.1
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.7,
+            0.1
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_0_foot",
+      "from": [
+        2.3,
+        5.7,
+        4.68
+      ],
+      "to": [
+        3.45,
+        6.02,
+        5.52
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_0_riser",
+      "from": [
+        3.13,
+        6.02,
+        4.68
+      ],
+      "to": [
+        3.45,
+        6.83,
+        5.52
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_0_shoulder",
+      "from": [
+        3.13,
+        6.83,
+        4.68
+      ],
+      "to": [
+        4.6,
+        7.12,
+        5.52
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_1_foot",
+      "from": [
+        2.3,
+        5.7,
+        7.58
+      ],
+      "to": [
+        3.45,
+        6.02,
+        8.42
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_1_riser",
+      "from": [
+        3.13,
+        6.02,
+        7.58
+      ],
+      "to": [
+        3.45,
+        6.83,
+        8.42
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_1_shoulder",
+      "from": [
+        3.13,
+        6.83,
+        7.58
+      ],
+      "to": [
+        4.6,
+        7.12,
+        8.42
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_2_foot",
+      "from": [
+        2.3,
+        5.7,
+        10.48
+      ],
+      "to": [
+        3.45,
+        6.02,
+        11.32
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_2_riser",
+      "from": [
+        3.13,
+        6.02,
+        10.48
+      ],
+      "to": [
+        3.45,
+        6.83,
+        11.32
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_2_shoulder",
+      "from": [
+        3.13,
+        6.83,
+        10.48
+      ],
+      "to": [
+        4.6,
+        7.12,
+        11.32
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_3_foot",
+      "from": [
+        12.55,
+        5.7,
+        10.48
+      ],
+      "to": [
+        13.7,
+        6.02,
+        11.32
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_3_riser",
+      "from": [
+        12.55,
+        6.02,
+        10.48
+      ],
+      "to": [
+        12.87,
+        6.83,
+        11.32
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_3_shoulder",
+      "from": [
+        11.4,
+        6.83,
+        10.48
+      ],
+      "to": [
+        12.87,
+        7.12,
+        11.32
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_4_foot",
+      "from": [
+        12.55,
+        5.7,
+        4.68
+      ],
+      "to": [
+        13.7,
+        6.02,
+        5.52
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.15,
+            0.32
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        },
+        "west": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.32
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_4_riser",
+      "from": [
+        12.55,
+        6.02,
+        4.68
+      ],
+      "to": [
+        12.87,
+        6.83,
+        5.52
+      ],
+      "faces": {
+        "north": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "south": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.32,
+            0.81
+          ]
+        },
+        "east": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        },
+        "west": {
+          "texture": "#brushed_steel",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.81
+          ]
+        }
+      }
+    },
+    {
+      "name": "pin_4_shoulder",
+      "from": [
+        11.4,
+        6.83,
+        4.68
+      ],
+      "to": [
+        12.87,
+        7.12,
+        5.52
+      ],
+      "faces": {
+        "up": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "down": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.84
+          ]
+        },
+        "north": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "south": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            1.47,
+            0.29
+          ]
+        },
+        "east": {
+          "texture": "#solder_joint",
+          "uv": [
+            0,
+            0,
+            0.84,
+            0.29
+          ]
+        }
+      }
+    },
+    {
+      "name": "symbol",
+      "from": [
+        6,
+        7.8,
+        6
+      ],
+      "to": [
+        6.5,
+        7.88,
+        10
+      ],
+      "faces": {
+        "up": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.5,
+            4
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.5,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.5,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            4,
+            0.08
+          ]
+        },
+        "west": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            4,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "symbol",
+      "from": [
+        6.5,
+        7.8,
+        6.5
+      ],
+      "to": [
+        7.5,
+        7.88,
+        9.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.0,
+            3.0
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            3.0,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "symbol",
+      "from": [
+        7.5,
+        7.8,
+        7
+      ],
+      "to": [
+        8.5,
+        7.88,
+        9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.0,
+            2
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.0,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            2,
+            0.08
+          ]
+        }
+      }
+    },
+    {
+      "name": "symbol",
+      "from": [
+        8.5,
+        7.8,
+        7.6
+      ],
+      "to": [
+        10,
+        7.88,
+        8.4
+      ],
+      "faces": {
+        "up": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.5,
+            0.8
+          ]
+        },
+        "north": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.5,
+            0.08
+          ]
+        },
+        "south": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            1.5,
+            0.08
+          ]
+        },
+        "east": {
+          "texture": "#enamel",
+          "uv": [
+            0,
+            0,
+            0.8,
+            0.08
+          ]
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        35,
+        225,
+        0
+      ],
+      "scale": [
+        0.92,
+        0.92,
+        0.92
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.35,
+        0.35,
+        0.35
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        90,
+        180,
+        0
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        15,
+        45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        15,
+        -45,
+        0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        65,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        65,
+        -45,
+        0
+      ],
+      "translation": [
+        0,
+        2,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    }
+  }
+}

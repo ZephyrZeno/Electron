@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:silicon_diode"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_diode",
+    "count": 1
+  }
+}

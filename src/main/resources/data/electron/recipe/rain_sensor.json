@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:electrical_relay"
+    },
+    {
+      "item": "electron:smd_schmitt"
+    },
+    {
+      "item": "electron:smd_r100k"
+    },
+    {
+      "item": "electron:copper_foil"
+    },
+    {
+      "item": "electron:blank_pcb"
+    }
+  ],
+  "result": {
+    "id": "electron:rain_sensor",
+    "count": 1
+  }
+}

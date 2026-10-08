@@ -80,9 +80,9 @@ for path in (A/'blockstates').glob('*.json'):
             model(matches[0]['apply']['model']);state_count+=1
 
 zh=read(A/'lang/zh_cn.json')
-for name in ('ore_crusher','centrifuge','electric_kiln','fuel_fabricator','workshop_lamp','yard_lamp','precision_workbench','pcb_socket','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','water_level_sensor','temperature_sensor','emergency_lamp'):
+for name in ('ore_crusher','centrifuge','electric_kiln','fuel_fabricator','workshop_lamp','yard_lamp','precision_workbench','pcb_socket','uv_exposure_unit','pcb_drill','pcb_etcher','solder_mask_applicator','immersion_gold_line','water_level_sensor','temperature_sensor','emergency_lamp','light_sensor','rain_sensor'):
     variants=read(A/'blockstates'/f'{name}.json')['variants']
-    fixture=name in ('workshop_lamp','yard_lamp','emergency_lamp')
+    fixture=name in ('workshop_lamp','yard_lamp','emergency_lamp','light_sensor','rain_sensor')
     assert len(variants)==24*(32 if fixture else 2),(name,'Unexpected mounted variants')
     for face,turn,broken,power in itertools.product(('up','down','north','south','west','east'),range(4),('false','true'),range(16)):
         key=f'facing={face},turn={turn},broken={broken}'+(f',power={power}' if fixture else '')
@@ -175,6 +175,11 @@ def sheet(filename,title,names):
         d.text((x+10,y+222),zh[key],font=font,fill='#e5edf3')
     canvas.save(OUT/filename)
 
+if '--analog' in sys.argv:
+    sheet('pcb-analog.png','ELECTRON / 模拟、电源与环境控制',[(n,'item/'+n) for n in ['smd_r220','smd_r100k','smd_diode','smd_cap100uf','smd_pot10k','smd_comparator','smd_schmitt','smd_mosfet','smd_buck5','light_sensor','rain_sensor']])
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    print('Analog model sheet and all resource references verified.')
+    sys.exit(0)
 if '--ports' in sys.argv:
     sheet('ports.png','ELECTRON / 专用接口与插电供电',[(n,'item/'+n) for n in ['plant_fuel_port','reactor_fuel_intake','plant_ash_outlet','spent_rod_outlet','plant_water_inlet','wall_outlet','power_strip','appliance_adapter','appliance_power_cord','workshop_lamp','immersion_gold_line','precision_workbench']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
