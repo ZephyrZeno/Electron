@@ -48,12 +48,15 @@ public final class InterfaceQa implements ClientModInitializer {
         }
         if(stage==6){capture(c,"pcb-sequential.png");for(int i=0;i<3;i++)click(60,78);if((int)field(pcb,PcbScreen.class,"category")!=6)throw new AssertionError("Analog tray inaccessible");pcb.getScreenHandler().snapshot(PcbExamples.timer().encode());pcb.keyPressed(70,0,0);stage=7;return;}
         if(stage==7){capture(c,"pcb-analog.png");double scale=(double)field(pcb,PcbScreen.class,"viewScale");int left=(int)field(pcb,HandledScreen.class,"x"),top=(int)field(pcb,HandledScreen.class,"y");pcb.mouseScrolled((left+60)*scale,(top+130)*scale,0,-1);pcb.getScreenHandler().snapshot(PcbExamples.regulated().encode());pcb.keyPressed(70,0,0);stage=8;return;}
-        if(stage==8){capture(c,"pcb-buck.png");stage=9;return;}
-        if(stage==9){
-            if(!Files.exists(output.resolve("screenshots/pcb-buck.png")))return;
+        if(stage==8){capture(c,"pcb-buck.png");c.options.getGuiScale().setValue(2);c.onResolutionChanged();c.setScreen(new SurfaceQaScreen(false));stage=9;return;}
+        if(stage==9){capture(c,"surfaces-top.png");c.setScreen(new SurfaceQaScreen(true));stage=10;return;}
+        if(stage==10){capture(c,"surfaces-profile.png");stage=11;return;}
+        if(stage==11){
+            if(!Files.exists(output.resolve("screenshots/surfaces-profile.png")))return;
             Files.writeString(output.resolve("canvas-bounds.json"),new com.google.gson.Gson().toJson(canvasBounds));
             Files.writeString(output.resolve("verified.json"),"{\"manual_rendered\":true,\"pcb_left_drag\":true,\"pcb_middle_drag\":true,\"zoom_at_pointer\":true,\"resize_preserves_view\":true,\"region_selection\":true,\"copy_preview\":true,\"tool_switch_cancels_paste\":true,\"select_all_cancels_paste\":true,\"sequential_tray\":true,\"analog_tray\":true,\"analog_samples\":true,\"gui_scales\":[2,3],\"computer_use\":false}\n");
-            c.scheduleStop();stage=10;
+            Files.writeString(output.resolve("surface-rendering.json"),"{\"baked_world_models\":6,\"cabinet_variants\":3,\"views\":[\"top\",\"profile\"],\"computer_use\":false}\n");
+            c.scheduleStop();stage=12;
         }
     }
     private void click(int x,int y)throws Exception{

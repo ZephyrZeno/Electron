@@ -17,7 +17,7 @@ first=Image.open(shots/'pcb-fit.png').convert('RGB');panned=Image.open(shots/'pc
 assert first.size==panned.size
 difference=ImageChops.difference(first,panned).crop((first.width//3,first.height//6,first.width*2//3,first.height*2//3))
 assert difference.getbbox() is not None,'PCB panning did not change the rendered canvas'
-for name in ('guide.png','pcb-fit.png','pcb-panned.png','pcb-scaled.png','pcb-region.png','pcb-sequential.png','pcb-analog.png','pcb-buck.png'):
+for name in ('guide.png','pcb-fit.png','pcb-panned.png','pcb-scaled.png','pcb-region.png','pcb-sequential.png','pcb-analog.png','pcb-buck.png','surfaces-top.png','surfaces-profile.png'):
     with Image.open(shots/name) as image:assert image.width>=1000 and image.height>=700
 canvas_bounds=json.loads((folder/'canvas-bounds.json').read_text())
 for name, (left,top,right,bottom) in canvas_bounds.items():
@@ -32,9 +32,18 @@ for name, (left,top,right,bottom) in canvas_bounds.items():
     assert inside>(10 if name in ('pcb-region.png','pcb-sequential.png','pcb-analog.png','pcb-buck.png') else 100),(name,'Missing PCB copper in canvas',inside)
     assert outside==0,(name,'PCB copper escaped the canvas into tools or inventory',outside)
 assert all(report[k] for k in ('region_selection','copy_preview','tool_switch_cancels_paste','select_all_cancels_paste','sequential_tray','analog_tray','analog_samples'))
-log=(ROOT/'build/pcb-v16-interface-final.log').read_text(encoding='utf-8',errors='replace')
+surface_review=json.loads((folder/'surface-rendering.json').read_text())
+assert surface_review['baked_world_models']==6 and surface_review['cabinet_variants']==3
+for name in ('surfaces-top.png','surfaces-profile.png'):
+    picture=Image.open(shots/name).convert('RGB')
+    # A missing/invisible mesh must not pass merely because the screen background rendered.
+    for column in range(3):
+        for row in range(3):
+            region=picture.crop((int((12+column*205+12)*2),int((40+row*119+6)*2),int((12+column*205+193)*2),int((40+row*119+94)*2)))
+            assert sum(n for n,c in region.getcolors(region.width*region.height) if c not in ((16,27,37),(27,42,54)))>region.width*region.height*.02,(name,column,row,'Missing model')
+log=(ROOT/'build/surfaces-v17-interface-final.log').read_text(encoding='utf-8',errors='replace')
 assert 'Failed to load model electron:' not in log
 assert "Unable to load model: 'electron:" not in log
-report.update({'uncovered_paper_pixels':paper,'model_load_errors':0,'screenshots':8,'canvas_clipping':True})
+report.update({'uncovered_paper_pixels':paper,'model_load_errors':0,'screenshots':10,'canvas_clipping':True,'surface_model_views':surface_review})
 (folder/'verified.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report,indent=2))

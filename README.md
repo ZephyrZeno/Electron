@@ -1,6 +1,8 @@
 # Electron: Circuit Foundry
 
-Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.9.0-alpha.1**。Mod ID：`electron`；Java 包：`top.lacrus.zephyrzeno.electron`。
+Minecraft **1.21.1 / Fabric / Java 21**，主线版本 **0.9.1-alpha.1**。Mod ID：`electron`；Java 包：`top.lacrus.zephyrzeno.electron`。
+
+0.9.1-alpha.1 将 42 类器件的端子标识、功能字样改为实体表面材质，移除独立悬浮薄牌和运行时浮空文字。塔顶标签直接位于瓷件表面，接线柜标签位于内部端子座；切掉标识下方的重叠面，按实际尺寸统一小型金属／塑料件的纹理比例。修复光照、雨水传感器误渲染继电器活动触点的问题。详见 [一体表面与材质整理 v17](docs/design/INTEGRATED_SURFACES_V17.md)。
 
 0.9.0-alpha.1 新增 **九种 PCB 模拟／电源配件与两种环境传感器**：220 Ω、100 kΩ 电阻、二极管、100 μF 电容、电位器、比较器、施密特缓冲器、MOSFET、固定 5 V 微型降压模块，以及光照开关和雨水开关。提供实际铜线连接的 RC 延时板和稳压驱动板，支持电容电荷存档、无源分压与消耗输入能量的降压。所有新物品有配方、独立立体模型、中英文提示及两页图文教程。教学元件箱在 `(63,66,158)`；详见 [模拟元件与环境控制 v16](docs/design/ANALOG_AND_ENVIRONMENT_V16.md)。
 

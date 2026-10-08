@@ -146,6 +146,7 @@ def render(ref):
             im=im.crop((math.floor(min(u0,u1)*w/16),math.floor(min(v0,v1)*h/16),math.ceil(max(u0,u1)*w/16),math.ceil(max(v0,v1)*h/16)))
             if u1<u0:im=im.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
             if v1<v0:im=im.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
+            if f.get('rotation',0):im=im.rotate(-f['rotation'],expand=True)
             if 'rotation' in e:
                 rot=e['rotation'];ox,oy,oz=rot['origin'];angle=math.radians(rot['angle']);c,si=math.cos(angle),math.sin(angle)
                 points=[]
@@ -175,6 +176,17 @@ def sheet(filename,title,names):
         d.text((x+10,y+222),zh[key],font=font,fill='#e5edf3')
     canvas.save(OUT/filename)
 
+if '--surfaces' in sys.argv:
+    sheet('integrated-surfaces.png','ELECTRON / 机壳一体标识与材质比例',[(n,'block/'+v) for n,v in [
+        ('wire_and_gate','wire_and_gate_off_up'),('resistor_220','resistor_220_off_up'),
+        ('power_mosfet','power_mosfet_off_up'),('momentary_button','momentary_button_off_up'),
+        ('wire_not_gate','wire_not_gate_off_up_r1'),('silicon_diode','silicon_diode_inventory'),
+        ('rechargeable_battery','rechargeable_battery_off_up'),('terminal_strip','terminal_strip_off_up'),
+        ('tower_terminal','tower_terminal_off_up'),('fuse_25ma','fuse_25ma_off_up'),
+        ('electrical_relay','electrical_relay_off_up'),('wire_and_gate','wire_and_gate_broken_up')]])
+    (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')
+    print('Integrated markings and all resource references verified.')
+    sys.exit(0)
 if '--analog' in sys.argv:
     sheet('pcb-analog.png','ELECTRON / 模拟、电源与环境控制',[(n,'item/'+n) for n in ['smd_r220','smd_r100k','smd_diode','smd_cap100uf','smd_pot10k','smd_comparator','smd_schmitt','smd_mosfet','smd_buck5','light_sensor','rain_sensor']])
     (OUT/'validation.json').write_text(json.dumps({'models':len(models),'electrical_block_states':state_count},indent=2),encoding='utf-8')

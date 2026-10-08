@@ -17,7 +17,7 @@ for label,path,modid,forbidden in [('main',MAIN,'electron',b'top/lacrus/zephyrze
     with zipfile.ZipFile(path) as jar:
         names=jar.namelist();meta=json.loads(jar.read('fabric.mod.json'))
         assert meta['id']==modid
-        assert not any(n.endswith('GameTests.class') or '/electron/test/' in n or '/electron/showcase/' in n or '/InterfaceQa' in n or n.startswith('data/electron/structure/') for n in names)
+        assert not any(n.endswith('GameTests.class') or '/electron/test/' in n or '/electron/showcase/' in n or '/InterfaceQa' in n or '/SurfaceQaScreen' in n or n.startswith('data/electron/structure/') for n in names)
         for n in names:
             if n.endswith('.class'):assert forbidden not in jar.read(n),(label,n,'Cross-mod class dependency')
         if label=='main':
@@ -94,10 +94,13 @@ localization=json.loads((ROOT/'build/localization-verification.json').read_text(
 summary['map']=json.loads((ROOT/'build/academy-package-verification.json').read_text(encoding='utf-8'))
 interface=json.loads((ROOT/'build/interface-review/verified.json').read_text())
 assert interface['manual_rendered'] and interface['pcb_left_drag'] and interface['pcb_middle_drag'] and interface['zoom_at_pointer'] and interface['resize_preserves_view'] and interface['canvas_clipping'] and interface['model_load_errors']==0
-assert all(interface[k] for k in ('region_selection','copy_preview','tool_switch_cancels_paste','select_all_cancels_paste','sequential_tray','analog_tray','analog_samples')) and interface['screenshots']==8
+assert all(interface[k] for k in ('region_selection','copy_preview','tool_switch_cancels_paste','select_all_cancels_paste','sequential_tray','analog_tray','analog_samples')) and interface['screenshots']==10
 assert summary['map']['sequential_sample'] and summary['map']['chest_stacks']==412 and summary['map']['analog_samples']
 summary['validation']={'junit':sum(int(t.get('tests','0')) for t in tests),'native_gametest':native_count,**assets,**localization,'interface':interface,'client_visual':'Actual Minecraft framebuffer captures and interface event checks at GUI scales 2 and 3. Offline model previews and native geometry checks; no Computer Use. Full player-modpack visual acceptance remains manual.'}
 summary['surfaces']=json.loads((ROOT/'build/asset-review/surface-refinement.json').read_text())
+summary['integrated_surfaces']=json.loads((ROOT/'build/asset-review/integrated-surfaces-audit.json').read_text())
+assert summary['integrated_surfaces']['models']==5082 and summary['integrated_surfaces']['models_changed']==0 and summary['integrated_surfaces']['inlaid_faces']==18392
+summary['surface_mesh_comparison']=json.loads((ROOT/'build/asset-review/surface-baseline-comparison.json').read_text())
 audio_report=json.loads((ROOT/'build/industrial-audio-verification.json').read_text(encoding='utf-8'))
 assert audio_report['decoded'] and not audio_report['clipped'] and len(audio_report['original_ogg_samples'])==37
 summary['audio']=audio_report
@@ -119,7 +122,9 @@ shutil.copy2(ROOT/'docs/design/PCB_SEQUENTIAL_AND_EDITING_V15.md',out/'PCB时序
 shutil.copy2(ROOT/'build/asset-review/pcb-sequential.png',out/'pcb-sequential-preview.png')
 shutil.copy2(ROOT/'docs/design/ANALOG_AND_ENVIRONMENT_V16.md',out/'模拟元件与环境控制-v16.md')
 shutil.copy2(ROOT/'build/asset-review/pcb-analog.png',out/'pcb-analog-preview.png')
-for screenshot in ('guide.png','pcb-fit.png','pcb-panned.png','pcb-scaled.png','pcb-region.png','pcb-sequential.png','pcb-analog.png','pcb-buck.png'):
+shutil.copy2(ROOT/'docs/design/INTEGRATED_SURFACES_V17.md',out/'一体表面与材质整理-v17.md')
+shutil.copy2(ROOT/'build/asset-review/integrated-surfaces.png',out/'integrated-surfaces-preview.png')
+for screenshot in ('guide.png','pcb-fit.png','pcb-panned.png','pcb-scaled.png','pcb-region.png','pcb-sequential.png','pcb-analog.png','pcb-buck.png','surfaces-top.png','surfaces-profile.png'):
     shutil.copy2(ROOT/'build/interface-review/screenshots'/screenshot,out/('client-'+screenshot))
 shutil.copy2(ROOT/'docs/design/GRID_AND_MECHANICS_V4.md',out/'大型供电与传动-v4.md')
 shutil.copy2(ROOT/'build/asset-review/grid.png',out/'grid-preview.png')
@@ -150,7 +155,8 @@ Minecraft 1.21.1 / Fabric / Java 21，另需 Fabric API。
 把 electron-{VERSION}.jar 放入 mods，并替换旧版 Electron，勿同时装两个主线版本。
 主线不依赖、引用或调用独立计算器；该模组未包含在本包中。
 
-本版新增九种PCB模拟/电源配件、光照与雨水传感器；提供RC延时板和24V输入的稳压驱动板。新增独立立体模型、11种合成配方、中英文提示及两页图文教程，装配台扩展到38个材料槽并迁移旧存档。新教学箱在（63,66,158）。完整引脚、额定值、配方和样板操作见《模拟元件与环境控制-v16.md》。
+本版将42类器件的端子与功能铭牌改为机壳、PCB底板或芯片封装本身的表面材质；移除悬浮薄牌和实时浮空文字。标识与承载面共面且没有底层重复面。塔顶标签移到瓷件，接线柜标识印在内部端子座，关闭柜门仍保留。按实物尺寸统一金属、塑料细件的UV比例，清理内部面；修复光照与雨水传感器误渲染活动继电器触点的穿模。连接点、配方、碰撞与存档电路保持兼容。详见《一体表面与材质整理-v17.md》。
+前版新增九种PCB模拟/电源配件、光照与雨水传感器；提供RC延时板和24V输入的稳压驱动板。新增独立立体模型、11种合成配方、中英文提示及两页图文教程，装配台扩展到38个材料槽并迁移旧存档。新教学箱在（63,66,158）。完整引脚、额定值、配方和样板操作见《模拟元件与环境控制-v16.md》。
 前版新增 PCB 框选、整组复制／移动／删除，支持跨铜层铜线与贯穿孔、原子撤销及多人修订检查。元件区增加分类和分页。补齐 T 触发器、SR 锁存器、4位计数器、4位移位寄存器，使用独立立体物品模型与实际耗材配方；修复 D 触发器不确定电平与芯片存档状态。教学箱（59,66,158）新增双层计数器成品和沉金裸板：接入5V，RESET置1再置0，显示0–F循环。详见《PCB时序与批量编辑-v15.md》。
 前版修复 PCB 画布拖动、缩放后的越界裁剪与窗口调整时回中问题。移动工具拖动空白处、中键或空格＋左键均可平移；滚轮跟随指针缩放，F 回到整板。手册修复正文被背景覆盖，改为浅色阅读卡片。机组缺水提示改为平滑定位双音，冷机不鸣叫，普通警示间隔20秒。补齐核电站管路，清理工作台、灯具和加工机叠面；详见《界面模型与冷却提示-v14.md》。
 前版将样机改为单张80×88、四层PCB：58个元件中52个为板内基本逻辑门，支持两个0–9输入的加减法，结果−9…18。板外使用小型导线；3×4底座只提供支撑。设计最大128×96、256元件，支持1–4铜层、贯穿孔、自定义板边接口及缩放平移。面积和层数增加实际耗材、耗电和加工时间，大板需要扩展底座；分批装配材料和加工进度可保存。

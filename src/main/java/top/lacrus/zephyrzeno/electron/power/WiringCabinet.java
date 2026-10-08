@@ -11,8 +11,11 @@ import top.lacrus.zephyrzeno.electron.multiblock.Assembly;
 
 /** A recessed terminal cabinet. Shutters retract within its cell; closing never disconnects a wire. */
 public final class WiringCabinet {
-    public record Part(Box box,String texture){}
+    public record Part(Box box,String texture,int pin){}
+    /** Face patches share the real carrier plane; printed areas replace, never cover, metal. */
+    public record Surface(Box box,Direction side,String texture){}
     private static final Map<String,List<Part>> PARTS=new HashMap<>();
+    private static final Map<String,List<Surface>> SURFACES=new HashMap<>();
     private static final Map<String,VoxelShape> SHAPES=new HashMap<>();
     public static boolean present(BlockState s){
         return s.isOf(Industrial.WIND_BASE)||Assembly.formed(s)&&s.getBlock() instanceof ComponentBlock b
@@ -36,7 +39,9 @@ public final class WiringCabinet {
             add(parts,1,11,0,15,16,1,"cabinet_skin");add(parts,1,11,15,15,16,16,"cabinet_skin");
             for(int pin=windBase?2:0;pin<ComponentPins.count(kind);pin++){
                 double x=ComponentPins.u(kind,pin),z=ComponentPins.v(kind,pin);
-                add(parts,x-1.2,11,z-1.1,x+1.2,14.4,z+1.1,"cabinet_inside");
+                // The printed end extends away from the cable gland, never underneath it.
+                double front=z<8?z-1.1:z-2.6,back=z<8?z+2.6:z+1.1;
+                parts.add(new Part(new Box((x-1.2)/16,11d/16,front/16,(x+1.2)/16,14.4/16,back/16),"cabinet_inside",pin));
                 add(parts,x-.65,14.4,z-.65,x+.65,15.35,z+.65,"cabinet_contact");
                 add(parts,x-.35,15.35,z-.10,x+.35,15.4,z+.10,"cast_base");
                 // A cable gland reaches the edge at the same height as the routed conductor.
@@ -57,7 +62,28 @@ public final class WiringCabinet {
         });
     }
     private static void add(List<Part> parts,double x,double y,double z,double X,double Y,double Z,String t){
-        parts.add(new Part(new Box(x/16,y/16,z/16,X/16,Y/16,Z/16),t));
+        parts.add(new Part(new Box(x/16,y/16,z/16,X/16,Y/16,Z/16),t,-1));
+    }
+    public static synchronized List<Surface> surfaces(ComponentBlock.Kind kind,boolean windBase,boolean open){
+        return SURFACES.computeIfAbsent(kind+":"+windBase+":"+open,key->{
+            var result=new ArrayList<Surface>();
+            for(var part:parts(kind,windBase,open)){
+                var b=part.box();String material="assembled/"+part.texture();
+                for(var side:Direction.values())if(side!=Direction.UP||part.pin()<0)result.add(new Surface(b,side,material));
+                if(part.pin()<0)continue;
+                double pinZ=ComponentPins.v(kind,part.pin());
+                double x0=b.minX+.1/16,x1=b.maxX-.1/16;
+                double z0=pinZ<8?(pinZ+.73)/16:b.minZ+.1/16,z1=pinZ<8?b.maxZ-.1/16:(pinZ-.73)/16;
+                result.add(new Surface(new Box(b.minX,b.minY,b.minZ,x0,b.maxY,b.maxZ),Direction.UP,material));
+                result.add(new Surface(new Box(x1,b.minY,b.minZ,b.maxX,b.maxY,b.maxZ),Direction.UP,material));
+                result.add(new Surface(new Box(x0,b.minY,b.minZ,x1,b.maxY,z0),Direction.UP,material));
+                result.add(new Surface(new Box(x0,b.minY,z1,x1,b.maxY,b.maxZ),Direction.UP,material));
+                boolean four=ComponentPins.count(kind)==4;
+                String label=(four?"mains_inlet":"hand_crank")+"_pin_"+part.pin();
+                result.add(new Surface(new Box(x0,b.minY,z0,x1,b.maxY,z1),Direction.UP,label));
+            }
+            return List.copyOf(result);
+        });
     }
     public static Box orient(Box b,BlockState s){
         var a=ComponentGeometry.local(s.get(ComponentBlock.FACING),s.get(ComponentBlock.TURN),b.minX*16,b.minZ*16,(1-b.minY)*16);
