@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_dff"
+    },
+    {
+      "item": "electron:smd_dff"
+    },
+    {
+      "item": "electron:smd_dff"
+    },
+    {
+      "item": "electron:smd_dff"
+    },
+    {
+      "item": "electron:smd_and"
+    },
+    {
+      "item": "electron:solder_alloy"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_shift4",
+    "count": 1
+  }
+}

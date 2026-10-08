@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_nor"
+    },
+    {
+      "item": "electron:smd_nor"
+    },
+    {
+      "item": "electron:solder_alloy"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_sr_latch",
+    "count": 1
+  }
+}

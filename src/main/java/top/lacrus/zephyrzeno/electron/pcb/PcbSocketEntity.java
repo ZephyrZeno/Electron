@@ -17,9 +17,10 @@ public final class PcbSocketEntity extends ComponentEntity {
     public long[] pixels=new long[0];
     public BitSet leds=new BitSet();
     private int[] savedControls=new int[0];
+    private long[] savedCircuitState=new long[0];
     public PcbSocketEntity(BlockPos p,BlockState s){super(p,s);}
-    public PcbCircuit circuit(){if(circuit==null){circuit=new PcbCircuit(Pcb.layout(plantItems.get(0)));System.arraycopy(savedControls,0,circuit.controls,0,Math.min(savedControls.length,circuit.controls.length));}return circuit;}
-    public void boardChanged(){circuit=null;savedControls=new int[0];ledMask=0;displays=new int[0];pixels=new long[0];leds.clear();markDirty();if(world!=null)world.updateListeners(pos,getCachedState(),getCachedState(),Block.NOTIFY_LISTENERS);}
+    public PcbCircuit circuit(){if(circuit==null){circuit=new PcbCircuit(Pcb.layout(plantItems.get(0)));System.arraycopy(savedControls,0,circuit.controls,0,Math.min(savedControls.length,circuit.controls.length));circuit.restore(savedCircuitState);}return circuit;}
+    public void boardChanged(){circuit=null;savedControls=new int[0];savedCircuitState=new long[0];ledMask=0;displays=new int[0];pixels=new long[0];leds.clear();markDirty();if(world!=null)world.updateListeners(pos,getCachedState(),getCachedState(),Block.NOTIFY_LISTENERS);}
     public void stamp(List<DcSolver.Branch> branches,long tick){String[] ports=new String[6];for(int i=0;i<6;i++)ports[i]=CircuitParts.node(pos,i);circuit().stamp("d:"+pos.asLong(),ports,branches,tick,getCachedState().get(ComponentBlock.BROKEN)||!supported(circuit().layout));}
     public void update(DcSolver.Result r,Predicate<String> driven){
         if(!supported(circuit().layout)){pause();return;}
@@ -56,7 +57,8 @@ public final class PcbSocketEntity extends ComponentEntity {
         return net.minecraft.util.ActionResult.CONSUME;
     }
     public void setControl(int index,int value){var c=circuit();if(index<0||index>=c.controls.length||!c.layout.parts().get(index).type().input())return;int clamped=Math.clamp(value,0,c.layout.parts().get(index).type()==PcbLayout.Type.DIAL?9:c.layout.parts().get(index).type()==PcbLayout.Type.SWITCH?1:25);if(c.controls[index]==clamped)return;c.controls[index]=clamped;savedControls=c.controls.clone();markDirty();if(world!=null)world.updateListeners(pos,getCachedState(),getCachedState(),Block.NOTIFY_LISTENERS);}
-    @Override protected void writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.writeNbt(n,r);n.putIntArray("pcb_controls",(circuit==null?savedControls:circuit.controls).clone());}
-    @Override protected void readNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.readNbt(n,r);circuit=null;ledMask=n.getInt("pcb_leds");displays=n.getIntArray("pcb_displays");pixels=n.getLongArray("pcb_pixels");leds=BitSet.valueOf(n.getLongArray("pcb_led_bits"));savedControls=n.getIntArray("pcb_controls");}
-    @Override public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup r){var n=createNbt(r);n.putInt("pcb_leds",ledMask);n.putIntArray("pcb_displays",displays.clone());n.putLongArray("pcb_pixels",pixels.clone());n.putLongArray("pcb_led_bits",leds.toLongArray());return n;}
+    private void writeVisibleNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.writeNbt(n,r);n.putIntArray("pcb_controls",(circuit==null?savedControls:circuit.controls).clone());}
+    @Override protected void writeNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){writeVisibleNbt(n,r);n.putLongArray("pcb_circuit_state",circuit==null?savedCircuitState.clone():circuit.snapshot());}
+    @Override protected void readNbt(NbtCompound n,RegistryWrapper.WrapperLookup r){super.readNbt(n,r);circuit=null;ledMask=n.getInt("pcb_leds");displays=n.getIntArray("pcb_displays");pixels=n.getLongArray("pcb_pixels");leds=BitSet.valueOf(n.getLongArray("pcb_led_bits"));savedControls=n.getIntArray("pcb_controls");savedCircuitState=n.getLongArray("pcb_circuit_state");}
+    @Override public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup r){var n=new NbtCompound();writeVisibleNbt(n,r);n.putInt("pcb_leds",ledMask);n.putIntArray("pcb_displays",displays.clone());n.putLongArray("pcb_pixels",pixels.clone());n.putLongArray("pcb_led_bits",leds.toLongArray());return n;}
 }

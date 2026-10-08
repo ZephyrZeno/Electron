@@ -11,13 +11,16 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
     // Existing ordinals are persistent item/blueprint data: append, never reorder.
     public enum Type {
         R1K(null),R10K(null),LED(null),NOT(LogicFunction.NOT),AND(LogicFunction.AND),OR(LogicFunction.OR),XOR(LogicFunction.XOR),NAND(LogicFunction.NAND),HALF_ADDER(null),DISPLAY(null),
-        NOR(LogicFunction.NOR),XNOR(LogicFunction.XNOR),BUFFER(LogicFunction.BUFFER),RGB(null),PIXEL(null),DIAL(null),SWITCH(null),DFF(null),CLOCK(null),TRISTATE(null),MUX(null),SIGN(null);
+        NOR(LogicFunction.NOR),XNOR(LogicFunction.XNOR),BUFFER(LogicFunction.BUFFER),RGB(null),PIXEL(null),DIAL(null),SWITCH(null),DFF(null),CLOCK(null),TRISTATE(null),MUX(null),SIGN(null),
+        TFF(null),SR_LATCH(null),COUNTER4(null),SHIFT4(null);
         public final LogicFunction logic;
         Type(LogicFunction logic){this.logic=logic;}
         public boolean digital(){return logic!=null||ordinal()>=HALF_ADDER.ordinal();}
         public boolean input(){return this==DIAL||this==SWITCH||this==CLOCK;}
-        public int pins(){return !digital()?2:logic!=null||this==RGB||this==DFF||this==TRISTATE||this==SIGN||this==SWITCH||this==CLOCK?5:6;}
-        public int outputs(){return this==DIAL?4:this==HALF_ADDER?2:logic!=null||this==SWITCH||this==DFF||this==CLOCK||this==TRISTATE||this==MUX?1:0;}
+        public boolean sequential(){return this==DFF||this==TFF||this==SR_LATCH||this==COUNTER4||this==SHIFT4;}
+        public int pins(){return this==COUNTER4||this==SHIFT4?8:!digital()?2:logic!=null||this==RGB||this==DFF||this==TRISTATE||this==SIGN||this==SWITCH||this==CLOCK||this==SR_LATCH?5:6;}
+        public int outputs(){return this==DIAL||this==COUNTER4||this==SHIFT4?4:this==HALF_ADDER?2:logic!=null||this==SWITCH||this==DFF||this==CLOCK||this==TRISTATE||this==MUX||this==TFF||this==SR_LATCH?1:0;}
+        public int outputPin(int output){if(output<0||output>=outputs())throw new IllegalArgumentException("output");return this==DIAL?output+2:this==MUX||this==TFF?5:output+4;}
         public String pinName(int pin){return switch(this){
             case HALF_ADDER->new String[]{"VCC","GND","A","B","SUM","CARRY"}[pin];
             case DISPLAY,DIAL->new String[]{"VCC","GND","D0","D1","D2","D3"}[pin];
@@ -25,6 +28,10 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
             case RGB->new String[]{"VCC","GND","R","G","B"}[pin];
             case SIGN->new String[]{"VCC","GND","SIGN","NC","NC"}[pin];
             case DFF->new String[]{"VCC","GND","D","CLK","Q"}[pin];
+            case TFF->new String[]{"VCC","GND","T","CLK","RESET","Q"}[pin];
+            case SR_LATCH->new String[]{"VCC","GND","S","R","Q"}[pin];
+            case COUNTER4->new String[]{"VCC","GND","CLK","RESET","Q0","Q1","Q2","Q3"}[pin];
+            case SHIFT4->new String[]{"VCC","GND","D","CLK","Q0","Q1","Q2","Q3"}[pin];
             case TRISTATE->new String[]{"VCC","GND","A","EN","Y"}[pin];
             case MUX->new String[]{"VCC","GND","A","B","SEL","Y"}[pin];
             case SWITCH,CLOCK->new String[]{"VCC","GND","NC","NC","Y"}[pin];
@@ -34,7 +41,8 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
     public record Part(Type type,int x,int y,int turn){
         public int pin(int pin){
             int u,v;
-            if(type==Type.HALF_ADDER){u=new int[]{0,1,0,0,2,2}[pin];v=new int[]{0,2,1,2,1,2}[pin];}
+            if(type.pins()==8){u=new int[]{0,2,0,0,1,2,2,1}[pin];v=new int[]{0,0,1,2,2,2,1,0}[pin];}
+            else if(type==Type.HALF_ADDER){u=new int[]{0,1,0,0,2,2}[pin];v=new int[]{0,2,1,2,1,2}[pin];}
             else if(type.pins()==6){u=new int[]{0,2,0,2,0,2}[pin];v=new int[]{0,0,1,1,2,2}[pin];}
             else if(!type.digital()){u=pin==0?0:2;v=1;}
             else{u=new int[]{0,2,0,2,1}[pin];v=new int[]{0,0,2,2,1}[pin];}
@@ -66,13 +74,15 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
     }
     public static int[] ports(int w,int h){return new int[]{point(0,1),point(0,h-2),point(0,h/3),point(0,2*h/3-1),point(w-1,h/3),point(w-1,2*h/3-1)};}
     public int[] ports(){return connectors.stream().mapToInt(Integer::intValue).toArray();}
-    public boolean contains(int x,int y){return x>=0&&y>=0&&x<width&&y<height&&!cutouts.contains(point(x,y));}
+    private boolean inBounds(int x,int y){return x>=0&&y>=0&&x<width&&y<height;}
+    public boolean contains(int x,int y){return inBounds(x,y)&&!cutouts.contains(point(x,y));}
+    private void requireCell(int x,int y,int layer){if(layer<0||layer>=layers||!contains(x,y))throw new IllegalArgumentException("bounds");}
     private PcbLayout copy(List<Part> p,List<Track> t,Set<Integer> cut,Set<Integer> holes,List<Integer> pins){return new PcbLayout(p,t,width,height,cut,layers,holes,pins);}
     public PcbLayout resize(int w,int h){var pins=connectors.equals(Arrays.stream(ports(width,height)).boxed().toList())?Arrays.stream(ports(w,h)).boxed().toList():connectors;return new PcbLayout(parts,tracks,w,h,cutouts,layers,vias,pins);}
     public PcbLayout withLayers(int n){return new PcbLayout(parts,tracks,width,height,cutouts,n,vias,connectors);}
-    public PcbLayout via(int x,int y){var holes=new HashSet<>(vias);if(!holes.remove(point(x,y)))holes.add(point(x,y));return copy(parts,tracks,cutouts,holes,connectors);}
-    public PcbLayout port(int pin,int x,int y){var pins=new ArrayList<>(connectors);pins.set(pin,point(x,y));return copy(parts,tracks,cutouts,vias,pins);}
-    public PcbLayout cut(int x,int y){if(!contains(x,y)&&!cutouts.contains(point(x,y)))throw new IllegalArgumentException();var c=new HashSet<>(cutouts);if(!c.remove(point(x,y)))c.add(point(x,y));return copy(parts,tracks,c,vias,connectors);}
+    public PcbLayout via(int x,int y){requireCell(x,y,0);var holes=new HashSet<>(vias);if(!holes.remove(point(x,y)))holes.add(point(x,y));return copy(parts,tracks,cutouts,holes,connectors);}
+    public PcbLayout port(int pin,int x,int y){requireCell(x,y,0);if(pin<0||pin>=connectors.size())throw new IllegalArgumentException("connector");var pins=new ArrayList<>(connectors);pins.set(pin,point(x,y));return copy(parts,tracks,cutouts,vias,pins);}
+    public PcbLayout cut(int x,int y){if(!inBounds(x,y))throw new IllegalArgumentException("bounds");var c=new HashSet<>(cutouts);if(!c.remove(point(x,y)))c.add(point(x,y));return copy(parts,tracks,c,vias,connectors);}
     public PcbLayout move(int index,int x,int y,int turn){var list=new ArrayList<>(parts);var old=list.get(index);list.set(index,new Part(old.type,x,y,turn));return copy(list,tracks,cutouts,vias,connectors);}
     public PcbLayout removePart(int index){var list=new ArrayList<>(parts);list.remove(index);return copy(list,tracks,cutouts,vias,connectors);}
     public static PcbLayout empty(){return new PcbLayout(List.of(),List.of(),32,24,Set.of());}
@@ -84,7 +94,7 @@ public record PcbLayout(List<Part> parts,List<Track> tracks,int width,int height
     private static boolean adjacent(int a,int b){return Math.abs(x(a)-x(b))+Math.abs(y(a)-y(b))==1;}
     public PcbLayout place(Type type,int x,int y,int turn){var list=new ArrayList<>(parts);list.add(new Part(type,x,y,turn));return copy(list,tracks,cutouts,vias,connectors);}
     public PcbLayout erase(int x,int y){return erase(x,y,0);}
-    public PcbLayout erase(int x,int y,int layer){int at=point(x,y,layer);return copy(layer==0?parts.stream().filter(p->!p.contains(x,y)).toList():parts,tracks.stream().filter(t->t.a!=at&&t.b!=at).toList(),cutouts,vias,connectors);}
+    public PcbLayout erase(int x,int y,int layer){requireCell(x,y,layer);int at=point(x,y,layer);return copy(layer==0?parts.stream().filter(p->!p.contains(x,y)).toList():parts,tracks.stream().filter(t->t.a!=at&&t.b!=at).toList(),cutouts,vias,connectors);}
     public PcbLayout route(int a,int b,boolean verticalFirst){
         if(a<0||b<0||layer(a)!=layer(b)||layer(a)>=layers||!contains(x(a),y(a))||!contains(x(b),y(b)))throw new IllegalArgumentException("bounds");
         var list=new ArrayList<>(tracks);int u=x(a),v=y(a),l=layer(a);

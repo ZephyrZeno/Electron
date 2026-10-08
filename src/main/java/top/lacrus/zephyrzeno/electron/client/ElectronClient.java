@@ -29,7 +29,7 @@ public final class ElectronClient implements ClientModInitializer {
     private record PathPreview(String start,SurfacePoint target,List<SurfacePoint> path,Endpoint end,Text status,long tick){}
     private static PathPreview cachedRoute;private static long nextRouteUpdate;
     @Override public void onInitializeClient() {
-        ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.pcb.PcbNetworking.Snapshot.ID,(payload,context)->context.client().execute(()->{if(context.player().currentScreenHandler instanceof top.lacrus.zephyrzeno.electron.pcb.PcbScreenHandler h&&h.syncId==payload.sync())h.snapshot(payload.layout());}));
+        ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.pcb.PcbNetworking.Snapshot.ID,(payload,context)->context.client().execute(()->{if(context.player().currentScreenHandler instanceof top.lacrus.zephyrzeno.electron.pcb.PcbScreenHandler h&&h.syncId==payload.sync())h.snapshot(payload.layout(),payload.revision());}));
         MagnifierZoom.register();WorkshopMechanismRenderer.register();MachineSounds.register();
         net.minecraft.client.gui.screen.ingame.HandledScreens.register(top.lacrus.zephyrzeno.electron.pcb.Pcb.SCREEN,PcbScreen::new);
         ClientPlayNetworking.registerGlobalReceiver(top.lacrus.zephyrzeno.electron.power.FaultEffects.Event.ID,(payload,context)->context.client().execute(()->ArcRenderer.receive(payload.data())));

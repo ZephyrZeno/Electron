@@ -24,6 +24,46 @@ public final class PcbAdvancedTests implements FabricGameTest {
     @GameTest(templateName="electron:components_test")
     public void oldOutputSlotMigratesWithoutEatingTheBoard(TestContext t){var a=(PcbBenchEntity)put(t,Pcb.ASSEMBLY,3,3);a.setStack(11,Pcb.board(PcbLayout.inverter()));a.setStack(0,new ItemStack(PcbFabrication.FILM,3));var n=a.createNbt(t.getWorld().getRegistryManager());n.remove("pcb_inventory_version");n.putBoolean("pcb_working",true);var restored=new PcbBenchEntity(a.getPos(),a.getCachedState());restored.read(n,t.getWorld().getRegistryManager());t.assertTrue(restored.getStack(Pcb.OUTPUT_SLOT).isOf(Pcb.BOARD),"Old output survives migration");t.assertTrue(restored.getStack(11).isEmpty(),"New part slot cannot eat legacy output");t.assertEquals(restored.getStack(0).getCount(),3,"Legacy material remains recoverable");t.assertFalse(restored.working,"Old mixed-role job stops safely");t.complete();}
     @GameTest(templateName="electron:components_test")
+    public void versionThreeOutputMovesPastSequentialPartsAndVersionFourKeepsThem(TestContext t){
+        var bench=(PcbBenchEntity)put(t,Pcb.ASSEMBLY,3,3);var layout=PcbLayout.halfAdder();
+        bench.setStack(24,new ItemStack(Pcb.PARTS.get(PcbLayout.Type.SIGN),7));bench.setStack(25,Pcb.board(layout));
+        var n=bench.createNbt(t.getWorld().getRegistryManager());n.putInt("pcb_inventory_version",3);
+        bench.read(n,t.getWorld().getRegistryManager());
+        t.assertEquals(Pcb.layout(bench.getStack(Pcb.OUTPUT_SLOT)),layout,"v3 output 25 migrates intact to 29");
+        t.assertTrue(bench.getStack(25).isEmpty(),"Output is never interpreted as a new TFF package");
+        t.assertEquals(bench.getStack(24).getCount(),7,"Existing SIGN material is retained");
+        for(var type:List.of(PcbLayout.Type.TFF,PcbLayout.Type.SR_LATCH,PcbLayout.Type.COUNTER4,PcbLayout.Type.SHIFT4))bench.setStack(3+type.ordinal(),new ItemStack(Pcb.PARTS.get(type),3));
+        n=bench.createNbt(t.getWorld().getRegistryManager());t.assertEquals(n.getInt("pcb_inventory_version"),4,"Expanded inventory writes v4");
+        bench.read(n,t.getWorld().getRegistryManager());
+        for(var type:List.of(PcbLayout.Type.TFF,PcbLayout.Type.SR_LATCH,PcbLayout.Type.COUNTER4,PcbLayout.Type.SHIFT4))t.assertEquals(bench.getStack(3+type.ordinal()).getCount(),3,"New material slots survive a second reload");
+        t.assertEquals(Pcb.layout(bench.getStack(Pcb.OUTPUT_SLOT)),layout,"Finished output remains separate from all four new inputs");t.complete();
+    }
+    @GameTest(templateName="electron:components_test")
+    public void poweredCounterStateSurvivesSocketNbtWithoutAnExtraRisingEdge(TestContext t){
+        var socket=(PcbSocketEntity)put(t,Pcb.SOCKET,3,3);var layout=PcbLayout.empty().place(PcbLayout.Type.COUNTER4,6,4,0);
+        socket.plantItems.set(0,Pcb.board(layout));socket.boardChanged();
+        var circuit=socket.circuit();int tick=0;
+        tick=counterDrive(circuit,tick,0,1);tick=counterDrive(circuit,tick,0,0);tick=counterDrive(circuit,tick,1,0);
+        t.assertEquals(circuit.outputState(0,0),1,"A reset followed by one edge sets Q0");
+        var saved=socket.createNbt(t.getWorld().getRegistryManager());var restored=new PcbSocketEntity(socket.getPos(),socket.getCachedState());
+        restored.read(saved,t.getWorld().getRegistryManager());
+        t.assertTrue(Arrays.equals(circuit.snapshot(),restored.circuit().snapshot()),"Solved outputs, pending transitions and clock memory persist together");
+        tick=counterDrive(restored.circuit(),tick,1,0);t.assertEquals(restored.circuit().outputState(0,0),1,"Held-high clock after reload cannot count again");
+        tick=counterDrive(restored.circuit(),tick,0,0);counterDrive(restored.circuit(),tick,1,0);
+        t.assertEquals(restored.circuit().outputState(0,0),0,"Next real edge clears Q0");t.assertEquals(restored.circuit().outputState(0,1),1,"Next real edge increments to two");
+        restored.boardChanged();t.assertEquals(restored.circuit().outputState(0,0),3,"Removing or replacing the PCB cannot retain its old memory");t.complete();
+    }
+    private static int counterDrive(PcbCircuit circuit,int tick,int clock,int reset){
+        var part=circuit.layout.parts().getFirst();
+        for(int step=0;step<6;step++){
+            var branches=new ArrayList<DcSolver.Branch>();circuit.stamp("counter",new String[]{"P0","P1","P2","P3","P4","P5"},branches,tick,false);
+            String v=circuit.net("counter",part.pin(0)),g=circuit.net("counter",part.pin(1));
+            branches.add(DcSolver.Branch.source("supply",v,g,5,.01));branches.add(DcSolver.Branch.resistor("clock",circuit.net("counter",part.pin(2)),clock==1?v:g,100));branches.add(DcSolver.Branch.resistor("reset",circuit.net("counter",part.pin(3)),reset==1?v:g,100));
+            for(int out=0;out<4;out++)branches.add(DcSolver.Branch.resistor("load"+out,circuit.net("counter",part.pin(out+4)),g,1000));
+            circuit.update("counter",DcSolver.solve(branches),node->true,tick++,false);
+        }return tick;
+    }
+    @GameTest(templateName="electron:components_test")
     public void numericDecoderUsesPaidRailsAndUnknownInputsBlank(TestContext t){var dial=(DisplayEntity)put(t,Displays.DIAL,2,3);var screen=(DisplayEntity)put(t,Displays.SMALL,6,3);dial.setting=9;
         var branches=new ArrayList<DcSolver.Branch>();dial.stamp(branches);screen.stamp(branches);for(int pin=0;pin<6;pin++)branches.add(DcSolver.Branch.resistor("w"+pin,node(dial.getPos(),pin),node(screen.getPos(),pin),.02));branches.add(DcSolver.Branch.source("s",node(dial.getPos(),0),node(dial.getPos(),1),5,.1));var r=DcSolver.solve(branches);screen.voltage=r.voltage(node(screen.getPos(),0))-r.voltage(node(screen.getPos(),1));screen.update(r,n->true);t.assertEquals(screen.value,9,"Four physical input bits decode to 9");screen.signMode=true;screen.value=8;t.assertEquals(screen.glyph(),-1,"Only D0 drives minus mode");screen.value=9;t.assertEquals(screen.glyph(),16,"High D0 shows minus");t.assertTrue(-r.current("s")>.009,"Both components load actual supply");screen.update(r,n->false);t.assertEquals(screen.value,-1,"Floating input blanks the screen");screen.voltage=0;screen.update(r,n->true);t.assertEquals(screen.value,-1,"No supply means no display");t.complete();}
     @GameTest(templateName="electron:components_test")

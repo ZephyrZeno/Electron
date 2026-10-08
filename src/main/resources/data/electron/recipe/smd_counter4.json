@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "electron:smd_tff"
+    },
+    {
+      "item": "electron:smd_tff"
+    },
+    {
+      "item": "electron:smd_tff"
+    },
+    {
+      "item": "electron:smd_tff"
+    },
+    {
+      "item": "electron:smd_and"
+    },
+    {
+      "item": "electron:smd_and"
+    },
+    {
+      "item": "electron:smd_not"
+    },
+    {
+      "item": "electron:solder_alloy"
+    },
+    {
+      "item": "electron:copper_foil"
+    }
+  ],
+  "result": {
+    "id": "electron:smd_counter4",
+    "count": 1
+  }
+}

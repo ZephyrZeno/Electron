@@ -15,6 +15,7 @@ public final class PcbScreenHandler extends ScreenHandler {
     public int materialPage;
     public static final int PAGE_SIZE=12;
     private PcbLayout cachedLayout;
+    private int cachedLayoutRevision=-1;
     public PcbScreenHandler(int sync,PlayerInventory inv){this(sync,inv,new SimpleInventory(Pcb.INVENTORY_SIZE),new ArrayPropertyDelegate(201));}
     public PcbScreenHandler(int sync,PlayerInventory inv,Inventory machine,PropertyDelegate properties){
         super(Pcb.SCREEN,sync);viewer=inv.player;inventory=machine;data=properties;addProperties(data);
@@ -25,9 +26,17 @@ public final class PcbScreenHandler extends ScreenHandler {
     public net.minecraft.item.Item inputItem(int i){return i==0?assembly()?PcbFabrication.GOLD:PcbFabrication.FILM:i==2?net.minecraft.item.Items.BLACK_DYE:Pcb.MATERIALS.get(i);}
     public int value(int i){return data.get(i);}
     public PcbLayout layout(){return inventory instanceof PcbBenchEntity e?e.draft:cachedLayout==null?PcbLayout.empty():cachedLayout;}
-    public void snapshot(String encoded){try{cachedLayout=PcbLayout.decode(encoded);}catch(IllegalArgumentException ignored){}}
+    public boolean designSynchronized(){return inventory instanceof PcbBenchEntity||cachedLayout!=null&&cachedLayoutRevision==value(2);}
+    public void snapshot(String encoded){snapshot(encoded,value(2));}
+    public void snapshot(String encoded,int revision){
+        if(revision<0||revision>32767)return;
+        // Revisions wrap at 32768. A late older packet must not replace a newer decoded board.
+        if(cachedLayoutRevision>=0&&((revision-cachedLayoutRevision)&32767)>16384)return;
+        try{var decoded=PcbLayout.decode(encoded);cachedLayout=decoded;cachedLayoutRevision=revision;}
+        catch(IllegalArgumentException ignored){}
+    }
     @Override public void sendContentUpdates(){super.sendContentUpdates();if(inventory instanceof PcbBenchEntity e&&viewer instanceof net.minecraft.server.network.ServerPlayerEntity p&&p.currentScreenHandler==this&&sentRevision!=e.revision){sentRevision=e.revision;net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking.send(p,new PcbNetworking.Snapshot(syncId,e.revision,e.draft.encode()));}}
-    public void action(PlayerEntity p,PcbNetworking.Action a){if(canUse(p)&&inventory instanceof PcbBenchEntity e&&a.revision()==e.revision){if(a.op()==18){if(a.a()>=0&&a.a()<(Pcb.INPUT_SLOTS+PAGE_SIZE-1)/PAGE_SIZE)materialPage=a.a();}else e.edit(a.op(),a.a(),a.b(),a.c(),a.d());sendContentUpdates();}}
+    public void action(PlayerEntity p,PcbNetworking.Action a){if(canUse(p)&&inventory instanceof PcbBenchEntity e){if(a.op()==18){if(a.a()>=0&&a.a()<(Pcb.INPUT_SLOTS+PAGE_SIZE-1)/PAGE_SIZE)materialPage=a.a();}else if(a.revision()==e.revision)e.edit(a.op(),a.a(),a.b(),a.c(),a.d());sendContentUpdates();}}
     @Override public boolean canUse(PlayerEntity p){return inventory.canPlayerUse(p);}
     @Override public ItemStack quickMove(PlayerEntity p,int index){if(index<0||index>=slots.size())return ItemStack.EMPTY;var slot=slots.get(index);if(!slot.hasStack()||!slot.canTakeItems(p))return ItemStack.EMPTY;var s=slot.getStack();var copy=s.copy();if(index<Pcb.INVENTORY_SIZE){if(!insertItem(s,Pcb.INVENTORY_SIZE,slots.size(),true))return ItemStack.EMPTY;}else if(!insertItem(s,0,Pcb.INPUT_SLOTS,false))return ItemStack.EMPTY;if(s.isEmpty())slot.setStack(ItemStack.EMPTY);else slot.markDirty();return copy;}
 }

@@ -42,13 +42,51 @@ public final class InterfaceQa implements ClientModInitializer {
         if(stage==1){capture(c,"guide.png");var inv=new PlayerInventory(null);var handler=new PcbScreenHandler(1,inv);handler.snapshot(SingleBoardCalculator.layout().encode());pcb=new PcbScreen(handler,inv,Text.translatable("block.electron.pcb_design_station"));c.setScreen(new CanvasHost(pcb));stage=2;return;}
         if(stage==2){capture(c,"pcb-fit.png");checkDragAndZoom(c);stage=3;return;}
         if(stage==3){capture(c,"pcb-panned.png");c.options.getGuiScale().setValue(3);c.onResolutionChanged();checkDragAndZoom(c);stage=4;return;}
-        if(stage==4){capture(c,"pcb-scaled.png");stage=5;return;}
+        if(stage==4){capture(c,"pcb-scaled.png");prepareRegion(c);stage=5;return;}
         if(stage==5){
-            if(!Files.exists(output.resolve("screenshots/pcb-scaled.png")))return;
-            Files.writeString(output.resolve("canvas-bounds.json"),new com.google.gson.Gson().toJson(canvasBounds));
-            Files.writeString(output.resolve("verified.json"),"{\"manual_rendered\":true,\"pcb_left_drag\":true,\"pcb_middle_drag\":true,\"zoom_at_pointer\":true,\"resize_preserves_view\":true,\"gui_scales\":[2,3],\"computer_use\":false}\n");
-            c.scheduleStop();stage=6;
+            capture(c,"pcb-region.png");checkCancelAndTray(c);stage=6;return;
         }
+        if(stage==6){capture(c,"pcb-sequential.png");stage=7;return;}
+        if(stage==7){
+            if(!Files.exists(output.resolve("screenshots/pcb-sequential.png")))return;
+            Files.writeString(output.resolve("canvas-bounds.json"),new com.google.gson.Gson().toJson(canvasBounds));
+            Files.writeString(output.resolve("verified.json"),"{\"manual_rendered\":true,\"pcb_left_drag\":true,\"pcb_middle_drag\":true,\"zoom_at_pointer\":true,\"resize_preserves_view\":true,\"region_selection\":true,\"copy_preview\":true,\"tool_switch_cancels_paste\":true,\"select_all_cancels_paste\":true,\"sequential_tray\":true,\"gui_scales\":[2,3],\"computer_use\":false}\n");
+            c.scheduleStop();stage=8;
+        }
+    }
+    private void click(int x,int y)throws Exception{
+        double scale=(double)field(pcb,PcbScreen.class,"viewScale");int left=(int)field(pcb,HandledScreen.class,"x"),top=(int)field(pcb,HandledScreen.class,"y");
+        pcb.mouseClicked((left+x)*scale,(top+y)*scale,0);pcb.mouseReleased((left+x)*scale,(top+y)*scale,0);
+    }
+    private double[] canvasPoint(int u,int v)throws Exception{
+        var view=(PcbViewport)field(pcb,PcbScreen.class,"viewport");double scale=(double)field(pcb,PcbScreen.class,"viewScale");
+        int x=(int)field(pcb,HandledScreen.class,"x"),y=(int)field(pcb,HandledScreen.class,"y");return new double[]{(x+122+view.screenX(u))*scale,(y+48+view.screenY(v))*scale};
+    }
+    private void prepareRegion(MinecraftClient c)throws Exception{
+        var sample=new PcbLayout(java.util.List.of(),java.util.List.of(),64,48,java.util.Set.of()).withLayers(2)
+                .place(PcbLayout.Type.NOT,4,4,0).place(PcbLayout.Type.DFF,8,4,0)
+                .route(PcbLayout.point(4,4),PcbLayout.point(8,4),false).via(6,4)
+                .route(PcbLayout.point(6,4,1),PcbLayout.point(6,8,1),false);
+        pcb.getScreenHandler().snapshot(sample.encode());pcb.resize(c,c.getWindow().getScaledWidth(),c.getWindow().getScaledHeight());
+        click(215,32);double[] a=canvasPoint(3,3),b=canvasPoint(11,9);
+        pcb.mouseClicked(a[0],a[1],0);pcb.mouseDragged(b[0],b[1],0,b[0]-a[0],b[1]-a[1]);pcb.mouseReleased(b[0],b[1],0);
+        var region=(PcbSelection.Area)field(pcb,PcbScreen.class,"region");
+        if(region==null||sample.parts().stream().filter(region::contains).count()!=2)throw new AssertionError("Region selection failed");
+        pcb.keyPressed(67,0,2);pcb.keyPressed(86,0,2);
+        if(!(boolean)field(pcb,PcbScreen.class,"pasteMode"))throw new AssertionError("Clipboard preview not entered");
+        var validate=PcbScreen.class.getDeclaredMethod("validRegionGhost",int.class,int.class);validate.setAccessible(true);
+        if(!(boolean)validate.invoke(pcb,18,0)||(boolean)validate.invoke(pcb,0,0))throw new AssertionError("Copy preview accepted overlap or rejected free area");
+        double[] destination=canvasPoint(21,3);var host=(CanvasHost)c.currentScreen;host.mouseX=(int)destination[0];host.mouseY=(int)destination[1];
+    }
+    private void checkCancelAndTray(MinecraftClient c)throws Exception{
+        click(302,271);if((boolean)field(pcb,PcbScreen.class,"pasteMode"))throw new AssertionError("Via tool kept stale paste");
+        // There is no network connection here: an accidental edit packet fails this check.
+        double[] outside=canvasPoint(64,4);pcb.mouseClicked(outside[0],outside[1],0);pcb.mouseReleased(outside[0],outside[1],0);
+        pcb.keyPressed(86,0,2);pcb.keyPressed(65,0,2);if((boolean)field(pcb,PcbScreen.class,"pasteMode"))throw new AssertionError("Select all kept stale paste");
+        pcb.keyPressed(256,0,0);
+        for(int i=0;i<3;i++)click(60,78);
+        if((int)field(pcb,PcbScreen.class,"category")!=3)throw new AssertionError("Sequential category inaccessible");
+        var host=(CanvasHost)c.currentScreen;host.mouseX=host.mouseY=-100;
     }
     private void capture(MinecraftClient c,String name)throws Exception{
         if(name.startsWith("pcb-")){
@@ -81,9 +119,10 @@ public final class InterfaceQa implements ClientModInitializer {
     // HandledScreen.tick needs a live player. The host renders the real screen without inventing a world/player.
     private static final class CanvasHost extends Screen {
         private final PcbScreen child;
+        private int mouseX=-100,mouseY=-100;
         CanvasHost(PcbScreen child){super(Text.literal("Interface QA"));this.child=child;}
         @Override protected void init(){child.init(client,width,height);}
-        @Override public void render(DrawContext c,int x,int y,float dt){child.render(c,-100,-100,dt);}
+        @Override public void render(DrawContext c,int x,int y,float dt){child.render(c,mouseX,mouseY,dt);}
         @Override public void renderBackground(DrawContext c,int x,int y,float dt){}
     }
 }
