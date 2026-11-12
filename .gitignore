@@ -15,6 +15,6 @@ crash-reports/
 *.log
 *.hprof
 *.jfr
-tools/deploy.local.json
+/tools/
 __pycache__/
 *.pyc
